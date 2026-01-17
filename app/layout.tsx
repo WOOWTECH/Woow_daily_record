@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Outfit, Noto_Sans_TC } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import { Sidebar } from "@/components/sidebar";
-import { MobileNav } from "@/components/mobile-nav";
-import { ChildProvider } from "@/contexts/child-context";
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
+import { AppShell } from "@/core/components/app-shell";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -19,48 +19,44 @@ const notoSansTC = Noto_Sans_TC({
 });
 
 export const metadata: Metadata = {
-  title: "Woowtech Platform",
-  description: "SaaS/Membership Platform by Woowtech",
+  title: "Woowtech Home OS",
+  description: "Your Home Operating System by Woowtech",
 };
 
-import { createClient } from "@/lib/supabase/server";
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-  const { data: childrenData } = await supabase.from("children").select("*");
-
-  // Transform for Context (dates are strings in DB usually or need instantiation)
-  const initialChildren = (childrenData || []).map((c: any) => ({
-    ...c,
-    dob: new Date(c.dob),
-    photoUrl: c.photo_url
-  }));
-
+  const locale = await getLocale();
+  const messages = await getMessages();
 
   return (
-    <html lang="en" className={`${outfit.variable} ${notoSansTC.variable}`} suppressHydrationWarning>
-      <body className="antialiased bg-brand-gray dark:bg-brand-black">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <ChildProvider initialChildren={initialChildren}>
-            {/* Mobile Navigation */}
-            <MobileNav />
-
-            {/* Fixed Sidebar (Desktop) */}
-            <Sidebar />
-
-            {/* Main Content Area */}
-            <main className="lg:ml-64 min-h-screen transition-all duration-300">
-              <div className="mx-auto max-w-[1600px] p-4 lg:p-8 pt-16 lg:pt-8">
-                {children}
-              </div>
-            </main>
-          </ChildProvider>
-          <Toaster richColors position="top-center" />
-        </ThemeProvider>
+    <html lang={locale} className={`${outfit.variable} ${notoSansTC.variable}`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var accent = localStorage.getItem('accent-color') || 'blue';
+                  document.documentElement.setAttribute('data-accent', accent);
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="antialiased bg-white dark:bg-brand-black">
+        <NextIntlClientProvider messages={messages}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <AppShell>
+              {children}
+            </AppShell>
+            <Toaster richColors position="top-center" />
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
