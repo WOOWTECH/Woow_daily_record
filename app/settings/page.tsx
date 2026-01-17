@@ -6,10 +6,12 @@ import { createClient } from "@/lib/supabase/server";
 import { ProfileForm } from "@/components/settings/profile-form";
 import { BabySettingsForm } from "@/components/settings/baby-form";
 import { AppearanceForm } from "@/components/settings/appearance-form";
+import { getTranslations } from 'next-intl/server';
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
+    const t = await getTranslations('settings');
     const supabase = await createClient();
 
     // 1. Get User/Profile
@@ -38,8 +40,8 @@ export default async function SettingsPage() {
             <GlassCard className="p-8">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-3xl font-bold text-brand-black dark:text-brand-white tracking-tight">Settings</h1>
-                        <p className="text-brand-deep-gray mt-1 font-medium">Manage your profile and family preferences.</p>
+                        <h1 className="text-3xl font-bold text-brand-black dark:text-brand-white tracking-tight">{t('title')}</h1>
+                        <p className="text-brand-deep-gray mt-1 font-medium">{t('subtitle')}</p>
                     </div>
                 </div>
             </GlassCard>

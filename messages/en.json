@@ -77,13 +77,15 @@
   },
   "settings": {
     "title": "Settings",
+    "subtitle": "Manage your profile and family preferences",
     "appearance": "Appearance",
     "language": "Language",
-    "theme": "Theme",
+    "theme": "Theme Mode",
     "themeLight": "Light",
     "themeDark": "Dark",
     "themeSystem": "System",
-    "accentColor": "Accent Color"
+    "accentColor": "Accent Color",
+    "accentColorHint": "Choose a color that appears throughout the app"
   },
   "auth": {
     "login": "Login",

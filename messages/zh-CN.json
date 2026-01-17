@@ -77,13 +77,15 @@
   },
   "settings": {
     "title": "设置",
+    "subtitle": "管理个人资料与家庭偏好设置",
     "appearance": "外观",
     "language": "语言",
-    "theme": "主题",
+    "theme": "主题模式",
     "themeLight": "浅色",
     "themeDark": "深色",
     "themeSystem": "跟随系统",
-    "accentColor": "主色调"
+    "accentColor": "主色调",
+    "accentColorHint": "选择应用程序的主色调"
   },
   "auth": {
     "login": "登录",

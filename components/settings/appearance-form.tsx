@@ -2,16 +2,12 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { GlassCard } from "@/components/glass-card";
+import { GlassCard } from "@/core/components/glass-card";
 import Icon from "@mdi/react";
 import { mdiWeatherSunny, mdiWeatherNight, mdiMonitor, mdiCheck } from "@mdi/js";
 import { cn } from "@/lib/utils";
-
-const themeOptions = [
-  { value: "light", label: "Light", icon: mdiWeatherSunny },
-  { value: "dark", label: "Dark", icon: mdiWeatherNight },
-  { value: "system", label: "System", icon: mdiMonitor },
-];
+import { useTranslations } from 'next-intl';
+import { LanguageSelector } from './language-selector';
 
 const accentColors = [
   { value: "blue", label: "Blue", color: "#6184FD" },
@@ -24,9 +20,16 @@ const accentColors = [
 ];
 
 export function AppearanceForm() {
+  const t = useTranslations('settings');
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [accentColor, setAccentColor] = useState("blue");
+
+  const themeOptions = [
+    { value: "light", label: t('themeLight'), icon: mdiWeatherSunny },
+    { value: "dark", label: t('themeDark'), icon: mdiWeatherNight },
+    { value: "system", label: t('themeSystem'), icon: mdiMonitor },
+  ];
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -48,7 +51,7 @@ export function AppearanceForm() {
   if (!mounted) {
     return (
       <GlassCard className="p-6 space-y-6">
-        <h2 className="text-xl font-bold text-brand-black dark:text-brand-white">Appearance</h2>
+        <h2 className="text-xl font-bold text-brand-black dark:text-brand-white">{t('appearance')}</h2>
         <div className="h-32 animate-pulse bg-brand-gray/50 dark:bg-white/5 rounded-xl" />
       </GlassCard>
     );
@@ -56,12 +59,15 @@ export function AppearanceForm() {
 
   return (
     <GlassCard className="p-6 space-y-6">
-      <h2 className="text-xl font-bold text-brand-black dark:text-brand-white">Appearance</h2>
+      <h2 className="text-xl font-bold text-brand-black dark:text-brand-white">{t('appearance')}</h2>
+
+      {/* Language Selector */}
+      <LanguageSelector />
 
       {/* Theme Mode */}
       <div className="space-y-3">
         <label className="text-sm font-medium text-brand-deep-gray dark:text-gray-400">
-          Theme Mode
+          {t('theme')}
         </label>
         <div className="flex gap-3">
           {themeOptions.map((option) => {
@@ -101,7 +107,7 @@ export function AppearanceForm() {
       {/* Accent Color */}
       <div className="space-y-3">
         <label className="text-sm font-medium text-brand-deep-gray dark:text-gray-400">
-          Accent Color
+          {t('accentColor')}
         </label>
         <div className="flex flex-wrap gap-3">
           {accentColors.map((color) => {
@@ -130,7 +136,7 @@ export function AppearanceForm() {
           })}
         </div>
         <p className="text-xs text-brand-deep-gray/70 dark:text-gray-500">
-          Choose a color that appears throughout the app
+          {t('accentColorHint')}
         </p>
       </div>
     </GlassCard>
