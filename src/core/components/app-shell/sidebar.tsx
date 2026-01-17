@@ -2,19 +2,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Icon from "@mdi/react";
 import {
-  Home,
-  Baby,
-  DollarSign,
-  ListTodo,
-  Calendar,
-  StickyNote,
-  Wrench,
-  Settings,
-  ChevronLeft,
-  ChevronRight,
-  LogOut,
-} from "lucide-react";
+  mdiHome,
+  mdiBabyCarriage,
+  mdiCurrencyUsd,
+  mdiFormatListChecks,
+  mdiCalendar,
+  mdiNoteText,
+  mdiWrench,
+  mdiCog,
+  mdiLogout,
+} from "@mdi/js";
 import { useSidebar } from "@/core/hooks/use-sidebar";
 import { SidebarItem } from "./sidebar-item";
 import { NotificationBell } from "@/core/components/notifications";
@@ -22,22 +21,25 @@ import { getUserHousehold } from "@/core/lib/supabase/households";
 import { cn } from "@/lib/utils";
 import { signOut } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
-
-const navItems = [
-  { icon: Home, label: "Home", href: "/" },
-  { icon: Baby, label: "Baby", href: "/baby" },
-  { icon: DollarSign, label: "Finance", href: "/finance", disabled: true },
-  { icon: ListTodo, label: "To Do List", href: "/todos" },
-  { icon: Calendar, label: "Calendar", href: "/calendar" },
-  { icon: StickyNote, label: "Note", href: "/notes" },
-  { icon: Wrench, label: "Devices", href: "/devices", disabled: true },
-];
-
-const bottomItems = [
-  { icon: Settings, label: "Settings", href: "/settings" },
-];
+import { useTranslations } from 'next-intl';
 
 export function Sidebar() {
+  const t = useTranslations('nav');
+
+  const navItems = [
+    { icon: mdiHome, label: t('home'), href: "/" },
+    { icon: mdiBabyCarriage, label: t('baby'), href: "/baby" },
+    { icon: mdiCurrencyUsd, label: "Finance", href: "/finance", disabled: true },
+    { icon: mdiFormatListChecks, label: t('todos'), href: "/todos" },
+    { icon: mdiCalendar, label: t('calendar'), href: "/calendar" },
+    { icon: mdiNoteText, label: t('notes'), href: "/notes" },
+    { icon: mdiWrench, label: t('devices'), href: "/devices" },
+  ];
+
+  const bottomItems = [
+    { icon: mdiCog, label: t('settings'), href: "/settings" },
+  ];
+
   const { isExpanded, isHovered, expand, collapse, setHovered } = useSidebar();
   const router = useRouter();
   const showExpanded = isExpanded || isHovered;
@@ -113,14 +115,14 @@ export function Sidebar() {
             "text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20"
           )}
         >
-          <LogOut size={22} className="shrink-0" />
+          <Icon path={mdiLogout} size={0.92} className="shrink-0" />
           <span
             className={cn(
               "font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-200",
               showExpanded ? "w-auto opacity-100" : "w-0 opacity-0"
             )}
           >
-            Sign Out
+            {t('signOut')}
           </span>
         </button>
 
