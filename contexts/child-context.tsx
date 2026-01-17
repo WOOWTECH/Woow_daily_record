@@ -6,7 +6,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 export interface Child {
     id: string;
     name: string;
-    dob: Date;
+    dob: string;
     gender: "boy" | "girl";
     photoUrl: string;
 }

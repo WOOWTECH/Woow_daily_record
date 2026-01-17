@@ -11,6 +11,11 @@
   /* brand-black */
   --primary: oklch(0.205 0 0);
   /* brand-blue */
+  /* brand-blue */
+  --brand-blue: #6184FD;
+  --brand-deep-gray: #646262;
+  --brand-black: #212121;
+
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -83,7 +88,202 @@
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
+  --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Woowtech Brand Colors - Using CSS variable for dynamic accent */
+  --color-brand-blue: var(--accent-color, #6184FD);
+  --color-brand-cream: #FAFAFA;
+  --color-brand-soft-yellow: #FDE047;
+  --color-brand-black: #212121;
+  --color-brand-deep-gray: #646262;
+  --color-brand-gray: #EFF1F5;
+  --color-brand-white: #FFFFFF;
+
+  /* Accent Colors */
+  --color-accent-pink: #F45D6D;
+  --color-accent-green: #8CD37F;
+  --color-accent-yellow: #F2D06D;
+  --color-accent-orange: #E66D3E;
+  --color-accent-cyan: #65C1E0;
+  --color-accent-purple: #C09FE0;
+
+  /* Border Radius */
+  --radius-brand: 20px;
+}
+
+/* Accent Color Themes - Override brand-blue with accent color */
+:root {
+  --accent-color: #6184FD;
+}
+
+[data-accent="blue"] {
+  --accent-color: #6184FD;
+}
+
+[data-accent="pink"] {
+  --accent-color: #F45D6D;
+}
+
+[data-accent="green"] {
+  --accent-color: #8CD37F;
+}
+
+[data-accent="yellow"] {
+  --accent-color: #F2D06D;
+}
+
+[data-accent="orange"] {
+  --accent-color: #E66D3E;
+}
+
+[data-accent="cyan"] {
+  --accent-color: #65C1E0;
+}
+
+[data-accent="purple"] {
+  --accent-color: #C09FE0;
+}
+
+/* Override Tailwind brand-blue classes with accent color */
+.bg-brand-blue {
+  background-color: var(--accent-color) !important;
+}
+
+.text-brand-blue {
+  color: var(--accent-color) !important;
+}
+
+.border-brand-blue {
+  border-color: var(--accent-color) !important;
+}
+
+.ring-brand-blue {
+  --tw-ring-color: var(--accent-color) !important;
+}
+
+.shadow-brand-blue\/20 {
+  --tw-shadow-color: color-mix(in srgb, var(--accent-color) 20%, transparent) !important;
+}
+
+/* Opacity variants */
+.bg-brand-blue\/5 {
+  background-color: color-mix(in srgb, var(--accent-color) 5%, transparent) !important;
+}
+
+.bg-brand-blue\/10 {
+  background-color: color-mix(in srgb, var(--accent-color) 10%, transparent) !important;
+}
+
+.bg-brand-blue\/20 {
+  background-color: color-mix(in srgb, var(--accent-color) 20%, transparent) !important;
+}
+
+.bg-brand-blue\/90 {
+  background-color: color-mix(in srgb, var(--accent-color) 90%, transparent) !important;
+}
+
+.text-brand-blue\/50 {
+  color: color-mix(in srgb, var(--accent-color) 50%, transparent) !important;
+}
+
+.border-brand-blue\/20 {
+  border-color: color-mix(in srgb, var(--accent-color) 20%, transparent) !important;
+}
+
+.border-brand-blue\/30 {
+  border-color: color-mix(in srgb, var(--accent-color) 30%, transparent) !important;
+}
+
+.border-brand-blue\/50 {
+  border-color: color-mix(in srgb, var(--accent-color) 50%, transparent) !important;
+}
+
+/* Hover states */
+.hover\:bg-brand-blue:hover {
+  background-color: var(--accent-color) !important;
+}
+
+.hover\:bg-brand-blue\/5:hover {
+  background-color: color-mix(in srgb, var(--accent-color) 5%, transparent) !important;
+}
+
+.hover\:bg-brand-blue\/20:hover {
+  background-color: color-mix(in srgb, var(--accent-color) 20%, transparent) !important;
+}
+
+.hover\:bg-brand-blue\/90:hover {
+  background-color: color-mix(in srgb, var(--accent-color) 90%, transparent) !important;
+}
+
+.hover\:text-brand-blue:hover {
+  color: var(--accent-color) !important;
+}
+
+.hover\:border-brand-blue:hover {
+  border-color: var(--accent-color) !important;
+}
+
+.hover\:border-brand-blue\/30:hover {
+  border-color: color-mix(in srgb, var(--accent-color) 30%, transparent) !important;
+}
+
+.hover\:border-brand-blue\/50:hover {
+  border-color: color-mix(in srgb, var(--accent-color) 50%, transparent) !important;
+}
+
+/* Focus states */
+.focus\:border-brand-blue:focus {
+  border-color: var(--accent-color) !important;
+}
+
+/* Group hover states */
+.group:hover .group-hover\:text-brand-blue {
+  color: var(--accent-color) !important;
+}
+
+.group:hover .group-hover\:bg-brand-blue\/20 {
+  background-color: color-mix(in srgb, var(--accent-color) 20%, transparent) !important;
+}
+
+/* Dark mode variants */
+.dark\:bg-brand-blue\/20:is(.dark *) {
+  background-color: color-mix(in srgb, var(--accent-color) 20%, transparent) !important;
+}
+
+.dark\:text-brand-blue:is(.dark *) {
+  color: var(--accent-color) !important;
+}
+
+/* Ring variants */
+.ring-brand-blue {
+  --tw-ring-color: var(--accent-color) !important;
+}
+
+/* Override hardcoded hex colors with accent color */
+.bg-\[\#6184FD\] {
+  background-color: var(--accent-color) !important;
+}
+
+.text-\[\#6184FD\] {
+  color: var(--accent-color) !important;
+}
+
+.border-\[\#6184FD\] {
+  border-color: var(--accent-color) !important;
+}
+
+.fill-\[\#6184FD\] {
+  fill: var(--accent-color) !important;
+}
+
+.stroke-\[\#6184FD\] {
+  stroke: var(--accent-color) !important;
+}
+
+/* Chart colors - expose accent color as CSS variable for JS */
+:root {
+  --chart-accent-color: var(--accent-color);
 }
 
 /* Dark Mode - Woowtech Brand Colors */
@@ -136,6 +336,25 @@ body {
   }
 
   body {
-    @apply bg-background text-foreground;
+    /* Global Body Styles */
+    background-color: #FAFAFA;
+    color: #646262;
+
+    /* Global Background Image */
+    background-image: url('/background.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+
+  /* Typography Defaults */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #212121;
   }
 }

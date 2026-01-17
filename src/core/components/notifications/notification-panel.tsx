@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { Bell } from 'lucide-react';
+import Icon from "@mdi/react";
+import { mdiBell } from "@mdi/js";
 import { useNotifications, useNotificationsWithMeta } from '@/core/hooks/use-notifications';
 import { NotificationItem } from './notification-item';
 import { SOURCE_TYPE_ROUTES } from '@/core/types/notification';
@@ -50,7 +51,7 @@ export function NotificationPanel({ isExpanded }: NotificationPanelProps) {
       <div className="max-h-80 overflow-y-auto">
         {notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 px-4 text-gray-400">
-            <Bell size={32} className="mb-2 opacity-50" />
+            <Icon path={mdiBell} size={1.33} className="mb-2 opacity-50" />
             <p className="text-sm">No notifications</p>
           </div>
         ) : (

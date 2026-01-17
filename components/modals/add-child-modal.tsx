@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useState, useTransition } from "react";
 import { createChild } from "@/app/actions/children";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface AddChildModalProps {
     open: boolean;
@@ -24,10 +25,11 @@ export function AddChildModal({ open, onOpenChange }: AddChildModalProps) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!name || !dob) return;
+        console.log("=== ADD BABY FORM SUBMIT ===");
+        console.log("Name:", name, "DOB:", dob, "Gender:", gender);
 
-        if (!dob) {
-            alert("Please select a date of birth");
+        if (!name || !dob) {
+            toast.error("Please fill in all required fields");
             return;
         }
 
@@ -38,12 +40,16 @@ export function AddChildModal({ open, onOpenChange }: AddChildModalProps) {
                 throw new Error("Invalid Date");
             }
             isoDate = dateObj.toISOString();
+            console.log("Converted date to ISO:", isoDate);
         } catch (e) {
-            alert("Invalid Date");
+            toast.error("Invalid date format");
+            console.error("Date conversion error:", e);
             return;
         }
 
+        console.log("Starting transition...");
         startTransition(async () => {
+            console.log("Calling createChild...");
             const result = await createChild({
                 name,
                 dob: isoDate,
@@ -51,11 +57,16 @@ export function AddChildModal({ open, onOpenChange }: AddChildModalProps) {
                 photoUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`,
             });
 
+            console.log("createChild result:", result);
+
             if (!result.success) {
-                alert("Failed to create child: " + result.error);
+                toast.error("Failed to create baby: " + result.error);
+                console.error("Create child failed:", result.error);
                 return;
             }
 
+            toast.success(`${name} has been added!`);
+            console.log("✅ Baby created, refreshing...");
             router.refresh();
 
             // Reset and Close
@@ -80,23 +91,25 @@ export function AddChildModal({ open, onOpenChange }: AddChildModalProps) {
                         <Label htmlFor="name" className="text-right">
                             Name
                         </Label>
-                        <Input
+                        <input
                             id="name"
+                            name="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="col-span-3 bg-brand-gray/50 dark:bg-white/5"
+                            className="col-span-3 flex h-9 w-full rounded-md border border-input px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-brand-gray/50 dark:bg-white/5"
                         />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="dob" className="text-right">
                             Birthday
                         </Label>
-                        <Input
+                        <input
                             id="dob"
+                            name="dob"
                             type="date"
                             value={dob}
                             onChange={(e) => setDob(e.target.value)}
-                            className="col-span-3 bg-brand-gray/50 dark:bg-white/5"
+                            className="col-span-3 flex h-9 w-full rounded-md border border-input px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-brand-gray/50 dark:bg-white/5"
                         />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">

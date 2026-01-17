@@ -43,15 +43,33 @@ export async function createActivityType(data: { name: string; icon_name: string
     return { success: true, data: newActivity };
 }
 
-export async function deleteActivityType(id: string) {
+export async function deleteActivityType(id: string): Promise<{ success: boolean; error?: string }> {
+    console.log("[deleteActivityType] Starting...", { id });
+
+    if (!id) {
+        return { success: false, error: "No activity type ID provided" };
+    }
+
     const supabase = await createClient();
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+        console.error("[deleteActivityType] Auth error:", authError?.message);
+        return { success: false, error: "You must be logged in to delete activity types" };
+    }
+
     const { error } = await supabase
         .from("activity_types")
         .delete()
         .eq("id", id);
 
     if (error) {
-        throw new Error(error.message);
+        console.error("[deleteActivityType] Delete error:", error.message);
+        return { success: false, error: error.message };
     }
+
+    console.log("[deleteActivityType] Success!");
     revalidatePath("/dashboard");
+    revalidatePath("/baby/activity");
+    return { success: true };
 }

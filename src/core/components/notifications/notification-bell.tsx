@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from 'react';
-import { Bell } from 'lucide-react';
+import Icon from "@mdi/react";
+import { mdiBell } from "@mdi/js";
 import { useNotifications } from '@/core/hooks/use-notifications';
 import { NotificationPanel } from './notification-panel';
 import * as api from '@/core/lib/notifications';
@@ -62,7 +63,7 @@ export function NotificationBell({ householdId, isExpanded }: NotificationBellPr
         )}
       >
         <div className="relative shrink-0">
-          <Bell size={22} />
+          <Icon path={mdiBell} size={0.9} />
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-medium px-1">
               {unreadCount > 99 ? '99+' : unreadCount}

@@ -11,7 +11,8 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Trash2, User } from "lucide-react";
+import Icon from "@mdi/react";
+import { mdiCamera, mdiDelete, mdiAccount } from "@mdi/js";
 import { Textarea } from "@/components/ui/textarea";
 import {
     AlertDialog,
@@ -64,7 +65,11 @@ export function BabySettingsForm({ childrenList }: BabySettingsFormProps) {
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="mb-4 bg-brand-gray/50 dark:bg-white/10 flex flex-wrap h-auto">
                     {childrenList.map(child => (
-                        <TabsTrigger key={child.id} value={child.id} className="data-[state=active]:bg-brand-white dark:data-[state=active]:bg-brand-gray">
+                        <TabsTrigger
+                            key={child.id}
+                            value={child.id}
+                            className="cursor-pointer transition-all duration-200 data-[state=active]:bg-brand-white dark:data-[state=active]:bg-brand-gray data-[state=active]:shadow-sm data-[state=active]:text-brand-azure"
+                        >
                             {child.name}
                         </TabsTrigger>
                     ))}
@@ -110,19 +115,20 @@ function SingleBabyForm({ child }: { child: Child }) {
         const file = e.target.files[0];
         const fileExt = file.name.split('.').pop();
         const fileName = `${child.id}-${Date.now()}.${fileExt}`;
-        const filePath = `${fileName}`;
 
         const supabase = createClient();
 
         try {
             const { error: uploadError } = await supabase.storage
                 .from('baby_photos')
-                .upload(filePath, file);
+                .upload(fileName, file, {
+                    upsert: true
+                });
 
             if (uploadError) throw uploadError;
 
             // Get Public URL
-            const { data } = supabase.storage.from('baby_photos').getPublicUrl(filePath);
+            const { data } = supabase.storage.from('baby_photos').getPublicUrl(fileName);
             setPhotoUrl(data.publicUrl);
             toast.success("Photo uploaded!");
         } catch (error: any) {
@@ -187,7 +193,7 @@ function SingleBabyForm({ child }: { child: Child }) {
 
                 <div className="space-y-2">
                     <Label htmlFor={`photo-${child.id}`} className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-brand-gray/50 dark:bg-white/10 hover:bg-brand-gray/70 rounded-lg text-sm font-medium transition-colors">
-                        <Camera size={16} />
+                        <Icon path={mdiCamera} size={0.67} />
                         {isUploading ? "Uploading..." : "Upload Photo"}
                     </Label>
                     <Input
@@ -265,7 +271,7 @@ function SingleBabyForm({ child }: { child: Child }) {
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
                         <Button variant="ghost" className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10">
-                            <Trash2 size={16} className="mr-2" />
+                            <Icon path={mdiDelete} size={0.67} className="mr-2" />
                             Delete Baby
                         </Button>
                     </AlertDialogTrigger>

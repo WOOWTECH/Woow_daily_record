@@ -35,14 +35,17 @@ export async function updateSession(request: NextRequest) {
 
     const { data: { user } } = await supabase.auth.getUser()
 
-    // Auth enforcement removed by user request
-    // if (
-    //    !user &&
-    //    !request.nextUrl.pathname.startsWith('/login') &&
-    //    !request.nextUrl.pathname.startsWith('/auth')
-    // ) {
-    //    ...
-    // }
+    const path = request.nextUrl.pathname;
+
+    // 1. Protected Routes: If trying to access /dashboard or /baby etc without user, redirect to login
+    if (
+        !user &&
+        (path.startsWith('/dashboard') || path.startsWith('/baby') || path.startsWith('/settings'))
+    ) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/login'
+        return NextResponse.redirect(url)
+    }
 
     return response
 }

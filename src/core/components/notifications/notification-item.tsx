@@ -1,14 +1,15 @@
 // src/core/components/notifications/notification-item.tsx
 "use client";
 
-import { Calendar, CheckSquare, Baby } from 'lucide-react';
+import Icon from "@mdi/react";
+import { mdiCalendar, mdiCheckboxMarked, mdiBabyFaceOutline } from "@mdi/js";
 import { cn } from '@/lib/utils';
 import type { NotificationWithMeta } from '@/core/types/notification';
 
 const iconMap = {
-  calendar: Calendar,
-  'check-square': CheckSquare,
-  baby: Baby,
+  calendar: mdiCalendar,
+  'check-square': mdiCheckboxMarked,
+  baby: mdiBabyFaceOutline,
 };
 
 interface NotificationItemProps {
@@ -17,7 +18,7 @@ interface NotificationItemProps {
 }
 
 export function NotificationItem({ notification, onClick }: NotificationItemProps) {
-  const IconComponent = iconMap[notification.icon as keyof typeof iconMap] || Calendar;
+  const iconPath = iconMap[notification.icon as keyof typeof iconMap] || mdiCalendar;
 
   return (
     <button
@@ -37,7 +38,7 @@ export function NotificationItem({ notification, onClick }: NotificationItemProp
           notification.source_type === 'baby_care' && "bg-pink-100 text-pink-600 dark:bg-pink-900 dark:text-pink-400"
         )}
       >
-        <IconComponent size={18} />
+        <Icon path={iconPath} size={0.75} />
       </div>
 
       {/* Content */}

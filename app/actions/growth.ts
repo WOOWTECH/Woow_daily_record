@@ -60,6 +60,50 @@ export async function addGrowthRecord(formData: FormData) {
     revalidatePath("/growth");
 }
 
+export async function updateGrowthRecord(formData: FormData) {
+    const supabase = await createClient();
+
+    const recordId = formData.get("recordId") as string;
+    const date = formData.get("date") as string;
+    const height = formData.get("height") ? parseFloat(formData.get("height") as string) : null;
+    const weight = formData.get("weight") ? parseFloat(formData.get("weight") as string) : null;
+    const headCircumference = formData.get("headCircumference") ? parseFloat(formData.get("headCircumference") as string) : null;
+
+    // Parse custom measurements
+    const customMeasurements: Record<string, number> = {};
+    Array.from(formData.entries()).forEach(([key, value]) => {
+        if (key.startsWith("custom_metric_")) {
+            const metricName = key.replace("custom_metric_", "");
+            if (value && typeof value === "string") {
+                customMeasurements[metricName] = parseFloat(value);
+            }
+        }
+    });
+
+    if (!recordId || !date) {
+        throw new Error("Missing required fields");
+    }
+
+    const { error } = await supabase
+        .from("growth_records")
+        .update({
+            date,
+            height,
+            weight,
+            head_circumference: headCircumference,
+            custom_measurements: customMeasurements,
+        })
+        .eq("id", recordId);
+
+    if (error) {
+        console.error("Error updating growth record:", error);
+        console.error("Error details:", JSON.stringify(error, null, 2));
+        throw new Error("Failed to update record: " + error.message);
+    }
+
+    revalidatePath("/growth");
+}
+
 export async function getCustomMetricTypes(childId: string) {
     const supabase = await createClient();
     const { data, error } = await supabase

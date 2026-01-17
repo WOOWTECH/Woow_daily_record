@@ -105,7 +105,13 @@ export async function updateChild(formData: { id: string; name: string; dob: str
     }
 
     revalidatePath("/settings");
-    revalidatePath("/dashboard"); // Child name might be visible there
+    revalidatePath("/dashboard");
+
+    // Revalidate all baby tracker pages
+    revalidatePath("/baby/activity");
+    revalidatePath("/baby/analytics");
+    revalidatePath("/baby/growth");
+    revalidatePath("/baby/records");
     return { success: true };
 }
 
@@ -127,5 +133,9 @@ export async function deleteChild(childId: string) {
 
     revalidatePath("/settings");
     revalidatePath("/dashboard");
+    revalidatePath("/baby/activity");
+    revalidatePath("/baby/analytics");
+    revalidatePath("/baby/growth");
+    revalidatePath("/baby/records");
     return { success: true };
 }

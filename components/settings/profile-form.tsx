@@ -9,7 +9,8 @@ import { GlassCard } from "@/components/glass-card";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera } from "lucide-react";
+import Icon from "@mdi/react";
+import { mdiCamera } from "@mdi/js";
 
 interface ProfileData {
     name: string;
@@ -149,7 +150,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
 
                     <div className="space-y-2">
                         <Label htmlFor="avatar-upload" className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-brand-gray/50 dark:bg-white/10 hover:bg-brand-gray/70 rounded-lg text-sm font-medium transition-colors">
-                            <Camera size={16} />
+                            <Icon path={mdiCamera} size={0.67} />
                             {isUploading ? "Uploading..." : "Change Picture"}
                         </Label>
                         <Input

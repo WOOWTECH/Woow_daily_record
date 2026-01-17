@@ -13,7 +13,10 @@ export const config = {
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
-         * Feel free to modify this pattern to include more paths.
+         * - auth (auth callback routes)
+         * - login (public login page)
+         * - signup (public signup page)
+         * - / (public landing page - handled in middleware logic if needed, but here we just ensure middleware runs)
          */
         '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
     ],
