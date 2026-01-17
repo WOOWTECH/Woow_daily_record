@@ -1,0 +1,83 @@
+{
+  "common": {
+    "save": "儲存",
+    "cancel": "取消",
+    "delete": "刪除",
+    "edit": "編輯",
+    "add": "新增",
+    "search": "搜尋",
+    "loading": "載入中...",
+    "noResults": "找不到結果",
+    "confirm": "確認",
+    "back": "返回",
+    "close": "關閉",
+    "submit": "提交",
+    "reset": "重設"
+  },
+  "nav": {
+    "home": "首頁",
+    "baby": "寶寶",
+    "calendar": "行事曆",
+    "todos": "待辦事項",
+    "notes": "筆記",
+    "devices": "設備管理",
+    "settings": "設定",
+    "signOut": "登出"
+  },
+  "devices": {
+    "title": "設備管理",
+    "subtitle": "管理家用設備說明書及維修記錄",
+    "addDevice": "新增設備",
+    "editDevice": "編輯設備",
+    "deleteDevice": "刪除設備",
+    "noDevices": "尚未新增任何設備",
+    "warrantyUntil": "保固至",
+    "hasManual": "有使用說明",
+    "hasMaintenance": "有維修記錄",
+    "categories": {
+      "kitchen": "廚房",
+      "electronics": "電子產品",
+      "bathroom": "浴室",
+      "furniture": "傢俱",
+      "outdoor": "戶外",
+      "appliance": "家電",
+      "other": "其他"
+    },
+    "form": {
+      "name": "設備名稱",
+      "brand": "品牌",
+      "modelNumber": "型號",
+      "category": "類別",
+      "purchaseDate": "購買日期",
+      "warrantyExpiry": "保固到期日",
+      "tags": "標籤",
+      "manual": "使用說明",
+      "maintenance": "維修記錄"
+    }
+  },
+  "settings": {
+    "title": "設定",
+    "appearance": "外觀",
+    "language": "語言",
+    "theme": "主題",
+    "themeLight": "淺色",
+    "themeDark": "深色",
+    "themeSystem": "跟隨系統",
+    "accentColor": "主色調"
+  },
+  "auth": {
+    "login": "登入",
+    "logout": "登出",
+    "email": "電子郵件",
+    "password": "密碼"
+  },
+  "toast": {
+    "saveSuccess": "儲存成功",
+    "saveError": "儲存失敗",
+    "deleteSuccess": "刪除成功",
+    "deleteError": "刪除失敗",
+    "deviceAdded": "設備已新增",
+    "deviceUpdated": "設備已更新",
+    "deviceDeleted": "設備已刪除"
+  }
+}

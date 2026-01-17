@@ -1,0 +1,83 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "loading": "Loading...",
+    "noResults": "No results found",
+    "confirm": "Confirm",
+    "back": "Back",
+    "close": "Close",
+    "submit": "Submit",
+    "reset": "Reset"
+  },
+  "nav": {
+    "home": "Home",
+    "baby": "Baby",
+    "calendar": "Calendar",
+    "todos": "To-Do List",
+    "notes": "Notes",
+    "devices": "Devices",
+    "settings": "Settings",
+    "signOut": "Sign Out"
+  },
+  "devices": {
+    "title": "Device Management",
+    "subtitle": "Manage device manuals and maintenance records",
+    "addDevice": "Add Device",
+    "editDevice": "Edit Device",
+    "deleteDevice": "Delete Device",
+    "noDevices": "No devices added yet",
+    "warrantyUntil": "Warranty until",
+    "hasManual": "Has manual",
+    "hasMaintenance": "Has maintenance record",
+    "categories": {
+      "kitchen": "Kitchen",
+      "electronics": "Electronics",
+      "bathroom": "Bathroom",
+      "furniture": "Furniture",
+      "outdoor": "Outdoor",
+      "appliance": "Appliance",
+      "other": "Other"
+    },
+    "form": {
+      "name": "Device Name",
+      "brand": "Brand",
+      "modelNumber": "Model Number",
+      "category": "Category",
+      "purchaseDate": "Purchase Date",
+      "warrantyExpiry": "Warranty Expiry",
+      "tags": "Tags",
+      "manual": "Manual",
+      "maintenance": "Maintenance"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "accentColor": "Accent Color"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password"
+  },
+  "toast": {
+    "saveSuccess": "Saved successfully",
+    "saveError": "Failed to save",
+    "deleteSuccess": "Deleted successfully",
+    "deleteError": "Failed to delete",
+    "deviceAdded": "Device added",
+    "deviceUpdated": "Device updated",
+    "deviceDeleted": "Device deleted"
+  }
+}

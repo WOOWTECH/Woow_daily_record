@@ -1,0 +1,83 @@
+{
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "add": "新增",
+    "search": "搜索",
+    "loading": "加载中...",
+    "noResults": "未找到结果",
+    "confirm": "确认",
+    "back": "返回",
+    "close": "关闭",
+    "submit": "提交",
+    "reset": "重置"
+  },
+  "nav": {
+    "home": "首页",
+    "baby": "宝宝",
+    "calendar": "日历",
+    "todos": "待办事项",
+    "notes": "笔记",
+    "devices": "设备管理",
+    "settings": "设置",
+    "signOut": "退出登录"
+  },
+  "devices": {
+    "title": "设备管理",
+    "subtitle": "管理家用设备说明书及维修记录",
+    "addDevice": "新增设备",
+    "editDevice": "编辑设备",
+    "deleteDevice": "删除设备",
+    "noDevices": "尚未添加任何设备",
+    "warrantyUntil": "保修至",
+    "hasManual": "有使用说明",
+    "hasMaintenance": "有维修记录",
+    "categories": {
+      "kitchen": "厨房",
+      "electronics": "电子产品",
+      "bathroom": "浴室",
+      "furniture": "家具",
+      "outdoor": "户外",
+      "appliance": "家电",
+      "other": "其他"
+    },
+    "form": {
+      "name": "设备名称",
+      "brand": "品牌",
+      "modelNumber": "型号",
+      "category": "类别",
+      "purchaseDate": "购买日期",
+      "warrantyExpiry": "保修到期日",
+      "tags": "标签",
+      "manual": "使用说明",
+      "maintenance": "维修记录"
+    }
+  },
+  "settings": {
+    "title": "设置",
+    "appearance": "外观",
+    "language": "语言",
+    "theme": "主题",
+    "themeLight": "浅色",
+    "themeDark": "深色",
+    "themeSystem": "跟随系统",
+    "accentColor": "主色调"
+  },
+  "auth": {
+    "login": "登录",
+    "logout": "退出登录",
+    "email": "电子邮箱",
+    "password": "密码"
+  },
+  "toast": {
+    "saveSuccess": "保存成功",
+    "saveError": "保存失败",
+    "deleteSuccess": "删除成功",
+    "deleteError": "删除失败",
+    "deviceAdded": "设备已添加",
+    "deviceUpdated": "设备已更新",
+    "deviceDeleted": "设备已删除"
+  }
+}
