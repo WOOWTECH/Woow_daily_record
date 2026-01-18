@@ -101,5 +101,147 @@
     "deviceAdded": "设备已添加",
     "deviceUpdated": "设备已更新",
     "deviceDeleted": "设备已删除"
+  },
+  "calendar": {
+    "title": "日历",
+    "loading": "加载日历中...",
+    "views": {
+      "month": "月",
+      "week": "周",
+      "day": "日"
+    },
+    "days": {
+      "sun": "日",
+      "mon": "一",
+      "tue": "二",
+      "wed": "三",
+      "thu": "四",
+      "fri": "五",
+      "sat": "六"
+    },
+    "event": {
+      "add": "新增事件",
+      "edit": "编辑事件",
+      "delete": "删除事件",
+      "new": "新事件",
+      "title": "标题",
+      "description": "描述",
+      "start": "开始",
+      "end": "结束",
+      "allDay": "全天",
+      "category": "分类",
+      "addCategory": "新增分类",
+      "repeat": "重复",
+      "noRepeat": "不重复",
+      "daily": "每天",
+      "weekly": "每周",
+      "monthly": "每月",
+      "yearly": "每年",
+      "reminders": "提醒",
+      "reminderAtTime": "活动开始时",
+      "reminder15min": "15 分钟前",
+      "reminder30min": "30 分钟前",
+      "reminder1hour": "1 小时前",
+      "reminder1day": "1 天前",
+      "create": "创建事件",
+      "save": "保存"
+    },
+    "today": "今天",
+    "more": "更多",
+    "error": {
+      "initFailed": "无法初始化工作区",
+      "endBeforeStart": "结束时间必须在开始时间之后"
+    }
+  },
+  "todos": {
+    "title": "待办事项",
+    "subtitle": "管理您的日常待办",
+    "addTask": "新增任务",
+    "editTask": "编辑任务",
+    "deleteTask": "删除任务",
+    "deleteConfirm": "确定要删除此任务？",
+    "loading": "加载中...",
+    "noTasks": "没有任务",
+    "addFirstTask": "新增任务开始",
+    "filters": {
+      "all": "所有任务",
+      "active": "进行中",
+      "completed": "已完成"
+    },
+    "priority": {
+      "all": "所有优先级",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "form": {
+      "title": "标题",
+      "titlePlaceholder": "需要做什么？",
+      "description": "描述（选填）",
+      "descriptionPlaceholder": "添加更多细节...",
+      "dueDate": "截止日期",
+      "priority": "优先级"
+    },
+    "toast": {
+      "deleted": "任务已删除",
+      "added": "任务已新增",
+      "updated": "任务已更新"
+    }
+  },
+  "notes": {
+    "title": "笔记",
+    "subtitle": "记录您的想法与回忆",
+    "newNote": "新增笔记",
+    "editNote": "编辑笔记",
+    "deleteNote": "删除笔记",
+    "loading": "加载笔记中...",
+    "filters": {
+      "all": "所有笔记",
+      "pinned": "已置顶"
+    },
+    "form": {
+      "title": "标题",
+      "titlePlaceholder": "笔记标题",
+      "content": "内容",
+      "contentPlaceholder": "在这里写下您的笔记...（支持 markdown）",
+      "markdownSupported": "支持 Markdown",
+      "pin": "置顶",
+      "unpin": "取消置顶"
+    },
+    "toast": {
+      "deleted": "笔记已删除",
+      "added": "笔记已新增",
+      "updated": "笔记已更新"
+    },
+    "createNote": "创建笔记"
+  },
+  "baby": {
+    "title": "宝宝",
+    "tabs": {
+      "activity": "活动",
+      "records": "记录",
+      "growth": "成长",
+      "analytics": "统计"
+    },
+    "activity": {
+      "quickLog": "快速记录",
+      "addActivity": "新增活动",
+      "lastFeed": "上次喂食",
+      "lastSleep": "上次睡眠",
+      "lastDiaper": "上次换尿布"
+    },
+    "growth": {
+      "title": "成长记录",
+      "weight": "体重",
+      "height": "身高",
+      "headCirc": "头围",
+      "addRecord": "新增记录"
+    },
+    "analytics": {
+      "title": "统计分析",
+      "sleepTrend": "睡眠趋势",
+      "feedingPattern": "喂食模式",
+      "dailyDistribution": "每日分布"
+    }
   }
 }

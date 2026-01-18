@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import { useTranslations } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -15,7 +16,7 @@ import { Label } from '@/core/components/ui/label';
 import { Textarea } from '@/core/components/ui/textarea';
 import Icon from "@mdi/react";
 import { mdiDelete, mdiPlus } from "@mdi/js";
-import { REMINDER_OPTIONS, RECURRENCE_OPTIONS, DEFAULT_CATEGORY_COLORS } from '../types';
+import { DEFAULT_CATEGORY_COLORS } from '../types';
 import type { Event, NewEvent, EventOccurrence, Category } from '../types';
 import { useCalendarStore } from '../store';
 import { createEventCategory } from '@/app/actions/categories';
@@ -55,6 +56,24 @@ export function EventDialog({
   const [isAddingCategory, setIsAddingCategory] = useState(false);
 
   const { categories, householdId, fetchCategories } = useCalendarStore();
+  const t = useTranslations('calendar');
+  const tCommon = useTranslations('common');
+
+  const REMINDER_OPTIONS = [
+    { value: 0, label: t('event.reminderAtTime') },
+    { value: 15, label: t('event.reminder15min') },
+    { value: 30, label: t('event.reminder30min') },
+    { value: 60, label: t('event.reminder1hour') },
+    { value: 1440, label: t('event.reminder1day') },
+  ];
+
+  const RECURRENCE_OPTIONS = [
+    { value: '', label: t('event.noRepeat') },
+    { value: 'FREQ=DAILY', label: t('event.daily') },
+    { value: 'FREQ=WEEKLY', label: t('event.weekly') },
+    { value: 'FREQ=MONTHLY', label: t('event.monthly') },
+    { value: 'FREQ=YEARLY', label: t('event.yearly') },
+  ];
 
   const isEditing = !!event;
 
@@ -98,7 +117,7 @@ export function EventDialog({
       : `${endDate}T${endTime}:00`;
 
     if (new Date(endDateTime) < new Date(startDateTime)) {
-      toast.error('End time must be after start time');
+      toast.error(t('error.endBeforeStart'));
       return;
     }
 
@@ -141,13 +160,13 @@ export function EventDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'Edit Event' : 'New Event'}</DialogTitle>
+          <DialogTitle>{isEditing ? t('event.edit') : t('event.new')}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Title */}
           <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">{t('event.title')}</Label>
             <Input
               id="title"
               value={title}
@@ -167,14 +186,14 @@ export function EventDialog({
               className="rounded"
             />
             <Label htmlFor="allDay" className="cursor-pointer">
-              All day
+              {t('event.allDay')}
             </Label>
           </div>
 
           {/* Date/Time */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="startDate">Start</Label>
+              <Label htmlFor="startDate">{t('event.start')}</Label>
               <Input
                 id="startDate"
                 type="date"
@@ -190,7 +209,7 @@ export function EventDialog({
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="endDate">End</Label>
+              <Label htmlFor="endDate">{t('event.end')}</Label>
               <Input
                 id="endDate"
                 type="date"
@@ -209,7 +228,7 @@ export function EventDialog({
 
           {/* Category */}
           <div className="space-y-2">
-            <Label>Category</Label>
+            <Label>{t('event.category')}</Label>
             <div className="flex flex-wrap gap-2">
               {categories.map((cat) => (
                 <button
@@ -235,7 +254,7 @@ export function EventDialog({
                 className="px-3 py-1.5 rounded-lg text-sm font-medium border-2 border-dashed border-gray-300 dark:border-gray-700 text-gray-500 hover:border-gray-400 hover:text-gray-600 transition-colors"
               >
                 <Icon path={mdiPlus} size={0.6} className="inline mr-1" />
-                Add Category
+                {t('event.addCategory')}
               </button>
             </div>
             {isAddingCategory && (
@@ -268,7 +287,7 @@ export function EventDialog({
                       setNewCategoryColor('#3B82F6');
                     }}
                   >
-                    Cancel
+                    {tCommon('cancel')}
                   </Button>
                   <Button
                     type="button"
@@ -278,17 +297,17 @@ export function EventDialog({
                       try {
                         await createEventCategory(householdId, newCategoryName.trim(), newCategoryColor);
                         await fetchCategories();
-                        toast.success('Category created');
+                        toast.success(t('event.addCategory'));
                         setIsAddingCategory(false);
                         setNewCategoryName('');
                         setNewCategoryColor('#3B82F6');
                       } catch (error) {
-                        toast.error('Failed to create category');
+                        toast.error(t('error.initFailed'));
                       }
                     }}
                     disabled={!newCategoryName.trim()}
                   >
-                    Add
+                    {tCommon('add')}
                   </Button>
                 </div>
               </div>
@@ -297,7 +316,7 @@ export function EventDialog({
 
           {/* Recurrence */}
           <div className="space-y-2">
-            <Label htmlFor="recurrence">Repeat</Label>
+            <Label htmlFor="recurrence">{t('event.repeat')}</Label>
             <select
               id="recurrence"
               value={recurrenceRule}
@@ -314,7 +333,7 @@ export function EventDialog({
 
           {/* Reminders */}
           <div className="space-y-2">
-            <Label>Reminders</Label>
+            <Label>{t('event.reminders')}</Label>
             <div className="flex flex-wrap gap-2">
               {REMINDER_OPTIONS.map((opt) => (
                 <button
@@ -334,7 +353,7 @@ export function EventDialog({
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t('event.description')}</Label>
             <Textarea
               id="description"
               value={description}
@@ -354,17 +373,17 @@ export function EventDialog({
                 className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
               >
                 <Icon path={mdiDelete} size={0.67} className="mr-1" />
-                Delete
+                {tCommon('delete')}
               </Button>
             ) : (
               <div />
             )}
             <div className="flex gap-2">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
+                {tCommon('cancel')}
               </Button>
               <Button type="submit" disabled={!title.trim()}>
-                {isEditing ? 'Save' : 'Create Event'}
+                {isEditing ? t('event.save') : t('event.create')}
               </Button>
             </div>
           </div>

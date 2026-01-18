@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import Icon from "@mdi/react";
 import { mdiPlus } from "@mdi/js";
 import { toast } from 'sonner';
@@ -14,6 +15,7 @@ import { getUserHousehold } from '@/core/lib/supabase/households';
 import type { Task } from '@/modules/tasks/types';
 
 export default function TodosPage() {
+  const t = useTranslations('todos');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
@@ -73,9 +75,9 @@ export default function TodosPage() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Delete this task?')) {
+    if (confirm(t('deleteConfirm'))) {
       deleteTask(id);
-      toast.success('Task deleted');
+      toast.success(t('toast.deleted'));
     }
   };
 
@@ -84,15 +86,15 @@ export default function TodosPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-brand-black dark:text-brand-white">Tasks</h1>
-          <p className="text-brand-deep-gray mt-1">Manage your daily to-dos</p>
+          <h1 className="text-3xl font-bold text-brand-black dark:text-brand-white">{t('title')}</h1>
+          <p className="text-brand-deep-gray mt-1">{t('subtitle')}</p>
         </div>
         <Button
           onClick={handleAdd}
           className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-lg shadow-brand-blue/20"
         >
           <Icon path={mdiPlus} size={0.75} className="mr-2" />
-          Add Task
+          {t('addTask')}
         </Button>
       </div>
 
@@ -103,7 +105,7 @@ export default function TodosPage() {
 
       {/* Task List */}
       {isLoading ? (
-        <div className="text-center py-12 text-gray-500">Loading...</div>
+        <div className="text-center py-12 text-gray-500">{t('loading')}</div>
       ) : (
         <TaskList
           tasks={filteredTasks}

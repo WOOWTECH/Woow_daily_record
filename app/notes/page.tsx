@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import Icon from "@mdi/react";
 import { mdiPlus } from "@mdi/js";
 import { toast } from 'sonner';
@@ -15,6 +16,7 @@ import { getUserHousehold, createHousehold } from '@/core/lib/supabase/household
 import type { Note } from '@/modules/notes/types';
 
 export default function NotesPage() {
+  const t = useTranslations('notes');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
 
@@ -74,7 +76,7 @@ export default function NotesPage() {
   const handleDelete = (id: string) => {
     // TODO: Add proper confirmation dialog
     deleteNote(id);
-    toast.success('Note deleted');
+    toast.success(t('toast.deleted'));
   };
 
   return (
@@ -82,15 +84,15 @@ export default function NotesPage() {
       {/* Header */}
       <GlassCard className="flex items-center justify-between p-6">
         <div>
-          <h1 className="text-3xl font-bold text-brand-black dark:text-brand-white">Notes</h1>
-          <p className="text-brand-deep-gray mt-1">Capture your thoughts and memories</p>
+          <h1 className="text-3xl font-bold text-brand-black dark:text-brand-white">{t('title')}</h1>
+          <p className="text-brand-deep-gray mt-1">{t('subtitle')}</p>
         </div>
         <Button
           onClick={handleAdd}
           className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-lg shadow-brand-blue/20 transition-all hover:scale-105"
         >
           <Icon path={mdiPlus} size={0.75} className="mr-2" />
-          New Note
+          {t('newNote')}
         </Button>
       </GlassCard>
 
@@ -101,7 +103,7 @@ export default function NotesPage() {
 
       {/* Notes Grid */}
       {isLoading ? (
-        <div className="text-center py-20 text-brand-deep-gray animate-pulse">Loading your notes...</div>
+        <div className="text-center py-20 text-brand-deep-gray animate-pulse">{t('loading')}</div>
       ) : (
         <NoteList
           notes={filteredNotes}

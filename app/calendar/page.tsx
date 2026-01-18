@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { CalendarHeader } from '@/modules/calendar/components/calendar-header';
 import { CalendarMonthView } from '@/modules/calendar/components/calendar-month-view';
@@ -14,6 +15,7 @@ import type { EventOccurrence } from '@/modules/calendar/types';
 import { GlassCard } from '@/core/components/glass-card';
 
 export default function CalendarPage() {
+  const t = useTranslations('calendar');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<EventOccurrence | null>(null);
   const [initialDate, setInitialDate] = useState<Date | undefined>(undefined);
@@ -52,7 +54,7 @@ export default function CalendarPage() {
           fetchCategories();
           fetchEvents();
         } else {
-          toast.error('Could not initialize workspace');
+          toast.error(t('error.initFailed'));
         }
       } catch (err) {
         console.error('[Calendar] Error initializing:', err);
@@ -114,7 +116,7 @@ export default function CalendarPage() {
 
       {/* Calendar View */}
       {isLoading ? (
-        <div className="text-center py-20 text-brand-deep-gray animate-pulse">Loading calendar...</div>
+        <div className="text-center py-20 text-brand-deep-gray animate-pulse">{t('loading')}</div>
       ) : (
         <GlassCard className="p-6 min-h-[600px]">
           {view === 'month' && (

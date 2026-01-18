@@ -1,6 +1,7 @@
 // src/modules/tasks/components/task-filters.tsx
 "use client";
 
+import { useTranslations } from 'next-intl';
 import type { TaskFilter, Priority } from '../types';
 
 interface TaskFiltersProps {
@@ -9,6 +10,8 @@ interface TaskFiltersProps {
 }
 
 export function TaskFilters({ filter, onChange }: TaskFiltersProps) {
+  const t = useTranslations('todos');
+
   return (
     <div className="flex gap-2">
       <select
@@ -16,9 +19,9 @@ export function TaskFilters({ filter, onChange }: TaskFiltersProps) {
         onChange={(e) => onChange({ status: e.target.value as TaskFilter['status'] })}
         className="h-9 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm"
       >
-        <option value="all">All Tasks</option>
-        <option value="active">Active</option>
-        <option value="completed">Completed</option>
+        <option value="all">{t('filters.all')}</option>
+        <option value="active">{t('filters.active')}</option>
+        <option value="completed">{t('filters.completed')}</option>
       </select>
 
       <select
@@ -26,10 +29,10 @@ export function TaskFilters({ filter, onChange }: TaskFiltersProps) {
         onChange={(e) => onChange({ priority: e.target.value as TaskFilter['priority'] })}
         className="h-9 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm"
       >
-        <option value="all">All Priorities</option>
-        <option value="high">High</option>
-        <option value="medium">Medium</option>
-        <option value="low">Low</option>
+        <option value="all">{t('priority.all')}</option>
+        <option value="high">{t('priority.high')}</option>
+        <option value="medium">{t('priority.medium')}</option>
+        <option value="low">{t('priority.low')}</option>
       </select>
     </div>
   );

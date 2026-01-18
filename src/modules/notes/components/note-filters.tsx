@@ -1,6 +1,7 @@
 // src/modules/notes/components/note-filters.tsx
 "use client";
 
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { NoteFilter } from '../types';
 
@@ -9,12 +10,14 @@ interface NoteFiltersProps {
   onChange: (filter: NoteFilter) => void;
 }
 
-const filters: { value: NoteFilter; label: string }[] = [
-  { value: 'all', label: 'All Notes' },
-  { value: 'pinned', label: 'Pinned' },
-];
-
 export function NoteFilters({ filter, onChange }: NoteFiltersProps) {
+  const t = useTranslations('notes');
+
+  const filters: { value: NoteFilter; label: string }[] = [
+    { value: 'all', label: t('filters.all') },
+    { value: 'pinned', label: t('filters.pinned') },
+  ];
+
   return (
     <div className="flex gap-2">
       {filters.map((f) => (

@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -32,6 +33,8 @@ export function NoteDialog({
   onSave,
   onUpdate,
 }: NoteDialogProps) {
+  const t = useTranslations('notes');
+  const tCommon = useTranslations('common');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [isPinned, setIsPinned] = useState(false);
@@ -76,7 +79,7 @@ export function NoteDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            {isEditing ? 'Edit Note' : 'New Note'}
+            {isEditing ? t('editNote') : t('newNote')}
             <button
               type="button"
               onClick={() => setIsPinned(!isPinned)}
@@ -86,7 +89,7 @@ export function NoteDialog({
                   ? "text-yellow-500 bg-yellow-100 dark:bg-yellow-900/30"
                   : "text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
               )}
-              title={isPinned ? "Unpin" : "Pin"}
+              title={isPinned ? t('form.unpin') : t('form.pin')}
             >
               <Icon path={mdiPin} size={0.67} className={isPinned ? "fill-yellow-500" : ""} />
             </button>
@@ -95,26 +98,26 @@ export function NoteDialog({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">{t('form.title')}</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Note title"
+              placeholder={t('form.titlePlaceholder')}
               autoFocus
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="content">
-              Content
-              <span className="text-xs text-gray-400 ml-2">Markdown supported</span>
+              {t('form.content')}
+              <span className="text-xs text-gray-400 ml-2">{t('form.markdownSupported')}</span>
             </Label>
             <Textarea
               id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Write your note here... (supports markdown)"
+              placeholder={t('form.contentPlaceholder')}
               rows={10}
               className="font-mono text-sm"
             />
@@ -122,10 +125,10 @@ export function NoteDialog({
 
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button type="submit" disabled={!title.trim()}>
-              {isEditing ? 'Save' : 'Create Note'}
+              {isEditing ? tCommon('save') : t('createNote')}
             </Button>
           </div>
         </form>

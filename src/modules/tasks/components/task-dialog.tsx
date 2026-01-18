@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -31,12 +32,20 @@ export function TaskDialog({
   onSave,
   onUpdate,
 }: TaskDialogProps) {
+  const t = useTranslations('todos');
+  const tCommon = useTranslations('common');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<Priority>('medium');
   const [dueDate, setDueDate] = useState('');
 
   const isEditing = !!task;
+
+  const priorityLabels: Record<Priority, string> = {
+    low: t('priority.low'),
+    medium: t('priority.medium'),
+    high: t('priority.high'),
+  };
 
   useEffect(() => {
     if (task) {
@@ -79,35 +88,35 @@ export function TaskDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'Edit Task' : 'Add Task'}</DialogTitle>
+          <DialogTitle>{isEditing ? t('editTask') : t('addTask')}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">{t('form.title')}</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="What needs to be done?"
+              placeholder={t('form.titlePlaceholder')}
               autoFocus
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description (optional)</Label>
+            <Label htmlFor="description">{t('form.description')}</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add more details..."
+              placeholder={t('form.descriptionPlaceholder')}
               rows={3}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="priority">Priority</Label>
+              <Label htmlFor="priority">{t('form.priority')}</Label>
               <select
                 id="priority"
                 value={priority}
@@ -116,14 +125,14 @@ export function TaskDialog({
               >
                 {priorities.map((p) => (
                   <option key={p} value={p}>
-                    {p.charAt(0).toUpperCase() + p.slice(1)}
+                    {priorityLabels[p]}
                   </option>
                 ))}
               </select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dueDate">Due Date</Label>
+              <Label htmlFor="dueDate">{t('form.dueDate')}</Label>
               <Input
                 id="dueDate"
                 type="date"
@@ -135,10 +144,10 @@ export function TaskDialog({
 
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button type="submit" disabled={!title.trim()}>
-              {isEditing ? 'Save' : 'Add Task'}
+              {isEditing ? tCommon('save') : t('addTask')}
             </Button>
           </div>
         </form>

@@ -101,5 +101,147 @@
     "deviceAdded": "設備已新增",
     "deviceUpdated": "設備已更新",
     "deviceDeleted": "設備已刪除"
+  },
+  "calendar": {
+    "title": "行事曆",
+    "loading": "載入行事曆中...",
+    "views": {
+      "month": "月",
+      "week": "週",
+      "day": "日"
+    },
+    "days": {
+      "sun": "日",
+      "mon": "一",
+      "tue": "二",
+      "wed": "三",
+      "thu": "四",
+      "fri": "五",
+      "sat": "六"
+    },
+    "event": {
+      "add": "新增事件",
+      "edit": "編輯事件",
+      "delete": "刪除事件",
+      "new": "新事件",
+      "title": "標題",
+      "description": "描述",
+      "start": "開始",
+      "end": "結束",
+      "allDay": "全天",
+      "category": "分類",
+      "addCategory": "新增分類",
+      "repeat": "重複",
+      "noRepeat": "不重複",
+      "daily": "每天",
+      "weekly": "每週",
+      "monthly": "每月",
+      "yearly": "每年",
+      "reminders": "提醒",
+      "reminderAtTime": "活動開始時",
+      "reminder15min": "15 分鐘前",
+      "reminder30min": "30 分鐘前",
+      "reminder1hour": "1 小時前",
+      "reminder1day": "1 天前",
+      "create": "建立事件",
+      "save": "儲存"
+    },
+    "today": "今天",
+    "more": "更多",
+    "error": {
+      "initFailed": "無法初始化工作區",
+      "endBeforeStart": "結束時間必須在開始時間之後"
+    }
+  },
+  "todos": {
+    "title": "待辦事項",
+    "subtitle": "管理您的日常待辦",
+    "addTask": "新增任務",
+    "editTask": "編輯任務",
+    "deleteTask": "刪除任務",
+    "deleteConfirm": "確定要刪除此任務？",
+    "loading": "載入中...",
+    "noTasks": "沒有任務",
+    "addFirstTask": "新增任務開始",
+    "filters": {
+      "all": "所有任務",
+      "active": "進行中",
+      "completed": "已完成"
+    },
+    "priority": {
+      "all": "所有優先級",
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "form": {
+      "title": "標題",
+      "titlePlaceholder": "需要做什麼？",
+      "description": "描述（選填）",
+      "descriptionPlaceholder": "新增更多細節...",
+      "dueDate": "截止日期",
+      "priority": "優先級"
+    },
+    "toast": {
+      "deleted": "任務已刪除",
+      "added": "任務已新增",
+      "updated": "任務已更新"
+    }
+  },
+  "notes": {
+    "title": "筆記",
+    "subtitle": "記錄您的想法與回憶",
+    "newNote": "新增筆記",
+    "editNote": "編輯筆記",
+    "deleteNote": "刪除筆記",
+    "loading": "載入筆記中...",
+    "filters": {
+      "all": "所有筆記",
+      "pinned": "已釘選"
+    },
+    "form": {
+      "title": "標題",
+      "titlePlaceholder": "筆記標題",
+      "content": "內容",
+      "contentPlaceholder": "在這裡寫下您的筆記...（支援 markdown）",
+      "markdownSupported": "支援 Markdown",
+      "pin": "釘選",
+      "unpin": "取消釘選"
+    },
+    "toast": {
+      "deleted": "筆記已刪除",
+      "added": "筆記已新增",
+      "updated": "筆記已更新"
+    },
+    "createNote": "建立筆記"
+  },
+  "baby": {
+    "title": "寶寶",
+    "tabs": {
+      "activity": "活動",
+      "records": "記錄",
+      "growth": "成長",
+      "analytics": "統計"
+    },
+    "activity": {
+      "quickLog": "快速記錄",
+      "addActivity": "新增活動",
+      "lastFeed": "上次餵食",
+      "lastSleep": "上次睡眠",
+      "lastDiaper": "上次換尿布"
+    },
+    "growth": {
+      "title": "成長記錄",
+      "weight": "體重",
+      "height": "身高",
+      "headCirc": "頭圍",
+      "addRecord": "新增記錄"
+    },
+    "analytics": {
+      "title": "統計分析",
+      "sleepTrend": "睡眠趨勢",
+      "feedingPattern": "餵食模式",
+      "dailyDistribution": "每日分佈"
+    }
   }
 }

@@ -101,5 +101,147 @@
     "deviceAdded": "Device added",
     "deviceUpdated": "Device updated",
     "deviceDeleted": "Device deleted"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "loading": "Loading calendar...",
+    "views": {
+      "month": "Month",
+      "week": "Week",
+      "day": "Day"
+    },
+    "days": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    },
+    "event": {
+      "add": "Add Event",
+      "edit": "Edit Event",
+      "delete": "Delete Event",
+      "new": "New Event",
+      "title": "Title",
+      "description": "Description",
+      "start": "Start",
+      "end": "End",
+      "allDay": "All day",
+      "category": "Category",
+      "addCategory": "Add Category",
+      "repeat": "Repeat",
+      "noRepeat": "Does not repeat",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "reminders": "Reminders",
+      "reminderAtTime": "At time of event",
+      "reminder15min": "15 minutes before",
+      "reminder30min": "30 minutes before",
+      "reminder1hour": "1 hour before",
+      "reminder1day": "1 day before",
+      "create": "Create Event",
+      "save": "Save"
+    },
+    "today": "Today",
+    "more": "more",
+    "error": {
+      "initFailed": "Could not initialize workspace",
+      "endBeforeStart": "End time must be after start time"
+    }
+  },
+  "todos": {
+    "title": "Tasks",
+    "subtitle": "Manage your daily to-dos",
+    "addTask": "Add Task",
+    "editTask": "Edit Task",
+    "deleteTask": "Delete Task",
+    "deleteConfirm": "Delete this task?",
+    "loading": "Loading...",
+    "noTasks": "No tasks yet",
+    "addFirstTask": "Add a task to get started",
+    "filters": {
+      "all": "All Tasks",
+      "active": "Active",
+      "completed": "Completed"
+    },
+    "priority": {
+      "all": "All Priorities",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "form": {
+      "title": "Title",
+      "titlePlaceholder": "What needs to be done?",
+      "description": "Description (optional)",
+      "descriptionPlaceholder": "Add more details...",
+      "dueDate": "Due Date",
+      "priority": "Priority"
+    },
+    "toast": {
+      "deleted": "Task deleted",
+      "added": "Task added",
+      "updated": "Task updated"
+    }
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "Capture your thoughts and memories",
+    "newNote": "New Note",
+    "editNote": "Edit Note",
+    "deleteNote": "Delete Note",
+    "loading": "Loading your notes...",
+    "filters": {
+      "all": "All Notes",
+      "pinned": "Pinned"
+    },
+    "form": {
+      "title": "Title",
+      "titlePlaceholder": "Note title",
+      "content": "Content",
+      "contentPlaceholder": "Write your note here... (supports markdown)",
+      "markdownSupported": "Markdown supported",
+      "pin": "Pin",
+      "unpin": "Unpin"
+    },
+    "toast": {
+      "deleted": "Note deleted",
+      "added": "Note added",
+      "updated": "Note updated"
+    },
+    "createNote": "Create Note"
+  },
+  "baby": {
+    "title": "Baby",
+    "tabs": {
+      "activity": "Activity",
+      "records": "Records",
+      "growth": "Growth",
+      "analytics": "Analytics"
+    },
+    "activity": {
+      "quickLog": "Quick Log",
+      "addActivity": "Add Activity",
+      "lastFeed": "Last Feed",
+      "lastSleep": "Last Sleep",
+      "lastDiaper": "Last Diaper"
+    },
+    "growth": {
+      "title": "Growth Records",
+      "weight": "Weight",
+      "height": "Height",
+      "headCirc": "Head Circumference",
+      "addRecord": "Add Record"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "sleepTrend": "Sleep Trend",
+      "feedingPattern": "Feeding Pattern",
+      "dailyDistribution": "Daily Distribution"
+    }
   }
 }

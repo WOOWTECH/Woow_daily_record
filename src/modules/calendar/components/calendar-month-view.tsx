@@ -12,6 +12,7 @@ import {
   isToday,
   format,
 } from 'date-fns';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { EventItem } from './event-item';
 import type { EventOccurrence } from '../types';
@@ -23,14 +24,23 @@ interface CalendarMonthViewProps {
   onEventClick: (event: EventOccurrence) => void;
 }
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
 export function CalendarMonthView({
   selectedDate,
   events,
   onDateClick,
   onEventClick,
 }: CalendarMonthViewProps) {
+  const t = useTranslations('calendar');
+
+  const WEEKDAYS = [
+    t('days.sun'),
+    t('days.mon'),
+    t('days.tue'),
+    t('days.wed'),
+    t('days.thu'),
+    t('days.fri'),
+    t('days.sat'),
+  ];
   const monthStart = startOfMonth(selectedDate);
   const monthEnd = endOfMonth(selectedDate);
   const calendarStart = startOfWeek(monthStart);
@@ -106,7 +116,7 @@ export function CalendarMonthView({
                 ))}
                 {dayEvents.length > 3 && (
                   <div className="text-xs text-gray-500 dark:text-gray-400 px-2">
-                    +{dayEvents.length - 3} more
+                    +{dayEvents.length - 3} {t('more')}
                   </div>
                 )}
               </div>

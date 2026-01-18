@@ -2,6 +2,7 @@
 "use client";
 
 import { format } from 'date-fns';
+import { useTranslations } from 'next-intl';
 import Icon from "@mdi/react";
 import { mdiChevronLeft, mdiChevronRight, mdiPlus } from "@mdi/js";
 import { Button } from '@/core/components/ui/button';
@@ -18,12 +19,6 @@ interface CalendarHeaderProps {
   onAddEvent: () => void;
 }
 
-const viewButtons: { value: CalendarView; label: string }[] = [
-  { value: 'month', label: 'Month' },
-  { value: 'week', label: 'Week' },
-  { value: 'day', label: 'Day' },
-];
-
 export function CalendarHeader({
   selectedDate,
   view,
@@ -33,6 +28,14 @@ export function CalendarHeader({
   onToday,
   onAddEvent,
 }: CalendarHeaderProps) {
+  const t = useTranslations('calendar');
+
+  const viewButtons: { value: CalendarView; label: string }[] = [
+    { value: 'month', label: t('views.month') },
+    { value: 'week', label: t('views.week') },
+    { value: 'day', label: t('views.day') },
+  ];
+
   // Format title based on view
   const getTitle = () => {
     switch (view) {
@@ -57,7 +60,7 @@ export function CalendarHeader({
           onClick={onToday}
           className="hidden sm:inline-flex border-brand-gray/50 hover:border-brand-blue text-brand-deep-gray hover:text-brand-blue hover:bg-brand-blue/5"
         >
-          Today
+          {t('today')}
         </Button>
         <div className="flex items-center bg-white dark:bg-brand-black/20 rounded-lg border border-brand-gray/50 p-0.5">
           <Button
@@ -106,7 +109,7 @@ export function CalendarHeader({
           className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-lg shadow-brand-blue/20"
         >
           <Icon path={mdiPlus} size={0.75} className="mr-1" />
-          <span className="hidden sm:inline">Add Event</span>
+          <span className="hidden sm:inline">{t('event.add')}</span>
         </Button>
       </div>
     </div>

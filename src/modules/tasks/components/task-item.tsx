@@ -2,6 +2,7 @@
 "use client";
 
 import { format, isToday, isTomorrow, isPast } from 'date-fns';
+import { useTranslations } from 'next-intl';
 import Icon from "@mdi/react";
 import { mdiCheck, mdiDelete, mdiPencil } from "@mdi/js";
 import { cn } from '@/lib/utils';
@@ -29,8 +30,15 @@ function formatDueDate(dateStr: string | null): string | null {
 }
 
 export function TaskItem({ task, onToggle, onClick, onDelete }: TaskItemProps) {
+  const t = useTranslations('todos');
   const dueLabel = formatDueDate(task.due_date);
   const isOverdue = task.due_date && isPast(new Date(task.due_date)) && !task.is_completed;
+
+  const priorityLabels = {
+    low: t('priority.low'),
+    medium: t('priority.medium'),
+    high: t('priority.high'),
+  };
 
   return (
     <div
@@ -80,7 +88,7 @@ export function TaskItem({ task, onToggle, onClick, onDelete }: TaskItemProps) {
           priorityColors[task.priority]
         )}
       >
-        {task.priority}
+        {priorityLabels[task.priority]}
       </span>
 
       {/* Due Date */}
