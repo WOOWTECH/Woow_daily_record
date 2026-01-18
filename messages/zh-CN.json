@@ -402,7 +402,8 @@
       "monthlyIncome": "本月收入",
       "monthlyExpense": "本月支出",
       "netAmount": "净额",
-      "recentTransactions": "近期交易"
+      "recentTransactions": "近期交易",
+      "viewAll": "查看全部"
     },
     "accounts": {
       "title": "账户",

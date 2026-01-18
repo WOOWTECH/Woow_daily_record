@@ -402,7 +402,8 @@
       "monthlyIncome": "Monthly Income",
       "monthlyExpense": "Monthly Expense",
       "netAmount": "Net Amount",
-      "recentTransactions": "Recent Transactions"
+      "recentTransactions": "Recent Transactions",
+      "viewAll": "View All"
     },
     "accounts": {
       "title": "Accounts",

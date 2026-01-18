@@ -70,7 +70,7 @@ export function FinanceDashboard({
             <div className="p-2 rounded-xl bg-brand-blue/10">
               <Icon path={mdiWallet} size={0.8} className="text-brand-blue" />
             </div>
-            <span className="text-sm text-brand-deep-gray">{t("totalBalance")}</span>
+            <span className="text-sm text-brand-deep-gray">{t("dashboard.totalBalance")}</span>
           </div>
           <p className="text-xl font-bold text-brand-black dark:text-brand-white">
             {formatCurrency(totalBalance)}
@@ -83,7 +83,7 @@ export function FinanceDashboard({
             <div className="p-2 rounded-xl bg-green-500/10">
               <Icon path={mdiTrendingUp} size={0.8} className="text-green-500" />
             </div>
-            <span className="text-sm text-brand-deep-gray">{t("monthlyIncome")}</span>
+            <span className="text-sm text-brand-deep-gray">{t("dashboard.monthlyIncome")}</span>
           </div>
           <p className="text-xl font-bold text-green-500">
             {formatCurrency(monthlyIncome)}
@@ -96,7 +96,7 @@ export function FinanceDashboard({
             <div className="p-2 rounded-xl bg-red-500/10">
               <Icon path={mdiTrendingDown} size={0.8} className="text-red-500" />
             </div>
-            <span className="text-sm text-brand-deep-gray">{t("monthlyExpense")}</span>
+            <span className="text-sm text-brand-deep-gray">{t("dashboard.monthlyExpense")}</span>
           </div>
           <p className="text-xl font-bold text-red-500">
             {formatCurrency(monthlyExpense)}
@@ -113,7 +113,7 @@ export function FinanceDashboard({
                 className={netAmount >= 0 ? "text-green-500" : "text-red-500"}
               />
             </div>
-            <span className="text-sm text-brand-deep-gray">{t("netAmount")}</span>
+            <span className="text-sm text-brand-deep-gray">{t("dashboard.netAmount")}</span>
           </div>
           <p className={`text-xl font-bold ${netAmount >= 0 ? "text-green-500" : "text-red-500"}`}>
             {formatCurrency(netAmount)}
@@ -128,14 +128,14 @@ export function FinanceDashboard({
           className="bg-red-500 text-white hover:bg-red-600"
         >
           <Icon path={mdiPlus} size={0.75} className="mr-2" />
-          {t("addExpense")}
+          {t("transactions.addExpense")}
         </Button>
         <Button
           onClick={handleAddIncome}
           className="bg-green-500 text-white hover:bg-green-600"
         >
           <Icon path={mdiPlus} size={0.75} className="mr-2" />
-          {t("addIncome")}
+          {t("transactions.addIncome")}
         </Button>
       </div>
 
@@ -143,23 +143,23 @@ export function FinanceDashboard({
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-brand-black dark:text-brand-white">
-            {t("accounts")}
+            {t("accounts.title")}
           </h2>
           <Link
             href="/finance/accounts"
             className="text-sm text-brand-blue hover:underline"
           >
-            {t("addAccount")}
+            {t("accounts.addAccount")}
           </Link>
         </div>
 
         {accounts.length === 0 ? (
           <GlassCard className="p-8 text-center">
-            <p className="text-brand-deep-gray mb-4">{t("noAccounts")}</p>
+            <p className="text-brand-deep-gray mb-4">{t("accounts.noAccounts")}</p>
             <Link href="/finance/accounts">
               <Button className="bg-brand-blue text-white">
                 <Icon path={mdiPlus} size={0.75} className="mr-2" />
-                {t("addFirstAccount")}
+                {t("accounts.addFirstAccount")}
               </Button>
             </Link>
           </GlassCard>
@@ -176,19 +176,19 @@ export function FinanceDashboard({
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-brand-black dark:text-brand-white">
-            {t("recentTransactions")}
+            {t("dashboard.recentTransactions")}
           </h2>
           <Link
             href="/finance/transactions"
             className="text-sm text-brand-blue hover:underline"
           >
-            {t("viewAll")}
+            {t("dashboard.viewAll")}
           </Link>
         </div>
 
         {recentTransactions.length === 0 ? (
           <GlassCard className="p-8 text-center">
-            <p className="text-brand-deep-gray">{t("noTransactions")}</p>
+            <p className="text-brand-deep-gray">{t("transactions.noTransactions")}</p>
           </GlassCard>
         ) : (
           <GlassCard className="divide-y divide-gray-200 dark:divide-gray-700">
