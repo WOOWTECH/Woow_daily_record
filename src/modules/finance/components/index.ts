@@ -5,3 +5,5 @@ export { AccountList } from "./account-list";
 export { TransactionItem } from "./transaction-item";
 export { TransactionDialog } from "./transaction-dialog";
 export { TransactionList } from "./transaction-list";
+export { RecurringList } from "./recurring-list";
+export { RecurringDialog } from "./recurring-dialog";
