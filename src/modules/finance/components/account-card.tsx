@@ -51,7 +51,7 @@ export function AccountCard({ account }: AccountCardProps) {
               {account.name}
             </h3>
             <p className="text-sm text-brand-deep-gray">
-              {t(`accountTypes.${account.type}`)}
+              {t(`accounts.types.${account.type}`)}
             </p>
           </div>
 
@@ -64,7 +64,7 @@ export function AccountCard({ account }: AccountCardProps) {
             >
               {formatCurrency(account.balance)}
             </p>
-            <p className="text-xs text-brand-deep-gray">{t("balance")}</p>
+            <p className="text-xs text-brand-deep-gray">{t("accounts.balance")}</p>
           </div>
         </div>
       </GlassCard>
