@@ -1,4 +1,5 @@
 export { FinanceDashboard } from "./finance-dashboard";
+export { FinanceReports } from "./finance-reports";
 export { AccountCard } from "./account-card";
 export { AccountForm } from "./account-form";
 export { AccountList } from "./account-list";
