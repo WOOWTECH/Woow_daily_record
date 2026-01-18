@@ -86,7 +86,65 @@
     "themeDark": "深色",
     "themeSystem": "跟隨系統",
     "accentColor": "主色調",
-    "accentColorHint": "選擇應用程式的主色調"
+    "accentColorHint": "選擇應用程式的主色調",
+    "profile": {
+      "title": "個人設定",
+      "changePicture": "更換頭像",
+      "uploading": "上傳中...",
+      "displayName": "顯示名稱",
+      "dateOfBirth": "出生日期",
+      "timeZone": "時區",
+      "language": "語言",
+      "saveProfile": "儲存個人資料"
+    },
+    "baby": {
+      "title": "寶寶設定",
+      "noChildren": "尚未新增寶寶",
+      "uploadPhoto": "上傳照片",
+      "uploading": "上傳中...",
+      "photoRecommend": "推薦：正方形 JPG/PNG",
+      "name": "名稱",
+      "dateOfBirth": "出生日期",
+      "gender": "性別",
+      "boy": "男孩",
+      "girl": "女孩",
+      "other": "其他",
+      "detailsNotes": "詳情/備註",
+      "detailsPlaceholder": "過敏資訊、醫療紀錄或成長里程碑...",
+      "saveChanges": "儲存變更",
+      "saving": "儲存中...",
+      "deleteBaby": "刪除寶寶",
+      "deleteConfirmTitle": "確定要刪除嗎？",
+      "deleteConfirmDesc": "這會永久刪除 {name} 及其所有成長紀錄、日誌和照片。此操作無法復原。",
+      "deleting": "刪除中...",
+      "deleteForever": "永久刪除",
+      "cancel": "取消"
+    },
+    "account": {
+      "title": "帳戶安全",
+      "changeEmail": "更改電子郵件",
+      "email": "電子郵件",
+      "newEmail": "新電子郵件",
+      "updateEmail": "更新電子郵件",
+      "changePassword": "更改密碼",
+      "password": "密碼",
+      "newPassword": "新密碼",
+      "updatePassword": "更新密碼",
+      "signInRequired": "您必須登入才能管理帳戶安全",
+      "guestWarning": "訪客帳戶無法更改安全設定。請登入以管理電子郵件和密碼。"
+    }
+  },
+  "notifications": {
+    "title": "通知",
+    "markAllRead": "全部已讀",
+    "noNotifications": "暫無通知",
+    "button": "通知"
+  },
+  "babySwitcher": {
+    "selectChild": "選擇寶寶",
+    "switchBaby": "切換寶寶",
+    "myChildren": "我的寶寶",
+    "addBaby": "新增寶寶"
   },
   "auth": {
     "login": "登入",
@@ -241,16 +299,59 @@
         "activity": "活動",
         "health": "健康",
         "custom": "自訂"
-      }
+      },
+      "addChild": {
+        "title": "新增寶寶",
+        "description": "輸入寶寶的資訊開始記錄成長和活動。",
+        "name": "姓名",
+        "birthday": "生日",
+        "gender": "性別",
+        "boy": "男孩",
+        "girl": "女孩",
+        "cancel": "取消",
+        "addButton": "新增寶寶"
+      },
+      "editLog": {
+        "edit": "編輯",
+        "date": "日期",
+        "time": "時間",
+        "note": "備註",
+        "addDetails": "新增詳情...",
+        "amount": "數量",
+        "value": "數值",
+        "saving": "儲存中...",
+        "saveLog": "儲存記錄"
+      },
+      "createActivity": {
+        "title": "建立自訂活動",
+        "name": "名稱",
+        "namePlaceholder": "例如：趴趴時間",
+        "icon": "圖示",
+        "preview": "預覽",
+        "activityName": "活動名稱",
+        "cancel": "取消",
+        "creating": "建立中...",
+        "create": "建立活動"
+      },
+      "addNew": "新增"
     },
     "records": {
       "title": "記錄",
       "detailedLogFor": "{name} 的詳細活動記錄",
-      "filter": "篩選",
+      "filter": "篩選：",
       "allCategories": "所有分類",
       "apply": "套用",
       "noDetails": "無詳情",
-      "dateFormat": "yyyy年MM月dd日 (EEEE)"
+      "noRecordsFound": "此期間無記錄",
+      "dateFormat": "yyyy年MM月dd日 (EEEE)",
+      "categories": {
+        "sleep": "睡覺",
+        "feeding": "餵食",
+        "diaper": "尿布",
+        "activity": "活動",
+        "health": "健康",
+        "custom": "自訂"
+      }
     },
     "growth": {
       "title": "成長追蹤",
@@ -261,18 +362,34 @@
       "height": "身高",
       "headCirc": "頭圍",
       "addRecord": "新增記錄",
-      "percentile15th": "15百分位",
-      "percentile85th": "85百分位",
+      "editRecord": "編輯記錄",
+      "saveRecord": "儲存記錄",
+      "percentile15th": "第15百分位",
+      "percentile85th": "第85百分位",
       "average": "平均",
-      "childData": "孩子數據"
+      "childData": "寶寶數據",
+      "date": "日期",
+      "heightCm": "身高 (cm)",
+      "weightKg": "體重 (kg)",
+      "customMeasurements": "自訂測量",
+      "saveMetricPlaceholder": "儲存新測量類型 (例如：腳長)...",
+      "cancel": "取消",
+      "history": "歷史紀錄",
+      "noRecords": "尚無記錄",
+      "months": "月"
     },
     "analytics": {
       "title": "統計分析",
       "insightsFor": "{name} 的統計數據",
       "allCategories": "所有分類",
-      "filter": "篩選",
+      "filter": "篩選：",
       "allItems": "所有項目",
+      "apply": "套用",
       "dailyDistribution": "每日分佈",
+      "dailyTrend": "每日趨勢",
+      "volume": "攝取量",
+      "hours": "小時",
+      "count": "次數",
       "sleepTrend": "睡眠趨勢",
       "feedingPattern": "餵食模式"
     }
@@ -381,7 +498,8 @@
       "dueDay": "每月幾號",
       "selectAccount": "選擇帳戶",
       "selectCategory": "選擇分類",
-      "transferTo": "轉入帳戶"
+      "transferTo": "轉入帳戶",
+      "color": "顏色"
     },
     "toast": {
       "accountAdded": "帳戶已新增",

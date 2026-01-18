@@ -157,7 +157,7 @@ export function AccountForm({ householdId, account }: AccountFormProps) {
 
         {/* Color Selection */}
         <div className="space-y-2">
-          <Label>{t("form.type") === "Type" ? "Color" : "Color"}</Label>
+          <Label>{t("form.color")}</Label>
           <div className="flex gap-2 flex-wrap">
             {COLORS.map((c) => (
               <button

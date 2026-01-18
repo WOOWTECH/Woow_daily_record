@@ -86,7 +86,65 @@
     "themeDark": "Dark",
     "themeSystem": "System",
     "accentColor": "Accent Color",
-    "accentColorHint": "Choose a color that appears throughout the app"
+    "accentColorHint": "Choose a color that appears throughout the app",
+    "profile": {
+      "title": "Profile Settings",
+      "changePicture": "Change Picture",
+      "uploading": "Uploading...",
+      "displayName": "Display Name",
+      "dateOfBirth": "Date of Birth",
+      "timeZone": "Time Zone",
+      "language": "Language",
+      "saveProfile": "Save Profile"
+    },
+    "baby": {
+      "title": "Baby Settings",
+      "noChildren": "No babies added yet.",
+      "uploadPhoto": "Upload Photo",
+      "uploading": "Uploading...",
+      "photoRecommend": "Recommended: Square JPG/PNG",
+      "name": "Name",
+      "dateOfBirth": "Date of Birth",
+      "gender": "Gender",
+      "boy": "Boy",
+      "girl": "Girl",
+      "other": "Other",
+      "detailsNotes": "Details / Notes",
+      "detailsPlaceholder": "Allergies, medical notes, or cute timeline milestones...",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "deleteBaby": "Delete Baby",
+      "deleteConfirmTitle": "Are you absolutely sure?",
+      "deleteConfirmDesc": "This will permanently delete {name} and all their growth records, logs, and photos. This action cannot be undone.",
+      "deleting": "Deleting...",
+      "deleteForever": "Delete Permanently",
+      "cancel": "Cancel"
+    },
+    "account": {
+      "title": "Account Security",
+      "changeEmail": "Change Email",
+      "email": "Email",
+      "newEmail": "New Email Address",
+      "updateEmail": "Update Email",
+      "changePassword": "Change Password",
+      "password": "Password",
+      "newPassword": "New Password",
+      "updatePassword": "Update Password",
+      "signInRequired": "You must be signed in to manage account security.",
+      "guestWarning": "Guest accounts cannot change security settings. Please sign in to manage email and password."
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "noNotifications": "No notifications",
+    "button": "Notifications"
+  },
+  "babySwitcher": {
+    "selectChild": "Select Child",
+    "switchBaby": "Switch Baby",
+    "myChildren": "My Children",
+    "addBaby": "Add Baby"
   },
   "auth": {
     "login": "Login",
@@ -241,16 +299,59 @@
         "activity": "Activity",
         "health": "Health",
         "custom": "Custom"
-      }
+      },
+      "addChild": {
+        "title": "Add New Baby",
+        "description": "Enter your child's details to start tracking their growth and activities.",
+        "name": "Name",
+        "birthday": "Birthday",
+        "gender": "Gender",
+        "boy": "Boy",
+        "girl": "Girl",
+        "cancel": "Cancel",
+        "addButton": "Add Baby"
+      },
+      "editLog": {
+        "edit": "Edit",
+        "date": "Date",
+        "time": "Time",
+        "note": "Note",
+        "addDetails": "Add details...",
+        "amount": "Amount",
+        "value": "Value",
+        "saving": "Saving...",
+        "saveLog": "Save Log"
+      },
+      "createActivity": {
+        "title": "Create Custom Activity",
+        "name": "Name",
+        "namePlaceholder": "e.g., Tummy Time",
+        "icon": "Icon",
+        "preview": "Preview",
+        "activityName": "Activity Name",
+        "cancel": "Cancel",
+        "creating": "Creating...",
+        "create": "Create Activity"
+      },
+      "addNew": "Add New"
     },
     "records": {
       "title": "Records",
       "detailedLogFor": "Detailed activity log for {name}",
-      "filter": "Filter",
+      "filter": "Filter:",
       "allCategories": "All Categories",
       "apply": "Apply",
       "noDetails": "No details",
-      "dateFormat": "MMMM d, yyyy (EEEE)"
+      "noRecordsFound": "No records found for this period.",
+      "dateFormat": "MMMM d, yyyy (EEEE)",
+      "categories": {
+        "sleep": "Sleep",
+        "feeding": "Feeding",
+        "diaper": "Diaper",
+        "activity": "Activity",
+        "health": "Health",
+        "custom": "Custom"
+      }
     },
     "growth": {
       "title": "Growth Tracker",
@@ -261,18 +362,34 @@
       "height": "Height",
       "headCirc": "Head Circumference",
       "addRecord": "Add Record",
+      "editRecord": "Edit Record",
+      "saveRecord": "Save Record",
       "percentile15th": "15th %",
       "percentile85th": "85th %",
       "average": "Average",
-      "childData": "Child Data"
+      "childData": "Child Data",
+      "date": "Date",
+      "heightCm": "Height (cm)",
+      "weightKg": "Weight (kg)",
+      "customMeasurements": "Custom Measurements",
+      "saveMetricPlaceholder": "Save new metric type (e.g. Foot Size)...",
+      "cancel": "Cancel",
+      "history": "History",
+      "noRecords": "No records yet.",
+      "months": "Months"
     },
     "analytics": {
       "title": "Analytics",
       "insightsFor": "Insights for {name}",
       "allCategories": "All Categories",
-      "filter": "Filter",
+      "filter": "Filter:",
       "allItems": "All Items",
+      "apply": "Apply",
       "dailyDistribution": "Daily Distribution",
+      "dailyTrend": "Daily Trend",
+      "volume": "Volume",
+      "hours": "Hours",
+      "count": "Count",
       "sleepTrend": "Sleep Trend",
       "feedingPattern": "Feeding Pattern"
     }
@@ -381,7 +498,8 @@
       "dueDay": "Day of Month",
       "selectAccount": "Select Account",
       "selectCategory": "Select Category",
-      "transferTo": "Transfer To"
+      "transferTo": "Transfer To",
+      "color": "Color"
     },
     "toast": {
       "accountAdded": "Account added",
