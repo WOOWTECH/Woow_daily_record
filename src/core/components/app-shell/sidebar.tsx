@@ -29,7 +29,7 @@ export function Sidebar() {
   const navItems = [
     { icon: mdiHome, label: t('home'), href: "/" },
     { icon: mdiBabyCarriage, label: t('baby'), href: "/baby" },
-    { icon: mdiCurrencyUsd, label: "Finance", href: "/finance", disabled: true },
+    { icon: mdiCurrencyUsd, label: t('finance'), href: "/finance" },
     { icon: mdiFormatListChecks, label: t('todos'), href: "/todos" },
     { icon: mdiCalendar, label: t('calendar'), href: "/calendar" },
     { icon: mdiNoteText, label: t('notes'), href: "/notes" },
