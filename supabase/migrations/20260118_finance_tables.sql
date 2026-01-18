@@ -8,7 +8,7 @@
 CREATE TABLE IF NOT EXISTS public.finance_accounts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     household_id UUID NOT NULL REFERENCES public.households(id) ON DELETE CASCADE,
-    created_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE SET NULL,
+    created_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     type TEXT NOT NULL CHECK (type IN ('bank', 'cash', 'credit')),
     balance DECIMAL(15, 2) NOT NULL DEFAULT 0,
@@ -47,12 +47,12 @@ CREATE TABLE IF NOT EXISTS public.finance_recurring (
     account_id UUID NOT NULL REFERENCES public.finance_accounts(id) ON DELETE CASCADE,
     category_id UUID REFERENCES public.finance_categories(id) ON DELETE SET NULL,
     name TEXT NOT NULL,
-    amount DECIMAL(15, 2) NOT NULL,
+    amount DECIMAL(15, 2) NOT NULL CHECK (amount >= 0),
     type TEXT NOT NULL CHECK (type IN ('income', 'expense')),
     frequency TEXT NOT NULL CHECK (frequency IN ('monthly', 'weekly', 'yearly')),
     due_day INTEGER CHECK (due_day >= 1 AND due_day <= 31),
     active BOOLEAN DEFAULT TRUE,
-    created_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE SET NULL,
+    created_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
@@ -67,12 +67,12 @@ CREATE TABLE IF NOT EXISTS public.finance_transactions (
     account_id UUID NOT NULL REFERENCES public.finance_accounts(id) ON DELETE CASCADE,
     category_id UUID REFERENCES public.finance_categories(id) ON DELETE SET NULL,
     type TEXT NOT NULL CHECK (type IN ('income', 'expense', 'transfer')),
-    amount DECIMAL(15, 2) NOT NULL,
+    amount DECIMAL(15, 2) NOT NULL CHECK (amount >= 0),
     description TEXT,
     date DATE NOT NULL DEFAULT CURRENT_DATE,
     recurring_id UUID REFERENCES public.finance_recurring(id) ON DELETE SET NULL,
     transfer_to_account_id UUID REFERENCES public.finance_accounts(id) ON DELETE SET NULL,
-    created_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE SET NULL,
+    created_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS public.finance_recurring_status (
     year_month TEXT NOT NULL, -- Format: YYYY-MM
     status TEXT NOT NULL CHECK (status IN ('pending', 'paid')) DEFAULT 'pending',
     paid_date DATE,
-    actual_amount DECIMAL(15, 2),
+    actual_amount DECIMAL(15, 2) CHECK (actual_amount IS NULL OR actual_amount >= 0),
     transaction_id UUID REFERENCES public.finance_transactions(id) ON DELETE SET NULL,
     created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
@@ -281,10 +281,13 @@ CREATE POLICY "Users can delete their household recurring status"
 -- ============================================
 
 CREATE INDEX idx_finance_accounts_household ON public.finance_accounts(household_id);
+CREATE INDEX idx_finance_categories_household ON public.finance_categories(household_id);
 CREATE INDEX idx_finance_transactions_household ON public.finance_transactions(household_id);
 CREATE INDEX idx_finance_transactions_date ON public.finance_transactions(date);
+CREATE INDEX idx_finance_transactions_household_date ON public.finance_transactions(household_id, date);
 CREATE INDEX idx_finance_transactions_account ON public.finance_transactions(account_id);
 CREATE INDEX idx_finance_recurring_household ON public.finance_recurring(household_id);
+CREATE INDEX idx_finance_recurring_status_year_month ON public.finance_recurring_status(year_month);
 
 -- ============================================
 -- UPDATED_AT TRIGGERS
