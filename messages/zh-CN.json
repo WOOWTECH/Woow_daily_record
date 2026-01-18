@@ -21,6 +21,7 @@
     "todos": "待办事项",
     "notes": "笔记",
     "devices": "设备管理",
+    "finance": "财务",
     "settings": "设置",
     "signOut": "退出登录"
   },
@@ -224,24 +225,175 @@
       "analytics": "统计"
     },
     "activity": {
+      "title": "活动记录",
+      "todaysOverview": "今日概览",
+      "activityLog": "活动记录",
       "quickLog": "快速记录",
       "addActivity": "新增活动",
       "lastFeed": "上次喂食",
       "lastSleep": "上次睡眠",
-      "lastDiaper": "上次换尿布"
+      "lastDiaper": "上次换尿布",
+      "filters": {
+        "all": "全部",
+        "sleep": "睡觉",
+        "eat": "喂食",
+        "diaper": "尿布",
+        "activity": "活动",
+        "health": "健康",
+        "custom": "自定义"
+      }
+    },
+    "records": {
+      "title": "记录",
+      "detailedLogFor": "{name} 的详细活动记录",
+      "filter": "筛选",
+      "allCategories": "所有分类",
+      "apply": "应用",
+      "noDetails": "无详情",
+      "dateFormat": "yyyy年MM月dd日 (EEEE)"
     },
     "growth": {
-      "title": "成长记录",
+      "title": "成长追踪",
+      "trackDescription": "追踪 {name} 相较 WHO 标准的身高体重",
+      "weightCurve": "体重曲线",
+      "heightCurve": "身高曲线",
       "weight": "体重",
       "height": "身高",
       "headCirc": "头围",
-      "addRecord": "新增记录"
+      "addRecord": "新增记录",
+      "percentile15th": "15百分位",
+      "percentile85th": "85百分位",
+      "average": "平均",
+      "childData": "孩子数据"
     },
     "analytics": {
       "title": "统计分析",
+      "insightsFor": "{name} 的统计数据",
+      "allCategories": "所有分类",
+      "filter": "筛选",
+      "allItems": "所有项目",
+      "dailyDistribution": "每日分布",
       "sleepTrend": "睡眠趋势",
-      "feedingPattern": "喂食模式",
-      "dailyDistribution": "每日分布"
+      "feedingPattern": "喂食模式"
+    }
+  },
+  "finance": {
+    "title": "财务",
+    "subtitle": "管理家庭收支与账户",
+    "dashboard": {
+      "totalBalance": "总资产",
+      "monthlyIncome": "本月收入",
+      "monthlyExpense": "本月支出",
+      "netAmount": "净额",
+      "recentTransactions": "近期交易"
+    },
+    "accounts": {
+      "title": "账户",
+      "addAccount": "新增账户",
+      "editAccount": "编辑账户",
+      "deleteAccount": "删除账户",
+      "noAccounts": "尚无账户",
+      "addFirstAccount": "新增第一个账户",
+      "balance": "余额",
+      "types": {
+        "bank": "银行账户",
+        "cash": "现金",
+        "credit": "信用卡"
+      }
+    },
+    "transactions": {
+      "title": "交易记录",
+      "addTransaction": "新增交易",
+      "addExpense": "记支出",
+      "addIncome": "记收入",
+      "editTransaction": "编辑交易",
+      "deleteTransaction": "删除交易",
+      "noTransactions": "尚无交易记录",
+      "types": {
+        "income": "收入",
+        "expense": "支出",
+        "transfer": "转账"
+      },
+      "filters": {
+        "all": "所有交易",
+        "income": "仅收入",
+        "expense": "仅支出"
+      }
+    },
+    "categories": {
+      "title": "分类",
+      "addCategory": "新增分类",
+      "expense": {
+        "food": "餐饮",
+        "transport": "交通",
+        "housing": "居住",
+        "utilities": "水电燃气",
+        "entertainment": "娱乐",
+        "shopping": "购物",
+        "healthcare": "医疗",
+        "education": "教育",
+        "childcare": "育儿",
+        "other": "其他"
+      },
+      "income": {
+        "salary": "薪资",
+        "bonus": "奖金",
+        "investment": "投资收益",
+        "sidejob": "副业",
+        "other": "其他"
+      }
+    },
+    "recurring": {
+      "title": "固定收支",
+      "addRecurring": "新增固定项目",
+      "editRecurring": "编辑固定项目",
+      "noRecurring": "尚无固定收支",
+      "thisMonth": "本月状态",
+      "status": {
+        "pending": "待付款",
+        "paid": "已付款"
+      },
+      "markAsPaid": "标记为已付款",
+      "frequency": {
+        "monthly": "每月",
+        "weekly": "每周",
+        "yearly": "每年"
+      },
+      "dueDay": "到期日"
+    },
+    "reports": {
+      "title": "报表",
+      "monthlySummary": "月度摘要",
+      "trends": "趋势分析",
+      "byCategory": "按分类",
+      "noData": "此期间无数据"
+    },
+    "form": {
+      "name": "名称",
+      "amount": "金额",
+      "account": "账户",
+      "category": "分类",
+      "date": "日期",
+      "description": "备注",
+      "descriptionPlaceholder": "选填备注...",
+      "type": "类型",
+      "frequency": "频率",
+      "dueDay": "每月几号",
+      "selectAccount": "选择账户",
+      "selectCategory": "选择分类",
+      "transferTo": "转入账户"
+    },
+    "toast": {
+      "accountAdded": "账户已添加",
+      "accountUpdated": "账户已更新",
+      "accountDeleted": "账户已删除",
+      "transactionAdded": "交易已添加",
+      "transactionUpdated": "交易已更新",
+      "transactionDeleted": "交易已删除",
+      "recurringAdded": "固定项目已添加",
+      "recurringUpdated": "固定项目已更新",
+      "recurringDeleted": "固定项目已删除",
+      "markedAsPaid": "已标记为已付款"
     }
   }
 }

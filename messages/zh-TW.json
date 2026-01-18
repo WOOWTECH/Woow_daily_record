@@ -21,6 +21,7 @@
     "todos": "待辦事項",
     "notes": "筆記",
     "devices": "設備管理",
+    "finance": "財務",
     "settings": "設定",
     "signOut": "登出"
   },
@@ -224,24 +225,175 @@
       "analytics": "統計"
     },
     "activity": {
+      "title": "活動記錄",
+      "todaysOverview": "今日概覽",
+      "activityLog": "活動記錄",
       "quickLog": "快速記錄",
       "addActivity": "新增活動",
       "lastFeed": "上次餵食",
       "lastSleep": "上次睡眠",
-      "lastDiaper": "上次換尿布"
+      "lastDiaper": "上次換尿布",
+      "filters": {
+        "all": "全部",
+        "sleep": "睡覺",
+        "eat": "餵食",
+        "diaper": "尿布",
+        "activity": "活動",
+        "health": "健康",
+        "custom": "自訂"
+      }
+    },
+    "records": {
+      "title": "記錄",
+      "detailedLogFor": "{name} 的詳細活動記錄",
+      "filter": "篩選",
+      "allCategories": "所有分類",
+      "apply": "套用",
+      "noDetails": "無詳情",
+      "dateFormat": "yyyy年MM月dd日 (EEEE)"
     },
     "growth": {
-      "title": "成長記錄",
+      "title": "成長追蹤",
+      "trackDescription": "追蹤 {name} 相較 WHO 標準的身高體重",
+      "weightCurve": "體重曲線",
+      "heightCurve": "身高曲線",
       "weight": "體重",
       "height": "身高",
       "headCirc": "頭圍",
-      "addRecord": "新增記錄"
+      "addRecord": "新增記錄",
+      "percentile15th": "15百分位",
+      "percentile85th": "85百分位",
+      "average": "平均",
+      "childData": "孩子數據"
     },
     "analytics": {
       "title": "統計分析",
+      "insightsFor": "{name} 的統計數據",
+      "allCategories": "所有分類",
+      "filter": "篩選",
+      "allItems": "所有項目",
+      "dailyDistribution": "每日分佈",
       "sleepTrend": "睡眠趨勢",
-      "feedingPattern": "餵食模式",
-      "dailyDistribution": "每日分佈"
+      "feedingPattern": "餵食模式"
+    }
+  },
+  "finance": {
+    "title": "財務",
+    "subtitle": "管理家庭收支與帳戶",
+    "dashboard": {
+      "totalBalance": "總資產",
+      "monthlyIncome": "本月收入",
+      "monthlyExpense": "本月支出",
+      "netAmount": "淨額",
+      "recentTransactions": "近期交易"
+    },
+    "accounts": {
+      "title": "帳戶",
+      "addAccount": "新增帳戶",
+      "editAccount": "編輯帳戶",
+      "deleteAccount": "刪除帳戶",
+      "noAccounts": "尚無帳戶",
+      "addFirstAccount": "新增第一個帳戶",
+      "balance": "餘額",
+      "types": {
+        "bank": "銀行帳戶",
+        "cash": "現金",
+        "credit": "信用卡"
+      }
+    },
+    "transactions": {
+      "title": "交易紀錄",
+      "addTransaction": "新增交易",
+      "addExpense": "記支出",
+      "addIncome": "記收入",
+      "editTransaction": "編輯交易",
+      "deleteTransaction": "刪除交易",
+      "noTransactions": "尚無交易紀錄",
+      "types": {
+        "income": "收入",
+        "expense": "支出",
+        "transfer": "轉帳"
+      },
+      "filters": {
+        "all": "所有交易",
+        "income": "僅收入",
+        "expense": "僅支出"
+      }
+    },
+    "categories": {
+      "title": "分類",
+      "addCategory": "新增分類",
+      "expense": {
+        "food": "餐飲",
+        "transport": "交通",
+        "housing": "居住",
+        "utilities": "水電瓦斯",
+        "entertainment": "娛樂",
+        "shopping": "購物",
+        "healthcare": "醫療",
+        "education": "教育",
+        "childcare": "育兒",
+        "other": "其他"
+      },
+      "income": {
+        "salary": "薪資",
+        "bonus": "獎金",
+        "investment": "投資收益",
+        "sidejob": "副業",
+        "other": "其他"
+      }
+    },
+    "recurring": {
+      "title": "固定收支",
+      "addRecurring": "新增固定項目",
+      "editRecurring": "編輯固定項目",
+      "noRecurring": "尚無固定收支",
+      "thisMonth": "本月狀態",
+      "status": {
+        "pending": "待付款",
+        "paid": "已付款"
+      },
+      "markAsPaid": "標記為已付款",
+      "frequency": {
+        "monthly": "每月",
+        "weekly": "每週",
+        "yearly": "每年"
+      },
+      "dueDay": "到期日"
+    },
+    "reports": {
+      "title": "報表",
+      "monthlySummary": "月度摘要",
+      "trends": "趨勢分析",
+      "byCategory": "依分類",
+      "noData": "此期間無資料"
+    },
+    "form": {
+      "name": "名稱",
+      "amount": "金額",
+      "account": "帳戶",
+      "category": "分類",
+      "date": "日期",
+      "description": "備註",
+      "descriptionPlaceholder": "選填備註...",
+      "type": "類型",
+      "frequency": "頻率",
+      "dueDay": "每月幾號",
+      "selectAccount": "選擇帳戶",
+      "selectCategory": "選擇分類",
+      "transferTo": "轉入帳戶"
+    },
+    "toast": {
+      "accountAdded": "帳戶已新增",
+      "accountUpdated": "帳戶已更新",
+      "accountDeleted": "帳戶已刪除",
+      "transactionAdded": "交易已新增",
+      "transactionUpdated": "交易已更新",
+      "transactionDeleted": "交易已刪除",
+      "recurringAdded": "固定項目已新增",
+      "recurringUpdated": "固定項目已更新",
+      "recurringDeleted": "固定項目已刪除",
+      "markedAsPaid": "已標記為已付款"
     }
   }
 }

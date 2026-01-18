@@ -21,6 +21,7 @@
     "todos": "To-Do List",
     "notes": "Notes",
     "devices": "Devices",
+    "finance": "Finance",
     "settings": "Settings",
     "signOut": "Sign Out"
   },
@@ -224,24 +225,175 @@
       "analytics": "Analytics"
     },
     "activity": {
+      "title": "Activity Log",
+      "todaysOverview": "Today's Overview",
+      "activityLog": "Activity Log",
       "quickLog": "Quick Log",
       "addActivity": "Add Activity",
       "lastFeed": "Last Feed",
       "lastSleep": "Last Sleep",
-      "lastDiaper": "Last Diaper"
+      "lastDiaper": "Last Diaper",
+      "filters": {
+        "all": "All",
+        "sleep": "Sleep",
+        "eat": "Eat",
+        "diaper": "Diaper",
+        "activity": "Activity",
+        "health": "Health",
+        "custom": "Custom"
+      }
+    },
+    "records": {
+      "title": "Records",
+      "detailedLogFor": "Detailed activity log for {name}",
+      "filter": "Filter",
+      "allCategories": "All Categories",
+      "apply": "Apply",
+      "noDetails": "No details",
+      "dateFormat": "MMMM d, yyyy (EEEE)"
     },
     "growth": {
-      "title": "Growth Records",
+      "title": "Growth Tracker",
+      "trackDescription": "Track height and weight against WHO standards for {name}",
+      "weightCurve": "Weight Curve",
+      "heightCurve": "Height Curve",
       "weight": "Weight",
       "height": "Height",
       "headCirc": "Head Circumference",
-      "addRecord": "Add Record"
+      "addRecord": "Add Record",
+      "percentile15th": "15th %",
+      "percentile85th": "85th %",
+      "average": "Average",
+      "childData": "Child Data"
     },
     "analytics": {
       "title": "Analytics",
+      "insightsFor": "Insights for {name}",
+      "allCategories": "All Categories",
+      "filter": "Filter",
+      "allItems": "All Items",
+      "dailyDistribution": "Daily Distribution",
       "sleepTrend": "Sleep Trend",
-      "feedingPattern": "Feeding Pattern",
-      "dailyDistribution": "Daily Distribution"
+      "feedingPattern": "Feeding Pattern"
+    }
+  },
+  "finance": {
+    "title": "Finance",
+    "subtitle": "Manage household income, expenses and accounts",
+    "dashboard": {
+      "totalBalance": "Total Balance",
+      "monthlyIncome": "Monthly Income",
+      "monthlyExpense": "Monthly Expense",
+      "netAmount": "Net Amount",
+      "recentTransactions": "Recent Transactions"
+    },
+    "accounts": {
+      "title": "Accounts",
+      "addAccount": "Add Account",
+      "editAccount": "Edit Account",
+      "deleteAccount": "Delete Account",
+      "noAccounts": "No accounts yet",
+      "addFirstAccount": "Add your first account",
+      "balance": "Balance",
+      "types": {
+        "bank": "Bank Account",
+        "cash": "Cash",
+        "credit": "Credit Card"
+      }
+    },
+    "transactions": {
+      "title": "Transactions",
+      "addTransaction": "Add Transaction",
+      "addExpense": "Add Expense",
+      "addIncome": "Add Income",
+      "editTransaction": "Edit Transaction",
+      "deleteTransaction": "Delete Transaction",
+      "noTransactions": "No transactions yet",
+      "types": {
+        "income": "Income",
+        "expense": "Expense",
+        "transfer": "Transfer"
+      },
+      "filters": {
+        "all": "All Transactions",
+        "income": "Income Only",
+        "expense": "Expense Only"
+      }
+    },
+    "categories": {
+      "title": "Categories",
+      "addCategory": "Add Category",
+      "expense": {
+        "food": "Food & Dining",
+        "transport": "Transportation",
+        "housing": "Housing",
+        "utilities": "Utilities",
+        "entertainment": "Entertainment",
+        "shopping": "Shopping",
+        "healthcare": "Healthcare",
+        "education": "Education",
+        "childcare": "Childcare",
+        "other": "Other"
+      },
+      "income": {
+        "salary": "Salary",
+        "bonus": "Bonus",
+        "investment": "Investment",
+        "sidejob": "Side Job",
+        "other": "Other"
+      }
+    },
+    "recurring": {
+      "title": "Recurring",
+      "addRecurring": "Add Recurring Item",
+      "editRecurring": "Edit Recurring Item",
+      "noRecurring": "No recurring items yet",
+      "thisMonth": "This Month",
+      "status": {
+        "pending": "Pending",
+        "paid": "Paid"
+      },
+      "markAsPaid": "Mark as Paid",
+      "frequency": {
+        "monthly": "Monthly",
+        "weekly": "Weekly",
+        "yearly": "Yearly"
+      },
+      "dueDay": "Due Day"
+    },
+    "reports": {
+      "title": "Reports",
+      "monthlySummary": "Monthly Summary",
+      "trends": "Trends",
+      "byCategory": "By Category",
+      "noData": "No data for this period"
+    },
+    "form": {
+      "name": "Name",
+      "amount": "Amount",
+      "account": "Account",
+      "category": "Category",
+      "date": "Date",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional notes...",
+      "type": "Type",
+      "frequency": "Frequency",
+      "dueDay": "Day of Month",
+      "selectAccount": "Select Account",
+      "selectCategory": "Select Category",
+      "transferTo": "Transfer To"
+    },
+    "toast": {
+      "accountAdded": "Account added",
+      "accountUpdated": "Account updated",
+      "accountDeleted": "Account deleted",
+      "transactionAdded": "Transaction added",
+      "transactionUpdated": "Transaction updated",
+      "transactionDeleted": "Transaction deleted",
+      "recurringAdded": "Recurring item added",
+      "recurringUpdated": "Recurring item updated",
+      "recurringDeleted": "Recurring item deleted",
+      "markedAsPaid": "Marked as paid"
     }
   }
 }
