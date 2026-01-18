@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import type { SupabaseClient } from '@supabase/ssr';
 import type {
   CreateAccountInput,
   CreateTransactionInput,
@@ -15,6 +16,10 @@ import type {
 // ============================================================
 
 export async function createAccountAction(householdId: string, input: CreateAccountInput) {
+  if (!input.name?.trim()) {
+    throw new Error("Account name is required");
+  }
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -149,6 +154,13 @@ export async function createTransactionAction(
   householdId: string,
   input: CreateTransactionInput
 ) {
+  if (!input.amount || input.amount <= 0) {
+    throw new Error("Amount must be greater than 0");
+  }
+  if (!input.account_id) {
+    throw new Error("Account is required");
+  }
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -262,19 +274,20 @@ export async function deleteTransactionAction(
     throw new Error("Unauthorized");
   }
 
-  // Delete the transaction
+  // Reverse balance FIRST (before delete)
+  await reverseTransactionFromBalance(supabase, input);
+
+  // Then delete transaction
   const { error } = await supabase
     .from('finance_transactions')
     .delete()
     .eq('id', transactionId);
 
   if (error) {
-    console.error("Delete transaction error:", error);
-    throw new Error(error.message || "Failed to delete transaction");
+    // Try to re-apply balance if delete failed
+    await applyTransactionToBalance(supabase, input);
+    throw new Error(error.message);
   }
-
-  // Reverse the balance change
-  await reverseTransactionFromBalance(supabase, input);
 
   revalidatePath("/finance");
 }
@@ -515,8 +528,7 @@ export async function createCategoryAction(
 // Helper Functions
 // ============================================================
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function applyTransactionToBalance(supabase: any, input: CreateTransactionInput) {
+async function applyTransactionToBalance(supabase: SupabaseClient, input: CreateTransactionInput) {
   const { type, amount, account_id, transfer_to_account_id } = input;
 
   if (type === 'expense') {
@@ -532,8 +544,7 @@ async function applyTransactionToBalance(supabase: any, input: CreateTransaction
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function reverseTransactionFromBalance(supabase: any, input: CreateTransactionInput) {
+async function reverseTransactionFromBalance(supabase: SupabaseClient, input: CreateTransactionInput) {
   const { type, amount, account_id, transfer_to_account_id } = input;
 
   if (type === 'expense') {
@@ -549,8 +560,7 @@ async function reverseTransactionFromBalance(supabase: any, input: CreateTransac
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function updateBalance(supabase: any, accountId: string, amount: number, type: 'add' | 'subtract') {
+async function updateBalance(supabase: SupabaseClient, accountId: string, amount: number, type: 'add' | 'subtract') {
   // Get current balance
   const { data: account, error: fetchError } = await supabase
     .from('finance_accounts')
