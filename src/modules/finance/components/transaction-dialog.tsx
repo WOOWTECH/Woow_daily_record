@@ -13,7 +13,7 @@ import { Button } from '@/core/components/ui/button';
 import { Input } from '@/core/components/ui/input';
 import { Label } from '@/core/components/ui/label';
 import { toast } from 'sonner';
-import { createTransactionAction } from '@/app/actions/finance';
+import { createTransactionAction, updateTransactionAction } from '@/app/actions/finance';
 import type { FinanceAccount, FinanceCategory, FinanceTransaction } from '../types';
 import { cn } from '@/lib/utils';
 
@@ -99,20 +99,36 @@ export function TransactionDialog({
     setIsSubmitting(true);
 
     try {
-      await createTransactionAction(householdId, {
+      const newData = {
         account_id: accountId,
         category_id: categoryId || undefined,
         type: type,
         amount: numericAmount,
         description: description.trim() || undefined,
         date: date,
-      });
+      };
 
-      toast.success(t('toast.transactionAdded'));
+      if (isEditing && transaction) {
+        // Build old input from the existing transaction
+        const oldInput = {
+          account_id: transaction.account_id,
+          type: transaction.type,
+          amount: transaction.amount,
+          category_id: transaction.category_id || undefined,
+          description: transaction.description || undefined,
+          date: transaction.date,
+        };
+        await updateTransactionAction(transaction.id, oldInput, newData);
+        toast.success(t('toast.transactionUpdated'));
+      } else {
+        await createTransactionAction(householdId, newData);
+        toast.success(t('toast.transactionAdded'));
+      }
+
       onOpenChange(false);
     } catch (error) {
-      console.error('Failed to create transaction:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to create transaction');
+      console.error('Failed to save transaction:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to save transaction');
     } finally {
       setIsSubmitting(false);
     }
