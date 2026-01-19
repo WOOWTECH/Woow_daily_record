@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
@@ -21,8 +22,8 @@ interface MemberFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   member?: FamilyMember | null;
-  onSave: (member: NewFamilyMember) => void;
-  onUpdate?: (id: string, updates: Partial<FamilyMember>) => void;
+  onSave: (member: NewFamilyMember) => Promise<void>;
+  onUpdate?: (id: string, updates: Partial<FamilyMember>) => Promise<void>;
 }
 
 type Gender = 'boy' | 'girl' | 'other';
@@ -44,9 +45,19 @@ export function MemberForm({
   const [photoUrl, setPhotoUrl] = useState('');
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isMountedRef = useRef(true);
   const isEditing = !!member;
+
+  // Track component mount state
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (member) {
@@ -74,10 +85,12 @@ export function MemberForm({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Show preview immediately
+    // Show preview immediately (with mount check)
     const reader = new FileReader();
     reader.onload = (event) => {
-      setPhotoPreview(event.target?.result as string);
+      if (isMountedRef.current) {
+        setPhotoPreview(event.target?.result as string);
+      }
     };
     reader.readAsDataURL(file);
 
@@ -86,44 +99,60 @@ export function MemberForm({
     try {
       // TODO: Implement actual photo upload to storage
       // For now, we'll use a data URL as a placeholder
-      const dataUrl = await new Promise<string>((resolve) => {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
         const r = new FileReader();
         r.onload = () => resolve(r.result as string);
+        r.onerror = () => reject(new Error('Failed to read file'));
         r.readAsDataURL(file);
       });
-      setPhotoUrl(dataUrl);
+      if (isMountedRef.current) {
+        setPhotoUrl(dataUrl);
+      }
     } catch (error) {
       console.error('Failed to upload photo:', error);
+      if (isMountedRef.current) {
+        toast.error(t('photoUploadError') || 'Failed to upload photo');
+      }
     } finally {
-      setIsUploading(false);
+      if (isMountedRef.current) {
+        setIsUploading(false);
+      }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
 
-    const memberData: NewFamilyMember = {
-      name: name.trim(),
-      date_of_birth: dateOfBirth || undefined,
-      gender: gender || undefined,
-      details: details.trim() || undefined,
-      photo_url: photoUrl || undefined,
-    };
-
-    if (isEditing && onUpdate && member) {
-      onUpdate(member.id, {
-        name: name.trim(),
-        date_of_birth: dateOfBirth || null,
-        gender: gender || null,
-        details: details.trim() || null,
-        photo_url: photoUrl || null,
-      });
-    } else {
-      onSave(memberData);
+    setIsSaving(true);
+    try {
+      if (isEditing && onUpdate && member) {
+        await onUpdate(member.id, {
+          name: name.trim(),
+          date_of_birth: dateOfBirth || null,
+          gender: gender || null,
+          details: details.trim() || null,
+          photo_url: photoUrl || null,
+        });
+        toast.success(t('memberUpdated') || 'Member updated');
+      } else {
+        const memberData: NewFamilyMember = {
+          name: name.trim(),
+          date_of_birth: dateOfBirth || undefined,
+          gender: gender || undefined,
+          details: details.trim() || undefined,
+          photo_url: photoUrl || undefined,
+        };
+        await onSave(memberData);
+        toast.success(t('memberAdded') || 'Member added');
+      }
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Failed to save member:', error);
+      toast.error(error instanceof Error ? error.message : t('saveFailed') || 'Failed to save member');
+    } finally {
+      setIsSaving(false);
     }
-
-    onOpenChange(false);
   };
 
   return (
@@ -232,11 +261,11 @@ export function MemberForm({
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>
               {tCommon('cancel')}
             </Button>
-            <Button type="submit" disabled={!name.trim() || isUploading}>
-              {isEditing ? tCommon('save') : t('addMember')}
+            <Button type="submit" disabled={!name.trim() || isUploading || isSaving}>
+              {isSaving ? tCommon('saving') || 'Saving...' : isEditing ? tCommon('save') : t('addMember')}
             </Button>
           </div>
         </form>

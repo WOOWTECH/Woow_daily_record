@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 import { GlassCard } from '@/core/components/glass-card';
 import { Button } from '@/core/components/ui/button';
 import { Input } from '@/core/components/ui/input';
@@ -124,11 +125,21 @@ export function HealthSettingsTab({ householdId }: HealthSettingsTabProps) {
   };
 
   const handleSaveMember = async (memberData: NewFamilyMember) => {
-    await addMember(memberData);
+    try {
+      await addMember(memberData);
+    } catch (error) {
+      console.error('Failed to add member:', error);
+      throw error; // Re-throw so member-form can handle it
+    }
   };
 
   const handleUpdateMember = async (id: string, updates: Partial<FamilyMember>) => {
-    await updateMember(id, updates);
+    try {
+      await updateMember(id, updates);
+    } catch (error) {
+      console.error('Failed to update member:', error);
+      throw error; // Re-throw so member-form can handle it
+    }
   };
 
   const handleConfirmDelete = async () => {
@@ -137,9 +148,13 @@ export function HealthSettingsTab({ householdId }: HealthSettingsTabProps) {
     setIsDeleting(true);
     try {
       await deleteMember(memberToDelete.id);
+      toast.success(t('memberDeleted') || 'Member deleted');
       setIsDeleteDialogOpen(false);
       setMemberToDelete(null);
       setDeleteConfirmName('');
+    } catch (error) {
+      console.error('Failed to delete member:', error);
+      toast.error(error instanceof Error ? error.message : t('deleteFailed') || 'Failed to delete member');
     } finally {
       setIsDeleting(false);
     }
