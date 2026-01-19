@@ -7,21 +7,8 @@ export { MemberForm } from './member-form';
 // Settings
 export { HealthSettingsTab } from './health-settings-tab';
 
-// Activity tracking
-// export { QuickLogWidget } from './activity/quick-log-widget';
-// export { TimelineWidget } from './activity/timeline-widget';
-
-// Growth tracking
-// export { GrowthChart } from './growth/growth-chart';
-// export { GrowthForm } from './growth/growth-form';
-
-// Records
-// export { Logbook } from './records/logbook';
-// export { DateRangeFilter } from './records/date-range-filter';
-
-// Analytics
-// export { AnalyticsFilters } from './analytics/analytics-filters';
-// export { DailyTrendChart } from './analytics/daily-trend-chart';
-
-// Tabs
-// export { HealthTabs } from './health-tabs';
+// Health Tab Components (wrapping baby module functionality for any family member)
+export { HealthActivityTab } from './health-activity-tab';
+export { HealthRecordsTab } from './health-records-tab';
+export { HealthGrowthTab } from './health-growth-tab';
+export { HealthAnalyticsTab } from './health-analytics-tab';
