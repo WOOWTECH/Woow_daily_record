@@ -10,7 +10,7 @@ import type {
   NewInvitation,
   UserProfile,
   ProfileUpdate,
-  PageName,
+  ModuleName,
   AccessLevel,
 } from "../types";
 
@@ -78,7 +78,7 @@ export async function updateProfileAction(
 // ============================================
 export async function fetchHouseholdAction(): Promise<{
   success: boolean;
-  data?: Household;
+  data?: Household & { isOwner: boolean };
   error?: string;
 }> {
   const supabase = await createClient();
@@ -88,59 +88,52 @@ export async function fetchHouseholdAction(): Promise<{
     return { success: false, error: "Not authenticated" };
   }
 
-  // First try to find household where user is owner
-  let { data: household, error } = await supabase
-    .from("households")
-    .select("*")
-    .eq("owner_id", user.id)
+  // First find via household_members (most reliable, works with or without migration)
+  const { data: membership } = await supabase
+    .from("household_members")
+    .select("household_id, role")
+    .eq("user_id", user.id)
     .single();
 
-  // If not owner, find via household_members
-  if (!household) {
-    const { data: membership } = await supabase
-      .from("household_members")
-      .select("household_id")
-      .eq("user_id", user.id)
-      .single();
+  let household: any = null;
+  let isOwner = false;
 
-    if (membership) {
-      const { data, error: err } = await supabase
-        .from("households")
-        .select("*")
-        .eq("id", membership.household_id)
-        .single();
-      household = data;
-      error = err;
-    }
-  }
-
-  // If still no household, create one for the user
-  if (!household) {
-    const { data: newHousehold, error: createError } = await supabase
+  if (membership) {
+    isOwner = membership.role === "owner";
+    const { data, error: err } = await supabase
       .from("households")
-      .insert({ owner_id: user.id, name: "My Household" })
-      .select()
+      .select("*")
+      .eq("id", membership.household_id)
       .single();
 
-    if (createError) {
-      return { success: false, error: createError.message };
+    if (data) {
+      household = data;
+      // Also check owner_id if it exists (for new migration)
+      if (data.owner_id) {
+        isOwner = isOwner || data.owner_id === user.id;
+      }
     }
-
-    // Also add owner as household member
-    await supabase.from("household_members").insert({
-      household_id: newHousehold.id,
-      user_id: user.id,
-      role: "owner",
-    });
-
-    household = newHousehold;
   }
 
-  if (error) {
-    return { success: false, error: error.message };
+  // If no household found, user doesn't have one yet
+  if (!household) {
+    return { success: false, error: "No household found" };
   }
 
-  return { success: true, data: household };
+  // Add default values for new columns that might not exist yet
+  const householdWithDefaults: Household = {
+    id: household.id,
+    owner_id: household.owner_id || user.id,
+    name: household.name || "My Household",
+    timezone: household.timezone || "UTC",
+    units: household.units || "metric",
+    theme: household.theme || "system",
+    language: household.language || "en",
+    created_at: household.created_at,
+    updated_at: household.updated_at,
+  };
+
+  return { success: true, data: { ...householdWithDefaults, isOwner } };
 }
 
 export async function updateHouseholdAction(
@@ -187,19 +180,21 @@ export async function fetchMembersAction(
     return { success: false, error: error.message };
   }
 
-  // Get user emails from auth (requires service role or separate query)
   const formattedMembers: HouseholdMember[] = (members || []).map((m: any) => {
-    const permissions: Record<PageName, AccessLevel> = {
-      activity: "view",
-      records: "view",
-      growth: "view",
-      analytics: "view",
-      settings: "close",
+    // Default all modules to 'close' for members, 'full' for owner
+    const defaultLevel = m.role === 'owner' ? 'full' : 'close';
+    const permissions: Record<ModuleName, AccessLevel> = {
+      health: defaultLevel as AccessLevel,
+      productivity: defaultLevel as AccessLevel,
+      devices: defaultLevel as AccessLevel,
+      finance: defaultLevel as AccessLevel,
     };
 
-    // Apply actual permissions
+    // Apply actual permissions from database
     (m.page_permissions || []).forEach((p: any) => {
-      permissions[p.page as PageName] = p.access_level;
+      if (['health', 'productivity', 'devices', 'finance'].includes(p.page)) {
+        permissions[p.page as ModuleName] = p.access_level;
+      }
     });
 
     return {
@@ -209,7 +204,7 @@ export async function fetchMembersAction(
       role: m.role,
       joined_at: m.joined_at,
       name: m.profiles?.name || "Unknown",
-      email: "", // Would need service role to get from auth.users
+      email: "",
       avatar_url: m.profiles?.avatar_url,
       permissions,
     };
@@ -220,16 +215,16 @@ export async function fetchMembersAction(
 
 export async function updateMemberPermissionsAction(
   memberId: string,
-  page: PageName,
+  module: ModuleName,
   level: AccessLevel
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient();
 
-  // Upsert permission
+  // Upsert permission (still uses 'page' column in DB)
   const { error } = await supabase
     .from("page_permissions")
     .upsert(
-      { household_member_id: memberId, page, access_level: level },
+      { household_member_id: memberId, page: module, access_level: level },
       { onConflict: "household_member_id,page" }
     );
 
