@@ -1,8 +1,7 @@
 // src/modules/health/components/index.ts
-// Placeholder exports for health module components
 
 // Member management
-// export { MemberSwitcher } from './member-switcher';
+export { MemberSwitcher } from './member-switcher';
 // export { AddMemberModal } from './add-member-modal';
 
 // Activity tracking
