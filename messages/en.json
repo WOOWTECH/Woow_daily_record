@@ -13,7 +13,9 @@
     "close": "Close",
     "submit": "Submit",
     "reset": "Reset",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "confirmDelete": "Confirm Delete",
+    "deleteConfirm": "Are you sure you want to delete this?"
   },
   "nav": {
     "home": "Home",
@@ -23,6 +25,7 @@
     "notes": "Notes",
     "devices": "Devices",
     "finance": "Finance",
+    "productivity": "Productivity",
     "settings": "Settings",
     "signOut": "Sign Out"
   },
@@ -75,6 +78,22 @@
       "saving": "Saving...",
       "updateDevice": "Update Device",
       "nameRequired": "Please enter a device name"
+    },
+    "detail": {
+      "serialNumber": "Serial",
+      "noContent": "No content yet",
+      "deleteConfirmTitle": "Delete this device?",
+      "deleteConfirmDescription": "This action cannot be undone. Device \"{name}\" and all its data will be permanently deleted.",
+      "purchaseDate": "Purchased",
+      "price": "Price",
+      "warrantyExpiry": "Warranty until",
+      "expired": "Expired",
+      "manual": "User Manual",
+      "maintenance": "Maintenance Records"
+    },
+    "toast": {
+      "deleted": "Device deleted",
+      "deleteFailed": "Failed to delete device"
     }
   },
   "settings": {
@@ -398,6 +417,12 @@
   "finance": {
     "title": "Finance",
     "subtitle": "Manage household income, expenses and accounts",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "accounts": "Accounts",
+      "transactions": "Transactions",
+      "analytics": "Analytics"
+    },
     "dashboard": {
       "totalBalance": "Total Balance",
       "monthlyIncome": "Monthly Income",
@@ -527,5 +552,67 @@
       "categoryCreated": "Category created",
       "typeCreated": "Type created"
     }
+  },
+  "productivity": {
+    "title": "Productivity",
+    "subtitle": "Manage tasks, notes, and calendar in one place",
+    "sidebar": {
+      "overview": "Overview",
+      "todos": "Tasks",
+      "notes": "Notes",
+      "calendar": "Calendar"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "todos": "Tasks",
+      "notes": "Notes",
+      "calendar": "Calendar"
+    },
+    "overview": {
+      "todos": "Tasks",
+      "notes": "Notes",
+      "calendar": "Calendar",
+      "activeTasks": "Active tasks",
+      "completedToday": "Completed today",
+      "totalNotes": "Total notes",
+      "pinnedNotes": "Pinned",
+      "eventsToday": "Events today",
+      "upcomingThisWeek": "Upcoming this week"
+    }
+  },
+  "healthSettings": {
+    "title": "Family Members",
+    "subtitle": "Manage family members for health tracking",
+    "addMember": "Add Member",
+    "editMember": "Edit Member",
+    "noMembers": "No family members added yet.",
+    "addFirstMember": "Add your first family member",
+    "ageMonths": "{count, plural, =0 {Newborn} =1 {1 month} other {# months}}",
+    "ageYears": "{count, plural, =1 {1 year} other {# years}}",
+    "name": "Name",
+    "namePlaceholder": "Enter name",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "selectGender": "Select gender",
+    "genderBoy": "Boy",
+    "genderGirl": "Girl",
+    "genderOther": "Other",
+    "details": "Notes / Details",
+    "detailsPlaceholder": "Allergies, medical notes, or other important information...",
+    "uploadPhoto": "Upload",
+    "uploading": "Uploading...",
+    "photoAlt": "Member photo",
+    "deleteConfirmTitle": "Delete Family Member",
+    "deleteConfirmWarning": "This will permanently delete {name} and ALL their health records, growth data, and activity logs. This action cannot be undone.",
+    "deleteConfirmInstruction": "To confirm, please type \"{name}\" below:",
+    "typeMemberName": "Type member name to confirm",
+    "deleting": "Deleting...",
+    "deleteForever": "Delete Permanently"
+  },
+  "healthMemberSwitcher": {
+    "selectMember": "Select Member",
+    "switchMember": "Tap to switch",
+    "familyMembers": "Family Members",
+    "noMembers": "No members added"
   }
 }

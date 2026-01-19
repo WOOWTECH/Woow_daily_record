@@ -2,7 +2,10 @@
 
 // Member management
 export { MemberSwitcher } from './member-switcher';
-// export { AddMemberModal } from './add-member-modal';
+export { MemberForm } from './member-form';
+
+// Settings
+export { HealthSettingsTab } from './health-settings-tab';
 
 // Activity tracking
 // export { QuickLogWidget } from './activity/quick-log-widget';
