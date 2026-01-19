@@ -7,6 +7,7 @@ import { mdiPencil } from "@mdi/js";
 import { useState } from "react";
 import { GrowthForm } from "./growth-form";
 import { Dialog, DialogContent, DialogTitle } from "@/core/components/ui/dialog";
+import { useTranslations } from "next-intl";
 
 interface GrowthRecord {
     id: string;
@@ -26,6 +27,7 @@ interface GrowthHistoryProps {
 export function GrowthHistory({ records, childId, savedMetrics = [] }: GrowthHistoryProps) {
     // Sort descending by date
     const sorted = [...records].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const t = useTranslations('baby.growth');
 
     const [editingRecord, setEditingRecord] = useState<GrowthRecord | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -43,16 +45,16 @@ export function GrowthHistory({ records, childId, savedMetrics = [] }: GrowthHis
     return (
         <GlassCard className="flex-1 overflow-hidden flex flex-col min-h-[300px]">
             <div className="p-4 border-b border-brand-gray dark:border-white/10">
-                <h3 className="font-semibold text-brand-black dark:text-brand-white">History</h3>
+                <h3 className="font-semibold text-brand-black dark:text-brand-white">{t('history')}</h3>
             </div>
 
             <div className="overflow-y-auto flex-1 p-0">
                 <table className="w-full text-sm text-left">
                     <thead className="text-brand-deep-gray bg-brand-gray/30 dark:bg-white/5 sticky top-0 backdrop-blur-md">
                         <tr>
-                            <th className="px-4 py-3 font-medium whitespace-nowrap min-w-[100px]">Date</th>
-                            <th className="px-4 py-3 font-medium whitespace-nowrap min-w-[80px]">Height</th>
-                            <th className="px-4 py-3 font-medium whitespace-nowrap min-w-[80px]">Weight</th>
+                            <th className="px-4 py-3 font-medium whitespace-nowrap min-w-[100px]">{t('date')}</th>
+                            <th className="px-4 py-3 font-medium whitespace-nowrap min-w-[80px]">{t('height')}</th>
+                            <th className="px-4 py-3 font-medium whitespace-nowrap min-w-[80px]">{t('weight')}</th>
                             {/* Dynamic Custom Headers */}
                             {allCustomKeys.map(key => (
                                 <th key={key} className="px-4 py-3 font-medium whitespace-nowrap min-w-[100px]">{key}</th>
@@ -93,7 +95,7 @@ export function GrowthHistory({ records, childId, savedMetrics = [] }: GrowthHis
                         {sorted.length === 0 && (
                             <tr>
                                 <td colSpan={3 + allCustomKeys.length} className="px-4 py-8 text-center text-brand-deep-gray">
-                                    No records yet.
+                                    {t('noRecords')}
                                 </td>
                             </tr>
                         )}

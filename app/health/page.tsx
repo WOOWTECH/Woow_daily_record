@@ -25,6 +25,7 @@ import {
 import { useHealthStore } from "@/modules/health/store";
 import { getUserHousehold, createHousehold } from "@/core/lib/supabase/households";
 import { cn } from "@/lib/utils";
+import { TabNavigation } from "@/core/components/ui/tab-navigation";
 
 type TabId = "activity" | "records" | "growth" | "analytics" | "settings";
 
@@ -137,23 +138,11 @@ export default function HealthPage() {
       </GlassCard>
 
       {/* Horizontal Tab Navigation */}
-      <nav className="flex gap-1 overflow-x-auto pb-2 -mb-2">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => handleTabChange(tab.id)}
-            className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap cursor-pointer",
-              activeTab === tab.id
-                ? "bg-brand-blue text-white"
-                : "text-brand-deep-gray hover:bg-brand-gray/20 dark:hover:bg-white/10"
-            )}
-          >
-            <Icon path={tab.icon} size={0.75} />
-            {t(tab.labelKey)}
-          </button>
-        ))}
-      </nav>
+      <TabNavigation<TabId>
+        tabs={TABS.map(tab => ({ id: tab.id, label: t(tab.labelKey), icon: tab.icon }))}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       {/* Content Area */}
       <div className="min-w-0">

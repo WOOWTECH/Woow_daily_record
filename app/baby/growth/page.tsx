@@ -7,6 +7,7 @@ import { getCustomMetricTypes } from "@/app/actions/growth";
 import { createClient } from "@/core/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { format } from "date-fns";
+import { getTranslations } from "next-intl/server";
 
 async function getGrowthData(searchParams?: { childId?: string }) {
     const supabase = await createClient();
@@ -40,6 +41,7 @@ async function getGrowthData(searchParams?: { childId?: string }) {
 export default async function BabyGrowthPage(props: { searchParams: Promise<{ childId?: string }> }) {
     const searchParams = await props.searchParams;
     const { records, child } = await getGrowthData(searchParams);
+    const t = await getTranslations('baby.growth');
 
     // Fetch custom metric types if child exists
     const savedMetrics = child ? await getCustomMetricTypes(child.id) : [];
@@ -77,8 +79,8 @@ export default async function BabyGrowthPage(props: { searchParams: Promise<{ ch
             <GlassCard className="p-8">
                 <div className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-3xl font-bold text-brand-black dark:text-brand-white tracking-tight">Growth Tracker</h1>
-                        <p className="text-brand-deep-gray mt-1 font-medium">Track height and weight against WHO standards for <span className="font-bold text-brand-blue">{child.name}</span>.</p>
+                        <h1 className="text-3xl font-bold text-brand-black dark:text-brand-white tracking-tight">{t('title')}</h1>
+                        <p className="text-brand-deep-gray mt-1 font-medium">{t('trackDescription', { name: child.name })}</p>
                     </div>
                 </div>
             </GlassCard>

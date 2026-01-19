@@ -11,6 +11,7 @@ import { createCustomMetricType, deleteCustomMetricType } from "@/app/actions/gr
 import Icon from "@mdi/react";
 import { mdiLoading, mdiClose, mdiPlus, mdiDelete } from "@mdi/js";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 interface GrowthFormProps {
     childId: string;
@@ -29,6 +30,7 @@ interface GrowthFormProps {
 export function GrowthForm({ childId, savedMetrics, existingRecord, onClose }: GrowthFormProps) {
     const [isPending, startTransition] = useTransition();
     const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
+    const t = useTranslations('baby.growth');
 
     // Optimistically filter metrics
     const visibleMetrics = savedMetrics.filter(m => !deletedIds.has(m.id));
@@ -95,14 +97,14 @@ export function GrowthForm({ childId, savedMetrics, existingRecord, onClose }: G
 
     return (
         <GlassCard className="p-6">
-            <h2 className="text-xl font-bold text-brand-black dark:text-brand-white mb-6">{isEditMode ? 'Edit' : 'Add'} Record</h2>
+            <h2 className="text-xl font-bold text-brand-black dark:text-brand-white mb-6">{isEditMode ? t('editRecord') : t('addRecord')}</h2>
             <form action={handleSubmit} className="space-y-6">
                 <input type="hidden" name="childId" value={childId} />
                 <input type="hidden" name="date" value={date} />
 
                 {/* Date Picker (Native for simplicity) */}
                 <div className="space-y-2">
-                    <Label htmlFor="date">Date</Label>
+                    <Label htmlFor="date">{t('date')}</Label>
                     <Input
                         id="date"
                         type="date"
@@ -115,7 +117,7 @@ export function GrowthForm({ childId, savedMetrics, existingRecord, onClose }: G
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label htmlFor="height">Height (cm)</Label>
+                        <Label htmlFor="height">{t('heightCm')}</Label>
                         <Input
                             id="height"
                             name="height" // Native form handling uses name
@@ -128,7 +130,7 @@ export function GrowthForm({ childId, savedMetrics, existingRecord, onClose }: G
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="weight">Weight (kg)</Label>
+                        <Label htmlFor="weight">{t('weightKg')}</Label>
                         <Input
                             id="weight"
                             name="weight"
@@ -145,7 +147,7 @@ export function GrowthForm({ childId, savedMetrics, existingRecord, onClose }: G
                 {/* Custom Metrics Section */}
                 <div className="space-y-4 pt-4 border-t border-brand-gray dark:border-white/10">
                     <div className="flex items-center justify-between">
-                        <Label>Custom Measurements</Label>
+                        <Label>{t('customMeasurements')}</Label>
                     </div>
 
                     {/* Saved Metrics Chips */}
@@ -240,12 +242,12 @@ export function GrowthForm({ childId, savedMetrics, existingRecord, onClose }: G
                 <div className="flex gap-2">
                     {isEditMode && onClose && (
                         <Button type="button" onClick={onClose} variant="outline" className="flex-1">
-                            Cancel
+                            {t('cancel')}
                         </Button>
                     )}
                     <Button type="submit" disabled={isPending} className="flex-1 bg-[#6184FD] text-white hover:opacity-90">
                         {isPending ? <Icon path={mdiLoading} size={0.8} spin className="mr-2" /> : null}
-                        {isEditMode ? 'Update' : 'Save'} Record
+                        {t('saveRecord')}
                     </Button>
                 </div>
             </form>

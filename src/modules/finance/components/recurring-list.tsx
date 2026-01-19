@@ -36,6 +36,7 @@ export function RecurringList({
 }: RecurringListProps) {
   const t = useTranslations("finance");
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [selectedRecurring, setSelectedRecurring] = useState<FinanceRecurring | null>(null);
   const [isMarking, setIsMarking] = useState<string | null>(null);
 
   const formatCurrency = (amount: number) => {
@@ -73,12 +74,27 @@ export function RecurringList({
   const expenseItems = recurringItems.filter((item) => item.type === "expense");
   const incomeItems = recurringItems.filter((item) => item.type === "income");
 
+  const handleItemClick = (item: FinanceRecurring) => {
+    setSelectedRecurring(item);
+  };
+
   const renderItem = (item: FinanceRecurring) => {
     const status = getStatus(item.id);
     const isPaid = status?.status === "paid";
 
     return (
-      <div key={item.id} className="flex items-center gap-4 p-4">
+      <div
+        key={item.id}
+        className="flex items-center gap-4 p-4 cursor-pointer hover:bg-brand-gray/10 transition-colors"
+        onClick={() => handleItemClick(item)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            handleItemClick(item);
+          }
+        }}
+      >
         {/* Status indicator */}
         <div
           className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -120,7 +136,10 @@ export function RecurringList({
             <Button
               size="sm"
               variant="outline"
-              onClick={() => handleMarkPaid(item)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleMarkPaid(item);
+              }}
               disabled={isMarking === item.id}
               className="text-xs"
               aria-label={`${t("recurring.markAsPaid")}: ${item.name}`}
@@ -198,12 +217,25 @@ export function RecurringList({
         </>
       )}
 
+      {/* Add Dialog */}
       <RecurringDialog
         open={showAddDialog}
         onOpenChange={setShowAddDialog}
         accounts={accounts}
         categories={categories}
         householdId={householdId}
+      />
+
+      {/* Edit Dialog */}
+      <RecurringDialog
+        open={!!selectedRecurring}
+        onOpenChange={(open) => {
+          if (!open) setSelectedRecurring(null);
+        }}
+        accounts={accounts}
+        categories={categories}
+        householdId={householdId}
+        recurring={selectedRecurring ?? undefined}
       />
     </div>
   );

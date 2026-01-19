@@ -14,10 +14,10 @@ export interface FamilyMember {
 
 export interface NewFamilyMember {
   name: string;
-  date_of_birth?: string;
-  gender?: 'boy' | 'girl' | 'other';
-  photo_url?: string;
-  details?: string;
+  date_of_birth?: string | null;
+  gender?: 'boy' | 'girl' | 'other' | null;
+  photo_url?: string | null;
+  details?: string | null;
 }
 
 export type HealthTabId = 'activity' | 'records' | 'growth' | 'analytics' | 'settings';

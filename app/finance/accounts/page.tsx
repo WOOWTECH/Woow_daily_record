@@ -1,5 +1,5 @@
 // app/finance/accounts/page.tsx
-import { GlassCard } from "@/core/components/glass-card";
+import { PageHeader } from "@/core/components/page-header";
 import { AccountList } from "@/modules/finance/components/account-list";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
@@ -38,15 +38,12 @@ export default async function AccountsPage() {
 
   return (
     <div className="space-y-6 pb-20">
-      {/* Header */}
-      <GlassCard className="p-8">
-        <h1 className="text-3xl font-bold text-brand-black dark:text-brand-white tracking-tight">
-          {t('accounts.title')}
-        </h1>
-        <p className="text-brand-deep-gray mt-1 font-medium">
-          {t('subtitle')}
-        </p>
-      </GlassCard>
+      {/* Header with Back Button */}
+      <PageHeader
+        title={t('accounts.title')}
+        subtitle={t('subtitle')}
+        fallbackHref="/finance"
+      />
 
       {/* Account List */}
       <AccountList accounts={accounts || []} householdId={household.id} />

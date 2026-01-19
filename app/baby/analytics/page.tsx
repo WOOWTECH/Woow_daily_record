@@ -4,6 +4,7 @@ import { getLogs } from "@/modules/baby/lib/data";
 import { createClient } from "@/core/lib/supabase/server";
 import { startOfDay, endOfDay, subDays } from "date-fns";
 import { AnalyticsFilters } from "@/modules/baby/components/analytics/analytics-filters";
+import { getTranslations } from "next-intl/server";
 import { DailyDistributionChart } from "@/modules/baby/components/analytics/daily-distribution-chart";
 import { DailyTrendChart } from "@/modules/baby/components/analytics/daily-trend-chart";
 
@@ -12,6 +13,7 @@ export const dynamic = "force-dynamic";
 export default async function BabyAnalyticsPage(props: { searchParams: Promise<{ startDate?: string; endDate?: string, childId?: string, category?: string, typeId?: string }> }) {
     const searchParams = await props.searchParams;
     const supabase = await createClient();
+    const t = await getTranslations('baby.analytics');
 
     // 1. Get Child
     let query = supabase.from("children").select("id, name").limit(1);
@@ -54,13 +56,13 @@ export default async function BabyAnalyticsPage(props: { searchParams: Promise<{
             {/* Floating Glass Header */}
             <GlassCard className="p-8 flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-brand-black dark:text-brand-white tracking-tight">Analytics</h1>
+                    <h1 className="text-3xl font-bold text-brand-black dark:text-brand-white tracking-tight">{t('title')}</h1>
                     <p className="text-brand-deep-gray mt-1 font-medium">
-                        Insights for <span className="font-bold text-brand-blue">{child.name}</span>.
+                        {t('insightsFor', { name: child.name })}
                     </p>
                 </div>
                 <div className="px-4 py-2 rounded-full bg-brand-blue/10 text-brand-blue text-sm font-bold shadow-sm">
-                    {category === "all" ? "All Categories" : category}
+                    {category === "all" ? t('allCategories') : category}
                 </div>
             </GlassCard>
 

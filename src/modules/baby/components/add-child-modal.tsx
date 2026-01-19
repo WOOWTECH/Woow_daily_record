@@ -9,6 +9,7 @@ import { useState, useTransition } from "react";
 import { createChild } from "@/app/actions/children";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface AddChildModalProps {
     open: boolean;
@@ -16,6 +17,7 @@ interface AddChildModalProps {
 }
 
 export function AddChildModal({ open, onOpenChange }: AddChildModalProps) {
+    const t = useTranslations('baby.activity.addChild');
     // const { addChild } = useChild(); // Removed client-side only context
     const router = useRouter(); // For refreshing server components
     const [name, setName] = useState("");
@@ -72,15 +74,15 @@ export function AddChildModal({ open, onOpenChange }: AddChildModalProps) {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px] bg-brand-gray dark:bg-brand-black border border-white/10 shadow-2xl backdrop-blur-2xl">
                 <DialogHeader>
-                    <DialogTitle>Add New Baby</DialogTitle>
+                    <DialogTitle>{t('title')}</DialogTitle>
                     <DialogDescription>
-                        Enter your child&apos;s details to start tracking their growth and activities.
+                        {t('description')}
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="name" className="text-right">
-                            Name
+                            {t('name')}
                         </Label>
                         <Input
                             id="name"
@@ -91,7 +93,7 @@ export function AddChildModal({ open, onOpenChange }: AddChildModalProps) {
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="dob" className="text-right">
-                            Birthday
+                            {t('birthday')}
                         </Label>
                         <Input
                             id="dob"
@@ -102,21 +104,21 @@ export function AddChildModal({ open, onOpenChange }: AddChildModalProps) {
                         />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right">Gender</Label>
+                        <Label className="text-right">{t('gender')}</Label>
                         <div className="col-span-3 flex gap-4">
                             <label className="flex items-center gap-2 cursor-pointer">
                                 <input type="radio" name="gender" value="boy" checked={gender === "boy"} onChange={() => setGender("boy")} />
-                                <span>Boy</span>
+                                <span>{t('boy')}</span>
                             </label>
                             <label className="flex items-center gap-2 cursor-pointer">
                                 <input type="radio" name="gender" value="girl" checked={gender === "girl"} onChange={() => setGender("girl")} />
-                                <span>Girl</span>
+                                <span>{t('girl')}</span>
                             </label>
                         </div>
                     </div>
                     <div className="flex justify-end gap-3 mt-4">
-                        <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>Cancel</Button>
-                        <Button type="submit" className="bg-brand-blue text-white hover:bg-brand-blue/90">Add Baby</Button>
+                        <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>{t('cancel')}</Button>
+                        <Button type="submit" className="bg-brand-blue text-white hover:bg-brand-blue/90">{t('addButton')}</Button>
                     </div>
                 </form>
             </DialogContent>

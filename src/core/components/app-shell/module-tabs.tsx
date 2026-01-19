@@ -3,42 +3,44 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Icon from "@mdi/react";
 import { cn } from "@/lib/utils";
 
 interface Tab {
   label: string;
   href: string;
+  icon?: string; // Optional MDI icon path
 }
 
 interface ModuleTabsProps {
   tabs: Tab[];
+  className?: string;
 }
 
-export function ModuleTabs({ tabs }: ModuleTabsProps) {
+export function ModuleTabs({ tabs, className }: ModuleTabsProps) {
   const pathname = usePathname();
 
   return (
-    <div className="border-b border-brand-gray/20 dark:border-white/10 mb-6">
-      <nav className="flex gap-1 -mb-px">
-        {tabs.map((tab) => {
-          const isActive = pathname === tab.href;
+    <nav className={cn("flex gap-1 overflow-x-auto pb-2 -mb-2 no-scrollbar", className)}>
+      {tabs.map((tab) => {
+        const isActive = pathname === tab.href;
 
-          return (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              className={cn(
-                "px-4 py-3 text-sm font-medium transition-all border-b-2",
-                isActive
-                  ? "border-brand-blue text-brand-blue"
-                  : "border-transparent text-brand-deep-gray hover:text-brand-black dark:hover:text-brand-white hover:border-brand-gray/50"
-              )}
-            >
-              {tab.label}
-            </Link>
-          );
-        })}
-      </nav>
-    </div>
+        return (
+          <Link
+            key={tab.href}
+            href={tab.href}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap cursor-pointer",
+              isActive
+                ? "bg-brand-blue text-white shadow-sm"
+                : "text-brand-deep-gray hover:bg-brand-gray/20 dark:hover:bg-white/10"
+            )}
+          >
+            {tab.icon && <Icon path={tab.icon} size={0.75} />}
+            {tab.label}
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

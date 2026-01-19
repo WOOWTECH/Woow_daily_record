@@ -14,10 +14,12 @@ import { useChild } from "@/modules/baby/hooks/use-child";
 import Icon from "@mdi/react";
 import { mdiUnfoldMoreHorizontal, mdiPlus, mdiAccount } from "@mdi/js";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export function ChildSwitcher() {
     const { selectedChild, children, selectChild } = useChild();
     const [modalOpen, setModalOpen] = useState(false);
+    const t = useTranslations('babySwitcher');
 
     return (
         <>
@@ -37,9 +39,9 @@ export function ChildSwitcher() {
                                 </div>
                                 <div className="min-w-0">
                                     <p className="font-bold text-sm text-brand-black dark:text-brand-white truncate">
-                                        {selectedChild ? selectedChild.name : "Select Child"}
+                                        {selectedChild ? selectedChild.name : t('selectChild')}
                                     </p>
-                                    <p className="text-xs text-brand-deep-gray truncate">Switch Baby</p>
+                                    <p className="text-xs text-brand-deep-gray truncate">{t('switchBaby')}</p>
                                 </div>
                             </div>
                             <Icon path={mdiUnfoldMoreHorizontal} size={0.67} className="text-brand-deep-gray opacity-50 group-hover:opacity-100" />
@@ -47,7 +49,7 @@ export function ChildSwitcher() {
                     </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-56" align="start">
-                    <DropdownMenuLabel>My Children</DropdownMenuLabel>
+                    <DropdownMenuLabel>{t('myChildren')}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {children.map((child) => (
                         <DropdownMenuItem key={child.id} onClick={() => selectChild(child.id)} className="cursor-pointer">
@@ -63,7 +65,7 @@ export function ChildSwitcher() {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => setModalOpen(true)} className="cursor-pointer text-brand-blue font-medium">
                         <Icon path={mdiPlus} size={0.67} className="mr-2" />
-                        <span>Add Baby</span>
+                        <span>{t('addBaby')}</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

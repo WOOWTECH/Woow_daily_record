@@ -1,5 +1,5 @@
 // app/finance/transactions/page.tsx
-import { GlassCard } from "@/core/components/glass-card";
+import { PageHeader } from "@/core/components/page-header";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -23,17 +23,7 @@ export default async function TransactionsPage() {
   const household = (memberData as { household: { id: string } } | null)?.household;
   if (!household) redirect("/login");
 
-  const { data: transactions } = await supabase
-    .from("finance_transactions")
-    .select(`
-      *,
-      account:finance_accounts(*),
-      category:finance_categories(*)
-    `)
-    .eq("household_id", household.id)
-    .order("date", { ascending: false })
-    .order("created_at", { ascending: false });
-
+  // Fetch accounts and categories first
   const { data: accounts } = await supabase
     .from("finance_accounts")
     .select("*")
@@ -44,13 +34,30 @@ export default async function TransactionsPage() {
     .select("*")
     .or(`household_id.eq.${household.id},is_system.eq.true`);
 
+  // Fetch transactions with simple SELECT (no embedded joins)
+  const { data: rawTransactions, error } = await supabase
+    .from("finance_transactions")
+    .select("*")
+    .eq("household_id", household.id)
+    .order("date", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching transactions:", error);
+  }
+
+  // Enrich transactions with account and category data
+  const transactions = (rawTransactions || []).map(tx => ({
+    ...tx,
+    account: accounts?.find(a => a.id === tx.account_id),
+    category: categories?.find(c => c.id === tx.category_id),
+  }));
+
   return (
     <div className="space-y-6 pb-20">
-      <GlassCard className="p-8">
-        <h1 className="text-3xl font-bold">{t("transactions.title")}</h1>
-      </GlassCard>
+      <PageHeader title={t("transactions.title")} fallbackHref="/finance" />
       <TransactionList
-        transactions={transactions || []}
+        transactions={transactions}
         accounts={accounts || []}
         categories={categories || []}
         householdId={household.id}
@@ -58,3 +65,4 @@ export default async function TransactionsPage() {
     </div>
   );
 }
+

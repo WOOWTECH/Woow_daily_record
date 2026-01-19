@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import Icon from "@mdi/react";
 import { mdiPin, mdiDelete, mdiPencil } from "@mdi/js";
 import { cn } from '@/lib/utils';
+import { MarkdownRenderer } from '@/core/components/markdown-renderer';
 import type { Note } from '../types';
 
 interface NoteItemProps {
@@ -17,8 +18,8 @@ interface NoteItemProps {
 export function NoteItem({ note, onTogglePin, onClick, onDelete }: NoteItemProps) {
   const updatedAt = format(new Date(note.updated_at), 'MMM d, yyyy');
 
-  // Get preview of content (first 100 chars)
-  const preview = note.content.slice(0, 100) + (note.content.length > 100 ? '...' : '');
+  // Get preview of content (first 150 chars for markdown)
+  const previewContent = note.content.slice(0, 150) + (note.content.length > 150 ? '...' : '');
 
   return (
     <div
@@ -46,11 +47,11 @@ export function NoteItem({ note, onTogglePin, onClick, onDelete }: NoteItemProps
         {note.title}
       </h3>
 
-      {/* Preview */}
-      {preview && (
-        <p className="text-sm text-brand-deep-gray leading-relaxed line-clamp-3 mb-4">
-          {preview}
-        </p>
+      {/* Preview - Rendered as Markdown */}
+      {previewContent && (
+        <div className="text-sm text-brand-deep-gray leading-relaxed line-clamp-3 mb-4 overflow-hidden">
+          <MarkdownRenderer content={previewContent} className="text-sm [&_*]:text-brand-deep-gray" />
+        </div>
       )}
 
       {/* Footer */}

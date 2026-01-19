@@ -12,6 +12,7 @@ import { mdiDelete, mdiPencil } from "@mdi/js";
 import { deleteLog } from "@/app/actions/logs";
 import { useRouter } from "next/navigation";
 import { LogActivityModal } from "./log-activity-modal";
+import { useTranslations } from "next-intl";
 
 // Filter categories
 const FILTER_OPTIONS = [
@@ -33,6 +34,7 @@ export function TimelineWidget({ initialLogs = [] }: { initialLogs?: Log[] }) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const router = useRouter();
     const supabase = createClient();
+    const t = useTranslations('baby.activity');
 
     // Sync logs when server revalidates (router.refresh triggers this re-render)
     useEffect(() => {
@@ -96,7 +98,7 @@ export function TimelineWidget({ initialLogs = [] }: { initialLogs?: Log[] }) {
     return (
         <GlassCard className="min-h-[600px] p-8">
             <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-bold text-brand-black dark:text-brand-white">Activity Log</h2>
+                <h2 className="text-xl font-bold text-brand-black dark:text-brand-white">{t('activityLog')}</h2>
 
                 {/* Filter Bar */}
                 <div className="flex bg-brand-gray/50 dark:bg-white/5 rounded-lg p-1">
@@ -111,7 +113,7 @@ export function TimelineWidget({ initialLogs = [] }: { initialLogs?: Log[] }) {
                                     : "text-brand-deep-gray hover:text-brand-black dark:hover:text-white"
                             )}
                         >
-                            {option.label}
+                            {t(`filters.${option.value === 'feeding' ? 'eat' : option.value === 'excretion' ? 'diaper' : option.value}`)}
                         </button>
                     ))}
                 </div>

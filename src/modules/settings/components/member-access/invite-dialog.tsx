@@ -70,8 +70,8 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
 
   const levelOptions: { value: AccessLevel; label: string }[] = [
     { value: "view", label: `👁 ${tMembers("accessView")}` },
-    { value: "partial", label: `✏️ ${tMembers("accessPartial")}` },
-    { value: "edit", label: `✅ ${tMembers("accessEdit")}` },
+    { value: "control", label: `✏️ ${tMembers("accessControl")}` },
+    { value: "full", label: `⭐ ${tMembers("accessFull")}` },
   ];
 
   return (
@@ -140,7 +140,7 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
                 <Button type="button" variant="outline" onClick={handleClose}>
                   {t("cancel")}
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
+                <Button type="submit" disabled={isSubmitting} className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-sm">
                   <Icon path={mdiSend} size={0.67} className="mr-1" />
                   {isSubmitting ? t("sending") : t("sendInvite")}
                 </Button>

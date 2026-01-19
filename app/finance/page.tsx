@@ -1,6 +1,6 @@
 // app/finance/page.tsx
 import { GlassCard } from "@/core/components/glass-card";
-import { FinanceDashboard } from "@/modules/finance/components/finance-dashboard";
+import { FinanceTabs } from "@/modules/finance/components/finance-tabs";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from 'next-intl/server';
@@ -43,18 +43,31 @@ export default async function FinancePage() {
     .or(`household_id.eq.${household.id},is_system.eq.true`)
     .order('sort_order', { ascending: true });
 
-  // Fetch recent transactions (last 10) with joined account and category
-  const { data: recentTransactions } = await supabase
+  // Fetch all transactions for full list and analytics
+  const { data: allTransactions, error: txError } = await supabase
     .from('finance_transactions')
-    .select(`
-      *,
-      account:finance_accounts(*),
-      category:finance_categories(*)
-    `)
+    .select('*')
     .eq('household_id', household.id)
     .order('date', { ascending: false })
-    .order('created_at', { ascending: false })
-    .limit(10);
+    .order('created_at', { ascending: false });
+
+  if (txError) {
+    console.error('Error fetching transactions:', txError);
+  }
+
+  // Enrich transactions with account and category data
+  const enrichedTransactions = (allTransactions || []).map(tx => {
+    const account = accounts?.find(a => a.id === tx.account_id);
+    const category = categories?.find(c => c.id === tx.category_id);
+    return {
+      ...tx,
+      account,
+      category,
+    };
+  });
+
+  // Get recent 10 transactions for dashboard
+  const recentTransactions = enrichedTransactions.slice(0, 10);
 
   // Calculate monthly totals for current month
   const now = new Date();
@@ -92,6 +105,30 @@ export default async function FinancePage() {
     }
   }
 
+  // Fetch recurring items
+  const { data: recurringItems } = await supabase
+    .from("finance_recurring")
+    .select(`
+      *,
+      account:finance_accounts(*),
+      category:finance_categories(*)
+    `)
+    .eq("household_id", household.id)
+    .order("due_day", { ascending: true });
+
+  // Get current year-month for status check
+  const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+
+  // Fetch status for current month
+  const recurringIds = recurringItems?.map(r => r.id) || [];
+  const { data: statusRecords } = recurringIds.length > 0
+    ? await supabase
+      .from("finance_recurring_status")
+      .select("*")
+      .in("recurring_id", recurringIds)
+      .eq("year_month", yearMonth)
+    : { data: [] };
+
   return (
     <div className="space-y-6 pb-20">
       {/* Header */}
@@ -104,15 +141,19 @@ export default async function FinancePage() {
         </p>
       </GlassCard>
 
-      {/* Finance Dashboard Component */}
-      <FinanceDashboard
+      {/* Finance Tabs Component */}
+      <FinanceTabs
         accounts={accounts || []}
         categories={categories || []}
-        recentTransactions={recentTransactions || []}
+        transactions={enrichedTransactions}
+        recentTransactions={recentTransactions}
         monthlyIncome={monthlyIncome}
         monthlyExpense={monthlyExpense}
         totalBalance={totalBalance}
         householdId={household.id}
+        recurringItems={recurringItems || []}
+        statusRecords={statusRecords || []}
+        currentYearMonth={yearMonth}
       />
     </div>
   );

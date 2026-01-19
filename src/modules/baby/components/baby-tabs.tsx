@@ -2,6 +2,7 @@
 "use client";
 
 import { useTranslations } from 'next-intl';
+import { mdiClockCheck, mdiFormatListBulleted, mdiChartLine, mdiChartPie } from '@mdi/js';
 import { ModuleTabs } from "@/core/components/app-shell/module-tabs";
 import { ChildSwitcher } from "./child-switcher";
 
@@ -9,10 +10,10 @@ export function BabyTabs() {
   const t = useTranslations('baby');
 
   const babyTabs = [
-    { label: t('tabs.activity'), href: "/baby/activity" },
-    { label: t('tabs.records'), href: "/baby/records" },
-    { label: t('tabs.growth'), href: "/baby/growth" },
-    { label: t('tabs.analytics'), href: "/baby/analytics" },
+    { label: t('tabs.activity'), href: "/baby/activity", icon: mdiClockCheck },
+    { label: t('tabs.records'), href: "/baby/records", icon: mdiFormatListBulleted },
+    { label: t('tabs.growth'), href: "/baby/growth", icon: mdiChartLine },
+    { label: t('tabs.analytics'), href: "/baby/analytics", icon: mdiChartPie },
   ];
 
   return (

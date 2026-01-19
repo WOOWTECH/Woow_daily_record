@@ -8,6 +8,7 @@ import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YA
 import { CustomTooltip } from "../analytics/custom-tooltip";
 import { GrowthRecord } from "@/modules/baby/lib/constants";
 import { useAccentColor } from "@/core/hooks/use-accent-color";
+import { useTranslations } from "next-intl";
 
 interface GrowthChartProps {
     records: GrowthRecord[];
@@ -17,6 +18,7 @@ interface GrowthChartProps {
 export function GrowthChart({ records, dob }: GrowthChartProps) {
     const [metric, setMetric] = useState<string>("weight");
     const accentColor = useAccentColor();
+    const t = useTranslations('baby.growth');
 
     // Extract available custom metrics from records
     const customMetricKeys = useMemo(() => {
@@ -91,8 +93,8 @@ export function GrowthChart({ records, dob }: GrowthChartProps) {
             <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
                 <h2 className="text-xl font-bold text-brand-black dark:text-brand-white">
                     {isStandard
-                        ? (metric === "weight" ? "Weight Curve" : "Height Curve")
-                        : `${metric} Curve`}
+                        ? (metric === "weight" ? t('weightCurve') : t('heightCurve'))
+                        : `${metric}`}
                 </h2>
 
                 <div className="flex flex-wrap gap-2 bg-brand-gray/50 dark:bg-white/5 rounded-lg p-1">
@@ -106,7 +108,7 @@ export function GrowthChart({ records, dob }: GrowthChartProps) {
                                 : "text-brand-deep-gray hover:text-brand-black dark:hover:text-brand-white"
                                 }`}
                         >
-                            {m.charAt(0).toUpperCase() + m.slice(1)}
+                            {m === 'weight' ? t('weight') : t('height')}
                         </button>
                     ))}
 
@@ -144,7 +146,7 @@ export function GrowthChart({ records, dob }: GrowthChartProps) {
                             axisLine={false}
                             tickLine={false}
                             tick={{ fill: "#9CA3AF" }}
-                            label={{ value: "Months", position: "insideBottom", offset: -10, fill: "#9CA3AF" }}
+                            label={{ value: t('months'), position: "insideBottom", offset: -10, fill: "#9CA3AF" }}
                         />
 
                         <YAxis
@@ -161,9 +163,9 @@ export function GrowthChart({ records, dob }: GrowthChartProps) {
                         {/* WHO Standards (Only if standard) */}
                         {isStandard && (
                             <>
-                                <Line type="monotone" dataKey="p85" stroke="#D1D5DB" strokeDasharray="5 5" dot={false} strokeWidth={1} name="85th %" connectNulls />
-                                <Line type="monotone" dataKey="p50" stroke="#9CA3AF" strokeDasharray="5 5" dot={false} strokeWidth={1.5} name="Average" connectNulls />
-                                <Line type="monotone" dataKey="p15" stroke="#D1D5DB" strokeDasharray="5 5" dot={false} strokeWidth={1} name="15th %" connectNulls />
+                                <Line type="monotone" dataKey="p85" stroke="#D1D5DB" strokeDasharray="5 5" dot={false} strokeWidth={1} name={t('percentile85th')} connectNulls />
+                                <Line type="monotone" dataKey="p50" stroke="#9CA3AF" strokeDasharray="5 5" dot={false} strokeWidth={1.5} name={t('average')} connectNulls />
+                                <Line type="monotone" dataKey="p15" stroke="#D1D5DB" strokeDasharray="5 5" dot={false} strokeWidth={1} name={t('percentile15th')} connectNulls />
                             </>
                         )}
 
@@ -175,7 +177,7 @@ export function GrowthChart({ records, dob }: GrowthChartProps) {
                             strokeWidth={3}
                             dot={{ r: 5, fill: accentColor, stroke: "#fff", strokeWidth: 2 }}
                             activeDot={{ r: 8 }}
-                            name="Child Data"
+                            name={t('childData')}
                             connectNulls
                         />
                     </LineChart>

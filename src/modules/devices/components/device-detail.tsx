@@ -3,10 +3,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { HomeDevice, DEVICE_CATEGORIES } from "../types/device";
 import { deleteDeviceAction } from "@/app/actions/devices";
 import { GlassCard } from "@/core/components/glass-card";
 import { Button } from "@/core/components/ui/button";
+import { BackButton } from "@/core/components/ui/back-button";
 import Icon from "@mdi/react";
 import {
   mdiPencil,
@@ -16,7 +18,6 @@ import {
   mdiTag,
   mdiFileDocument,
   mdiWrench,
-  mdiArrowLeft,
   mdiAlert
 } from "@mdi/js";
 import { format } from "date-fns";
@@ -40,36 +41,35 @@ interface DeviceDetailProps {
 
 export function DeviceDetail({ device }: DeviceDetailProps) {
   const router = useRouter();
+  const t = useTranslations("devices");
+  const tCommon = useTranslations("common");
   const [activeTab, setActiveTab] = useState<"manual" | "maintenance">("manual");
   const [isDeleting, setIsDeleting] = useState(false);
 
   const categoryLabel = DEVICE_CATEGORIES.find(
     c => c.value === device.category
-  )?.label || '其他';
+  )?.label || t("categories.other");
 
   const isWarrantyExpired = device.warranty_expiry
     && new Date(device.warranty_expiry) < new Date();
 
-  // 刪除設備
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
       await deleteDeviceAction(device.id);
-      toast.success("設備已刪除");
+      toast.success(t("toast.deleted"));
       router.push("/devices");
     } catch (error: any) {
       console.error("Delete device error:", error);
-      toast.error(error.message || "刪除失敗");
+      toast.error(error.message || t("toast.deleteFailed") || "Delete failed");
     } finally {
       setIsDeleting(false);
     }
   };
 
-  // 簡易 Markdown 渲染（轉換基本語法）
   const renderMarkdown = (content: string | null) => {
-    if (!content) return <p className="text-brand-deep-gray italic">尚無內容</p>;
+    if (!content) return <p className="text-brand-deep-gray italic">{t("detail.noContent")}</p>;
 
-    // 基本轉換：標題、粗體、列表、換行
     const html = content
       .replace(/^### (.*$)/gm, '<h3 class="text-lg font-bold mt-4 mb-2">$1</h3>')
       .replace(/^## (.*$)/gm, '<h2 class="text-xl font-bold mt-6 mb-3">$1</h2>')
@@ -90,13 +90,10 @@ export function DeviceDetail({ device }: DeviceDetailProps) {
 
   return (
     <div className="space-y-6 max-w-3xl">
-      {/* 返回按鈕 */}
-      <Link href="/devices" className="inline-flex items-center gap-2 text-brand-deep-gray hover:text-brand-blue">
-        <Icon path={mdiArrowLeft} size={0.75} />
-        返回設備列表
-      </Link>
+      {/* Back Button */}
+      <BackButton fallbackHref="/devices" />
 
-      {/* 標題卡片 */}
+      {/* Title Card */}
       <GlassCard className="p-6">
         <div className="flex items-start justify-between">
           <div>
@@ -117,17 +114,17 @@ export function DeviceDetail({ device }: DeviceDetailProps) {
 
             {device.serial_number && (
               <p className="text-sm text-brand-deep-gray mt-1">
-                序號：{device.serial_number}
+                {t("detail.serialNumber")}: {device.serial_number}
               </p>
             )}
           </div>
 
-          {/* 操作按鈕 */}
+          {/* Action Buttons */}
           <div className="flex gap-2">
             <Link href={`/devices/${device.id}/edit`}>
               <Button variant="outline" size="sm">
                 <Icon path={mdiPencil} size={0.67} className="mr-1" />
-                編輯
+                {tCommon("edit")}
               </Button>
             </Link>
 
@@ -135,24 +132,24 @@ export function DeviceDetail({ device }: DeviceDetailProps) {
               <AlertDialogTrigger asChild>
                 <Button variant="outline" size="sm" className="text-red-500 hover:text-red-600">
                   <Icon path={mdiDelete} size={0.67} className="mr-1" />
-                  刪除
+                  {tCommon("delete")}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>確定要刪除此設備？</AlertDialogTitle>
+                  <AlertDialogTitle>{t("detail.deleteConfirmTitle")}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    此操作無法復原，設備「{device.name}」的所有資料將被永久刪除。
+                    {t("detail.deleteConfirmDescription", { name: device.name })}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>取消</AlertDialogCancel>
+                  <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDelete}
                     disabled={isDeleting}
                     className="bg-red-500 hover:bg-red-600"
                   >
-                    {isDeleting ? "刪除中..." : "確定刪除"}
+                    {isDeleting ? tCommon("loading") : tCommon("confirmDelete")}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -160,7 +157,7 @@ export function DeviceDetail({ device }: DeviceDetailProps) {
           </div>
         </div>
 
-        {/* 標籤 */}
+        {/* Tags */}
         {device.tags && device.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-4">
             {device.tags.map(tag => (
@@ -175,19 +172,19 @@ export function DeviceDetail({ device }: DeviceDetailProps) {
           </div>
         )}
 
-        {/* 購買/保固資訊 */}
+        {/* Purchase/Warranty Info */}
         <div className="flex flex-wrap gap-6 mt-6 pt-4 border-t border-brand-gray/30 dark:border-white/10">
           {device.purchase_date && (
             <div className="flex items-center gap-2 text-sm text-brand-deep-gray">
               <Icon path={mdiCalendar} size={0.67} />
-              購買：{format(new Date(device.purchase_date), "yyyy/MM/dd")}
+              {t("detail.purchaseDate")}: {format(new Date(device.purchase_date), "yyyy/MM/dd")}
             </div>
           )}
 
           {device.purchase_price && (
             <div className="flex items-center gap-2 text-sm text-brand-deep-gray">
               <Icon path={mdiCurrencyUsd} size={0.67} />
-              金額：${device.purchase_price.toLocaleString()}
+              {t("detail.price")}: ${device.purchase_price.toLocaleString()}
             </div>
           )}
 
@@ -195,40 +192,40 @@ export function DeviceDetail({ device }: DeviceDetailProps) {
             <div className={`flex items-center gap-2 text-sm ${isWarrantyExpired ? 'text-red-500' : 'text-brand-deep-gray'}`}>
               {isWarrantyExpired && <Icon path={mdiAlert} size={0.67} />}
               <Icon path={mdiCalendar} size={0.67} />
-              保固至：{format(new Date(device.warranty_expiry), "yyyy/MM/dd")}
-              {isWarrantyExpired && " (已過期)"}
+              {t("detail.warrantyExpiry")}: {format(new Date(device.warranty_expiry), "yyyy/MM/dd")}
+              {isWarrantyExpired && ` (${t("detail.expired")})`}
             </div>
           )}
         </div>
       </GlassCard>
 
-      {/* 文件標籤頁 */}
+      {/* Document Tabs */}
       <GlassCard className="p-6">
-        {/* 標籤切換 */}
+        {/* Tab Switcher */}
         <div className="flex gap-2 mb-6 border-b border-brand-gray/30 dark:border-white/10">
           <button
             onClick={() => setActiveTab("manual")}
-            className={`flex items-center gap-2 px-4 py-3 -mb-px border-b-2 transition-colors ${activeTab === "manual"
+            className={`flex items-center gap-2 px-4 py-3 -mb-px border-b-2 transition-colors cursor-pointer ${activeTab === "manual"
               ? "border-brand-blue text-brand-blue"
               : "border-transparent text-brand-deep-gray hover:text-brand-black dark:hover:text-white"
               }`}
           >
             <Icon path={mdiFileDocument} size={0.75} />
-            使用說明
+            {t("detail.manual")}
           </button>
           <button
             onClick={() => setActiveTab("maintenance")}
-            className={`flex items-center gap-2 px-4 py-3 -mb-px border-b-2 transition-colors ${activeTab === "maintenance"
+            className={`flex items-center gap-2 px-4 py-3 -mb-px border-b-2 transition-colors cursor-pointer ${activeTab === "maintenance"
               ? "border-brand-blue text-brand-blue"
               : "border-transparent text-brand-deep-gray hover:text-brand-black dark:hover:text-white"
               }`}
           >
             <Icon path={mdiWrench} size={0.75} />
-            維修紀錄
+            {t("detail.maintenance")}
           </button>
         </div>
 
-        {/* 內容區 */}
+        {/* Content Area */}
         <div className="min-h-[200px]">
           {activeTab === "manual" && renderMarkdown(device.manual_md)}
           {activeTab === "maintenance" && renderMarkdown(device.maintenance_md)}

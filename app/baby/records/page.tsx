@@ -5,6 +5,7 @@ import { DateRangeFilter } from "@/modules/baby/components/records/date-range-fi
 import { Logbook } from "@/modules/baby/components/records/logbook";
 import { createClient } from "@/core/lib/supabase/server";
 import { startOfDay, endOfDay, subDays } from "date-fns";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,7 @@ export default async function BabyRecordsPage(props: {
 }) {
   const searchParams = await props.searchParams;
   const supabase = await createClient();
+  const t = await getTranslations('baby.records');
 
   let query = supabase.from("children").select("id, name").limit(1);
   if (searchParams.childId) {
@@ -36,9 +38,9 @@ export default async function BabyRecordsPage(props: {
       <GlassCard className="p-8">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-brand-black dark:text-brand-white tracking-tight">Records</h1>
+            <h1 className="text-3xl font-bold text-brand-black dark:text-brand-white tracking-tight">{t('title')}</h1 >
             <p className="text-brand-deep-gray mt-1 font-medium">
-              Detailed activity log for <span className="font-bold text-brand-blue">{child.name}</span>.
+              {t('detailedLogFor', { name: child.name })}
             </p>
           </div>
         </div>

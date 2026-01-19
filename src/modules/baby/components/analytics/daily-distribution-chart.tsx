@@ -4,6 +4,7 @@ import { GlassCard } from "@/core/components/glass-card";
 import { format } from "date-fns";
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ZAxis } from "recharts";
 import { useAccentColor } from "@/core/hooks/use-accent-color";
+import { useTranslations } from "next-intl";
 
 interface DailyDistributionChartProps {
     data: any[];
@@ -11,6 +12,7 @@ interface DailyDistributionChartProps {
 
 export function DailyDistributionChart({ data }: DailyDistributionChartProps) {
     const accentColor = useAccentColor();
+    const t = useTranslations('baby.analytics');
     // Transform data for scatter chart
     // X: Date (timestamp)
     // Y: Time of day (0-24 hours)
@@ -32,7 +34,7 @@ export function DailyDistributionChart({ data }: DailyDistributionChartProps) {
 
     return (
         <GlassCard className="p-6">
-            <h2 className="text-xl font-bold mb-4 text-brand-black dark:text-brand-white">Daily Distribution</h2>
+            <h2 className="text-xl font-bold mb-4 text-brand-black dark:text-brand-white">{t('dailyDistribution')}</h2>
             <div className="h-[300px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>

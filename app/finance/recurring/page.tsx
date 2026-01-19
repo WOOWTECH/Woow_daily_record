@@ -1,5 +1,5 @@
 // app/finance/recurring/page.tsx
-import { GlassCard } from "@/core/components/glass-card";
+import { PageHeader } from "@/core/components/page-header";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -42,10 +42,10 @@ export default async function RecurringPage() {
   const recurringIds = recurringItems?.map(r => r.id) || [];
   const { data: statusRecords } = recurringIds.length > 0
     ? await supabase
-        .from("finance_recurring_status")
-        .select("*")
-        .in("recurring_id", recurringIds)
-        .eq("year_month", yearMonth)
+      .from("finance_recurring_status")
+      .select("*")
+      .in("recurring_id", recurringIds)
+      .eq("year_month", yearMonth)
     : { data: [] };
 
   // Fetch accounts and categories
@@ -61,9 +61,7 @@ export default async function RecurringPage() {
 
   return (
     <div className="space-y-6 pb-20">
-      <GlassCard className="p-8">
-        <h1 className="text-3xl font-bold">{t("recurring.title")}</h1>
-      </GlassCard>
+      <PageHeader title={t("recurring.title")} fallbackHref="/finance" />
       <RecurringList
         recurringItems={recurringItems || []}
         statusRecords={statusRecords || []}

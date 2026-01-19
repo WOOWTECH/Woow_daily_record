@@ -1,7 +1,12 @@
 // src/modules/health/store/index.ts
 import { create } from 'zustand';
 import type { FamilyMember, NewFamilyMember } from '../types';
-import * as api from '../lib/supabase';
+import {
+  createFamilyMemberAction,
+  fetchFamilyMembersAction,
+  updateFamilyMemberAction,
+  deleteFamilyMemberAction,
+} from '../lib/actions';
 
 interface HealthState {
   members: FamilyMember[];
@@ -33,13 +38,17 @@ export const useHealthStore = create<HealthState>((set, get) => ({
 
     set({ isLoading: true, error: null });
     try {
-      const members = await api.fetchFamilyMembers(householdId);
-      set({ members, isLoading: false });
+      const result = await fetchFamilyMembersAction();
+      if (result.success && result.data) {
+        set({ members: result.data, isLoading: false });
 
-      // Auto-select first member if none selected
-      const { selectedMemberId } = get();
-      if (!selectedMemberId && members.length > 0) {
-        set({ selectedMemberId: members[0].id });
+        // Auto-select first member if none selected
+        const { selectedMemberId } = get();
+        if (!selectedMemberId && result.data.length > 0) {
+          set({ selectedMemberId: result.data[0].id });
+        }
+      } else {
+        set({ error: result.error || 'Failed to fetch members', isLoading: false });
       }
     } catch (error) {
       set({ error: (error as Error).message, isLoading: false });
@@ -47,19 +56,24 @@ export const useHealthStore = create<HealthState>((set, get) => ({
   },
 
   addMember: async (member) => {
-    const { householdId, members } = get();
-    if (!householdId) return;
+    const { members } = get();
 
     try {
-      const newMember = await api.createFamilyMember(householdId, member);
-      set({ members: [newMember, ...members] });
+      const result = await createFamilyMemberAction(member);
+      if (result.success && result.data) {
+        set({ members: [result.data, ...members] });
 
-      // Select newly added member if it's the first one
-      if (members.length === 0) {
-        set({ selectedMemberId: newMember.id });
+        // Select newly added member if it's the first one
+        if (members.length === 0) {
+          set({ selectedMemberId: result.data.id });
+        }
+      } else {
+        set({ error: result.error || 'Failed to add member' });
+        throw new Error(result.error || 'Failed to add member');
       }
     } catch (error) {
       set({ error: (error as Error).message });
+      throw error;
     }
   },
 
@@ -72,7 +86,11 @@ export const useHealthStore = create<HealthState>((set, get) => ({
     });
 
     try {
-      await api.updateFamilyMember(id, updates);
+      const result = await updateFamilyMemberAction(id, updates);
+      if (!result.success) {
+        // Rollback on error
+        set({ members, error: result.error || 'Failed to update member' });
+      }
     } catch (error) {
       // Rollback on error
       set({ members, error: (error as Error).message });
@@ -92,7 +110,11 @@ export const useHealthStore = create<HealthState>((set, get) => ({
     }
 
     try {
-      await api.deleteFamilyMember(id);
+      const result = await deleteFamilyMemberAction(id);
+      if (!result.success) {
+        // Rollback
+        set({ members, error: result.error || 'Failed to delete member' });
+      }
     } catch (error) {
       // Rollback
       set({ members, error: (error as Error).message });

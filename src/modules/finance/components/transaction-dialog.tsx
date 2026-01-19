@@ -13,9 +13,11 @@ import { Button } from '@/core/components/ui/button';
 import { Input } from '@/core/components/ui/input';
 import { Label } from '@/core/components/ui/label';
 import { toast } from 'sonner';
-import { createTransactionAction, updateTransactionAction } from '@/app/actions/finance';
-import type { FinanceAccount, FinanceCategory, FinanceTransaction } from '../types';
+import { createTransactionAction, updateTransactionAction, createCategoryAction } from '@/app/actions/finance';
+import type { FinanceAccount, FinanceCategory, FinanceTransaction, CategoryType } from '../types';
 import { cn } from '@/lib/utils';
+import Icon from '@mdi/react';
+import { mdiPlus, mdiCheck } from '@mdi/js';
 
 interface TransactionDialogProps {
   open: boolean;
@@ -48,10 +50,21 @@ export function TransactionDialog({
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Custom category creation state
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+  const [localCategories, setLocalCategories] = useState<FinanceCategory[]>(categories);
+
+  // Sync local categories when prop changes
+  useEffect(() => {
+    setLocalCategories(categories);
+  }, [categories]);
+
   const isEditing = !!transaction;
 
-  // Filter categories by type
-  const filteredCategories = categories.filter((cat) => cat.type === type);
+  // Filter categories by type using local state
+  const filteredCategories = localCategories.filter((cat) => cat.type === type);
 
   // Reset form when dialog opens/closes or transaction changes
   useEffect(() => {
@@ -72,6 +85,9 @@ export function TransactionDialog({
       setDescription('');
       setDate(new Date().toISOString().split('T')[0]);
     }
+    // Reset category creation state
+    setIsAddingCategory(false);
+    setNewCategoryName('');
   }, [transaction, defaultType, accounts, open]);
 
   // Reset category when type changes (since categories are filtered by type)
@@ -81,6 +97,34 @@ export function TransactionDialog({
       setCategoryId(filteredCategories.length > 0 ? filteredCategories[0].id : '');
     }
   }, [type, filteredCategories, categoryId]);
+
+  // Handle creating a new custom category
+  const handleCreateCategory = async () => {
+    if (!newCategoryName.trim()) {
+      toast.error(t('form.categoryNameRequired') || 'Category name is required');
+      return;
+    }
+
+    setIsCreatingCategory(true);
+    try {
+      const newCategory = await createCategoryAction(householdId, {
+        name: newCategoryName.trim(),
+        type: type as CategoryType,
+      });
+
+      // Add to local categories and select it
+      setLocalCategories(prev => [...prev, newCategory]);
+      setCategoryId(newCategory.id);
+      setNewCategoryName('');
+      setIsAddingCategory(false);
+      toast.success(t('toast.categoryCreated') || 'Category created');
+    } catch (error) {
+      console.error('Failed to create category:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to create category');
+    } finally {
+      setIsCreatingCategory(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -209,24 +253,76 @@ export function TransactionDialog({
             </select>
           </div>
 
-          {/* Category Select - Filtered by Type */}
+          {/* Category Select - Filtered by Type with Add Custom Option */}
           <div className="space-y-2">
             <Label htmlFor="category">{t('form.category')}</Label>
-            <select
-              id="category"
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
-            >
-              <option value="">
-                {t('form.selectCategory')}
-              </option>
-              {filteredCategories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+            {isAddingCategory ? (
+              <div className="flex gap-2">
+                <Input
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder={t('form.newCategoryPlaceholder') || 'Enter category name...'}
+                  className="flex-1"
+                  disabled={isCreatingCategory}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleCreateCategory();
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handleCreateCategory}
+                  disabled={isCreatingCategory || !newCategoryName.trim()}
+                  className="h-10 w-10 p-0"
+                >
+                  <Icon path={mdiCheck} size={0.8} />
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setIsAddingCategory(false);
+                    setNewCategoryName('');
+                  }}
+                  disabled={isCreatingCategory}
+                  className="h-10 px-3"
+                >
+                  {tCommon('cancel')}
+                </Button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <select
+                  id="category"
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value)}
+                  className="flex-1 h-10 px-3 rounded-md border border-input bg-background text-sm"
+                >
+                  <option value="">
+                    {t('form.selectCategory')}
+                  </option>
+                  {filteredCategories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setIsAddingCategory(true)}
+                  className="h-10 px-3 shrink-0"
+                  title={t('form.addCategory') || 'Add Custom Category'}
+                >
+                  <Icon path={mdiPlus} size={0.7} />
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Date Input */}
@@ -264,6 +360,7 @@ export function TransactionDialog({
             <Button
               type="submit"
               disabled={!amount || parseFloat(amount) <= 0 || !accountId || isSubmitting}
+              className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-sm"
             >
               {isSubmitting
                 ? tCommon('loading')

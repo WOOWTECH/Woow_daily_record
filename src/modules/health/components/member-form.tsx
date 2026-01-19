@@ -264,7 +264,7 @@ export function MemberForm({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>
               {tCommon('cancel')}
             </Button>
-            <Button type="submit" disabled={!name.trim() || isUploading || isSaving}>
+            <Button type="submit" disabled={!name.trim() || isUploading || isSaving} className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-sm">
               {isSaving ? tCommon('saving') || 'Saving...' : isEditing ? tCommon('save') : t('addMember')}
             </Button>
           </div>

@@ -20,6 +20,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useChild } from "@/modules/baby/hooks/use-child";
 import Icon from "@mdi/react";
+import { useTranslations } from "next-intl";
 
 interface LogActivityModalProps {
     activityType: ActivityType | null;
@@ -35,6 +36,7 @@ interface LogActivityModalProps {
 }
 
 export function LogActivityModal({ activityType, isOpen, onClose, existingLog }: LogActivityModalProps) {
+    const t = useTranslations('baby.activity.editLog');
     const router = useRouter();
     const { selectedChild } = useChild();
     const childId = selectedChild?.id;
@@ -166,7 +168,7 @@ export function LogActivityModal({ activityType, isOpen, onClose, existingLog }:
                             <Icon path={iconPath} size={1} />
                         </div>
                         <DialogTitle className="text-xl text-brand-black dark:text-brand-white">
-                            {isEditMode ? 'Edit' : ''} {activityType.name}
+                            {isEditMode ? t('edit') : ''} {activityType.name}
                         </DialogTitle>
                     </div>
                 </DialogHeader>
@@ -175,7 +177,7 @@ export function LogActivityModal({ activityType, isOpen, onClose, existingLog }:
 
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="date" className="text-right">
-                            Date
+                            {t('date')}
                         </Label>
                         <Input
                             id="date"
@@ -188,7 +190,7 @@ export function LogActivityModal({ activityType, isOpen, onClose, existingLog }:
 
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="time" className="text-right">
-                            Time
+                            {t('time')}
                         </Label>
                         <Input
                             id="time"
@@ -202,7 +204,7 @@ export function LogActivityModal({ activityType, isOpen, onClose, existingLog }:
                     {showValueInput && (
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="value" className="text-right">
-                                {activityType.category === "feeding" ? "Amount" : "Value"}
+                                {activityType.category === "feeding" ? t('amount') : t('value')}
                             </Label>
                             <div className="col-span-3 flex gap-2">
                                 <Input
@@ -223,11 +225,11 @@ export function LogActivityModal({ activityType, isOpen, onClose, existingLog }:
 
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="note" className="text-right">
-                            Note
+                            {t('note')}
                         </Label>
                         <Textarea
                             id="note"
-                            placeholder="Add details..."
+                            placeholder={t('addDetails')}
                             value={note}
                             onChange={(e) => setNote(e.target.value)}
                             className="col-span-3 bg-brand-gray/50 dark:bg-white/5 border-none"
@@ -236,7 +238,7 @@ export function LogActivityModal({ activityType, isOpen, onClose, existingLog }:
 
                     <DialogFooter>
                         <Button type="submit" disabled={isPending} className="bg-[#6184FD] text-white rounded-full hover:opacity-90">
-                            {isPending ? "Saving..." : "Save Log"}
+                            {isPending ? t('saving') : t('saveLog')}
                         </Button>
                     </DialogFooter>
                 </form>

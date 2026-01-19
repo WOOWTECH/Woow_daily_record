@@ -4,15 +4,31 @@ import type { FamilyMember, NewFamilyMember } from '../types';
 
 export async function fetchFamilyMembers(householdId: string): Promise<FamilyMember[]> {
   const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
+  if (!user) throw new Error('Not authenticated');
+
+  // Fetch by parent_id (user id) since children table uses parent_id
   const { data, error } = await supabase
     .from('children')
     .select('*')
-    .eq('household_id', householdId)
+    .eq('parent_id', user.id)
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  return data as FamilyMember[];
+
+  // Map children table schema to FamilyMember interface
+  return (data || []).map(child => ({
+    id: child.id,
+    household_id: householdId,
+    name: child.name,
+    date_of_birth: child.dob,
+    gender: child.gender,
+    photo_url: child.photo_url,
+    details: null,
+    created_at: child.created_at,
+    updated_at: child.updated_at || child.created_at,
+  })) as FamilyMember[];
 }
 
 export async function createFamilyMember(
@@ -24,21 +40,28 @@ export async function createFamilyMember(
 
   if (!user) throw new Error('Not authenticated');
 
+  // Map to children table schema (uses parent_id and dob)
   const { data, error } = await supabase
     .from('children')
     .insert({
-      household_id: householdId,
+      parent_id: user.id,
       name: member.name,
-      date_of_birth: member.date_of_birth || null,
+      dob: member.date_of_birth || null,
       gender: member.gender || null,
       photo_url: member.photo_url || null,
-      details: member.details || null,
     })
     .select()
     .single();
 
   if (error) throw error;
-  return data as FamilyMember;
+
+  // Map response to FamilyMember interface
+  return {
+    ...data,
+    household_id: householdId,
+    date_of_birth: data.dob,
+    details: null,
+  } as FamilyMember;
 }
 
 export async function updateFamilyMember(
@@ -47,15 +70,34 @@ export async function updateFamilyMember(
 ): Promise<FamilyMember> {
   const supabase = createClient();
 
+  // Map FamilyMember fields to children table schema
+  const dbUpdates: Record<string, unknown> = {};
+  if (updates.name !== undefined) dbUpdates.name = updates.name;
+  if (updates.date_of_birth !== undefined) dbUpdates.dob = updates.date_of_birth;
+  if (updates.gender !== undefined) dbUpdates.gender = updates.gender;
+  if (updates.photo_url !== undefined) dbUpdates.photo_url = updates.photo_url;
+
   const { data, error } = await supabase
     .from('children')
-    .update(updates)
+    .update(dbUpdates)
     .eq('id', memberId)
     .select()
     .single();
 
   if (error) throw error;
-  return data as FamilyMember;
+
+  // Map response back to FamilyMember interface
+  return {
+    id: data.id,
+    household_id: '',
+    name: data.name,
+    date_of_birth: data.dob,
+    gender: data.gender,
+    photo_url: data.photo_url,
+    details: null,
+    created_at: data.created_at,
+    updated_at: data.updated_at || data.created_at,
+  } as FamilyMember;
 }
 
 export async function deleteFamilyMember(memberId: string): Promise<void> {

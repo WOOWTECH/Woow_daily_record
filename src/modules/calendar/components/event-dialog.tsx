@@ -306,6 +306,7 @@ export function EventDialog({
                       }
                     }}
                     disabled={!newCategoryName.trim()}
+                    className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-sm"
                   >
                     {tCommon('add')}
                   </Button>
@@ -382,7 +383,7 @@ export function EventDialog({
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 {tCommon('cancel')}
               </Button>
-              <Button type="submit" disabled={!title.trim()}>
+              <Button type="submit" disabled={!title.trim()} className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-sm">
                 {isEditing ? t('event.save') : t('event.create')}
               </Button>
             </div>

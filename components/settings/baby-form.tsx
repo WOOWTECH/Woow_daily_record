@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Icon from "@mdi/react";
 import { mdiCamera, mdiDelete, mdiAccount } from "@mdi/js";
 import { Textarea } from "@/components/ui/textarea";
+import { useTranslations } from "next-intl";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -45,6 +46,7 @@ export function BabySettingsForm({ childrenList }: BabySettingsFormProps) {
 
     // We can use Tabs if multiple children
     const [activeTab, setActiveTab] = useState(childrenList[0]?.id || "");
+    const t = useTranslations('settings.baby');
 
     // If list changed (e.g. deletion), update active tab
     // Ideally use effect or simpler check
@@ -52,15 +54,15 @@ export function BabySettingsForm({ childrenList }: BabySettingsFormProps) {
     if (childrenList.length === 0) {
         return (
             <GlassCard className="p-6">
-                <h2 className="text-xl font-bold mb-4">Baby Profile</h2>
-                <p className="text-brand-deep-gray">No babies added yet.</p>
+                <h2 className="text-xl font-bold mb-4">{t('title')}</h2>
+                <p className="text-brand-deep-gray">{t('noChildren')}</p>
             </GlassCard>
         );
     }
 
     return (
         <GlassCard className="p-6 space-y-6">
-            <h2 className="text-xl font-bold text-brand-black dark:text-brand-white">Baby Settings</h2>
+            <h2 className="text-xl font-bold text-brand-black dark:text-brand-white">{t('title')}</h2>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="mb-4 bg-brand-gray/50 dark:bg-white/10 flex flex-wrap h-auto">
@@ -91,6 +93,7 @@ export function BabySettingsForm({ childrenList }: BabySettingsFormProps) {
 }
 
 function SingleBabyForm({ child }: { child: Child }) {
+    const t = useTranslations('settings.baby');
     const [name, setName] = useState(child.name);
     // Convert UTC/ISO to local date string for input 'datetime-local' or 'date'
     // 'date' input expects 'YYYY-MM-DD'
@@ -107,6 +110,12 @@ function SingleBabyForm({ child }: { child: Child }) {
 
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const genderLabels: Record<string, string> = {
+        boy: t('boy'),
+        girl: t('girl'),
+        other: t('other')
+    };
 
     const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
@@ -194,7 +203,7 @@ function SingleBabyForm({ child }: { child: Child }) {
                 <div className="space-y-2">
                     <Label htmlFor={`photo-${child.id}`} className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-brand-gray/50 dark:bg-white/10 hover:bg-brand-gray/70 rounded-lg text-sm font-medium transition-colors">
                         <Icon path={mdiCamera} size={0.67} />
-                        {isUploading ? "Uploading..." : "Upload Photo"}
+                        {isUploading ? t('uploading') : t('uploadPhoto')}
                     </Label>
                     <Input
                         id={`photo-${child.id}`}
@@ -204,13 +213,13 @@ function SingleBabyForm({ child }: { child: Child }) {
                         onChange={handlePhotoUpload}
                         disabled={isUploading}
                     />
-                    <p className="text-xs text-brand-deep-gray">Recommended: Square JPG/PNG</p>
+                    <p className="text-xs text-brand-deep-gray">{t('photoRecommend')}</p>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <Label>Name</Label>
+                    <Label>{t('name')}</Label>
                     <Input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -219,7 +228,7 @@ function SingleBabyForm({ child }: { child: Child }) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label>Date of Birth</Label>
+                    <Label>{t('dateOfBirth')}</Label>
                     <Input
                         type="datetime-local"
                         value={dob}
@@ -230,7 +239,7 @@ function SingleBabyForm({ child }: { child: Child }) {
             </div>
 
             <div className="space-y-2">
-                <Label>Gender</Label>
+                <Label>{t('gender')}</Label>
                 <div className="flex gap-4">
                     {["boy", "girl", "other"].map((g) => (
                         <label key={g} className="flex items-center gap-2 cursor-pointer">
@@ -242,7 +251,7 @@ function SingleBabyForm({ child }: { child: Child }) {
                                 onChange={() => setGender(g as any)}
                                 className="w-4 h-4 text-brand-blue"
                             />
-                            <span className="capitalize">{g}</span>
+                            <span className="capitalize">{genderLabels[g]}</span>
                         </label>
                     ))}
                 </div>
@@ -250,11 +259,11 @@ function SingleBabyForm({ child }: { child: Child }) {
 
             {/* Details Row */}
             <div className="space-y-2">
-                <Label>Details / Notes</Label>
+                <Label>{t('detailsNotes')}</Label>
                 <Textarea
                     value={details}
                     onChange={(e) => setDetails(e.target.value)}
-                    placeholder="Allergies, medical notes, or cute timeline milestones..."
+                    placeholder={t('detailsPlaceholder')}
                     className="bg-brand-gray/50 dark:bg-white/5 min-h-[100px]"
                 />
             </div>
@@ -265,27 +274,27 @@ function SingleBabyForm({ child }: { child: Child }) {
                     disabled={isSaving}
                     className="bg-[#6184FD] text-white hover:opacity-90 px-8"
                 >
-                    {isSaving ? "Saving..." : "Save Changes"}
+                    {isSaving ? t('saving') : t('saveChanges')}
                 </Button>
 
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
                         <Button variant="ghost" className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10">
                             <Icon path={mdiDelete} size={0.67} className="mr-2" />
-                            Delete Baby
+                            {t('deleteBaby')}
                         </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                         <AlertDialogHeader>
-                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogTitle>{t('deleteConfirmTitle')}</AlertDialogTitle>
                             <AlertDialogDescription>
-                                This will permanently delete <strong>{child.name}</strong> and all their growth records, logs, and photos. This action cannot be undone.
+                                {t('deleteConfirmDesc', { name: child.name })}
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
                             <AlertDialogAction onClick={handleDelete} className="bg-red-500 hover:bg-red-600 text-white">
-                                {isDeleting ? "Deleting..." : "Delete Permanently"}
+                                {isDeleting ? t('deleting') : t('deleteForever')}
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>

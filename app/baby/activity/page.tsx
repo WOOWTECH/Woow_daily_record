@@ -1,12 +1,15 @@
 // app/baby/activity/page.tsx
 import { redirect } from "next/navigation";
 import { format, differenceInYears, differenceInMonths, startOfDay, subDays, endOfDay } from "date-fns";
+import { zhTW, zhCN, enUS } from "date-fns/locale";
 import { GlassCard } from "@/core/components/glass-card";
 import { TimelineWidget } from "@/modules/baby/components/activity/timeline-widget";
 import { QuickLogWidget } from "@/modules/baby/components/activity/quick-log-widget";
 import { createClient } from "@/core/lib/supabase/server";
 import { Suspense } from "react";
 import { SkeletonCard } from "@/core/components/skeleton-card";
+import { getTranslations } from "next-intl/server";
+import { getLocale } from "next-intl/server";
 
 async function getActivityData(searchParams?: { childId?: string }) {
   const supabase = await createClient();
@@ -52,6 +55,10 @@ export default async function BabyActivityPage(props: {
   const searchParams = await props.searchParams;
   const { logs, child } = await getActivityData(searchParams);
 
+  const t = await getTranslations('baby.activity');
+  const locale = await getLocale();
+  const dateLocale = locale === 'zh-TW' ? zhTW : locale === 'zh-CN' ? zhCN : enUS;
+
   // Removed redirect - causes re-render loops
   // The page will work with the first child if no childId specified
 
@@ -91,7 +98,7 @@ export default async function BabyActivityPage(props: {
             <p className="text-lg font-medium text-brand-deep-gray flex items-center gap-2">
               {ageString}
               <span className="w-1.5 h-1.5 rounded-full bg-brand-blue/50" />
-              Today's Overview
+              {t('todaysOverview')}
             </p>
           </div>
         </div>
@@ -100,7 +107,7 @@ export default async function BabyActivityPage(props: {
             {format(currentDate, "d")}
           </p>
           <p className="text-sm font-bold uppercase tracking-widest text-brand-deep-gray/70">
-            {format(currentDate, "MMMM yyyy")}
+            {format(currentDate, "MMMM yyyy", { locale: dateLocale })}
           </p>
         </div>
       </GlassCard>

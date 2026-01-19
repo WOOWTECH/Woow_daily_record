@@ -1,5 +1,5 @@
 // app/finance/reports/page.tsx
-import { GlassCard } from "@/core/components/glass-card";
+import { PageHeader } from "@/core/components/page-header";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -47,9 +47,7 @@ export default async function ReportsPage() {
 
   return (
     <div className="space-y-6 pb-20">
-      <GlassCard className="p-8">
-        <h1 className="text-3xl font-bold">{t("reports.title")}</h1>
-      </GlassCard>
+      <PageHeader title={t("reports.title")} fallbackHref="/finance" />
       <FinanceReports
         transactions={transactions || []}
         categories={categories || []}

@@ -7,6 +7,7 @@ import { useNotifications } from '@/core/hooks/use-notifications';
 import { NotificationPanel } from './notification-panel';
 import * as api from '@/core/lib/notifications';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface NotificationBellProps {
   householdId: string;
@@ -14,6 +15,7 @@ interface NotificationBellProps {
 }
 
 export function NotificationBell({ householdId, isExpanded }: NotificationBellProps) {
+  const t = useTranslations('notifications');
   const containerRef = useRef<HTMLDivElement>(null);
   const {
     unreadCount,
@@ -76,7 +78,7 @@ export function NotificationBell({ householdId, isExpanded }: NotificationBellPr
             isExpanded ? "w-auto opacity-100" : "w-0 opacity-0"
           )}
         >
-          Notifications
+          {t('button')}
         </span>
       </button>
 

@@ -7,6 +7,7 @@ import { useNotifications, useNotificationsWithMeta } from '@/core/hooks/use-not
 import { NotificationItem } from './notification-item';
 import { SOURCE_TYPE_ROUTES } from '@/core/types/notification';
 import { cn } from '@/lib/utils';
+import { useTranslations } from "next-intl";
 
 interface NotificationPanelProps {
   isExpanded: boolean;
@@ -16,6 +17,7 @@ export function NotificationPanel({ isExpanded }: NotificationPanelProps) {
   const router = useRouter();
   const { isOpen, setOpen, markAsRead, markAllAsRead, unreadCount } = useNotifications();
   const notifications = useNotificationsWithMeta();
+  const t = useTranslations('notifications');
 
   const handleNotificationClick = async (notification: typeof notifications[0]) => {
     if (!notification.is_read) {
@@ -36,13 +38,13 @@ export function NotificationPanel({ isExpanded }: NotificationPanelProps) {
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-        <h3 className="font-semibold text-sm">Notifications</h3>
+        <h3 className="font-semibold text-sm">{t('title')}</h3>
         {unreadCount > 0 && (
           <button
             onClick={() => markAllAsRead()}
             className="text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400"
           >
-            Mark all read
+            {t('markAllRead')}
           </button>
         )}
       </div>
@@ -52,7 +54,7 @@ export function NotificationPanel({ isExpanded }: NotificationPanelProps) {
         {notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 px-4 text-gray-400">
             <Icon path={mdiBell} size={1.33} className="mb-2 opacity-50" />
-            <p className="text-sm">No notifications</p>
+            <p className="text-sm">{t('noNotifications')}</p>
           </div>
         ) : (
           <div className="p-2 space-y-1">

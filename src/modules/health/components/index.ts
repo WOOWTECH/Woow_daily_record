@@ -12,3 +12,4 @@ export { HealthActivityTab } from './health-activity-tab';
 export { HealthRecordsTab } from './health-records-tab';
 export { HealthGrowthTab } from './health-growth-tab';
 export { HealthAnalyticsTab } from './health-analytics-tab';
+export { HealthQuickLog } from './health-quick-log';

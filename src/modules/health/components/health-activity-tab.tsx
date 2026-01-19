@@ -3,18 +3,15 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { format, differenceInYears, differenceInMonths, startOfDay, subDays, endOfDay } from "date-fns";
+import { format, differenceInYears, differenceInMonths } from "date-fns";
 import { zhTW, zhCN, enUS } from "date-fns/locale";
 import { useLocale } from 'next-intl';
 import { GlassCard } from '@/core/components/glass-card';
 import { SkeletonCard } from '@/core/components/skeleton-card';
-import { TimelineWidget } from '@/modules/baby/components/activity/timeline-widget';
-import { QuickLogWidget } from '@/modules/baby/components/activity/quick-log-widget';
-import { createClient } from '@/core/lib/supabase/client';
 import { useSelectedMember } from '../store';
+import { HealthQuickLog } from './health-quick-log';
 import Icon from '@mdi/react';
 import { mdiAccount } from '@mdi/js';
-import type { Log, ActivityType } from '@/modules/baby/lib/constants';
 
 interface HealthActivityTabProps {
   householdId: string;
@@ -22,66 +19,12 @@ interface HealthActivityTabProps {
 }
 
 export function HealthActivityTab({ householdId, memberId }: HealthActivityTabProps) {
-  const t = useTranslations('baby.activity');
+  const t = useTranslations('health');
   const locale = useLocale();
   const dateLocale = locale === 'zh-TW' ? zhTW : locale === 'zh-CN' ? zhCN : enUS;
 
   const selectedMember = useSelectedMember();
-
-  const [logs, setLogs] = useState<Log[]>([]);
-  const [activityTypes, setActivityTypes] = useState<ActivityType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Fetch activity data for the selected member
-  useEffect(() => {
-    if (!memberId) return;
-
-    const fetchData = async () => {
-      setIsLoading(true);
-      const supabase = createClient();
-
-      try {
-        // Fetch logs for the last 7 days
-        const endDate = endOfDay(new Date());
-        const startDate = startOfDay(subDays(new Date(), 6));
-
-        const { data: logsData } = await supabase
-          .from("logs")
-          .select(`
-            id,
-            start_time,
-            end_time,
-            value,
-            unit,
-            note,
-            activity_type:activity_types(name, category, id, icon_name, color_theme)
-          `)
-          .eq("child_id", memberId)
-          .gte("start_time", startDate.toISOString())
-          .lte("start_time", endDate.toISOString())
-          .order("start_time", { ascending: false });
-
-        // Fetch activity types
-        const { data: typesData } = await supabase
-          .from("activity_types")
-          .select("*");
-
-        // Transform supabase response to match Log type (activity_type comes as array from join)
-        const transformedLogs = (logsData || []).map((log: any) => ({
-          ...log,
-          activity_type: Array.isArray(log.activity_type) ? log.activity_type[0] : log.activity_type
-        }));
-        setLogs(transformedLogs as Log[]);
-        setActivityTypes((typesData as ActivityType[]) || []);
-      } catch (error) {
-        console.error('Error fetching activity data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [memberId]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Calculate member age display
   const currentDate = new Date();
@@ -98,14 +41,7 @@ export function HealthActivityTab({ householdId, memberId }: HealthActivityTabPr
     return (
       <div className="space-y-6">
         <SkeletonCard className="h-32" />
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-8">
-            <SkeletonCard className="h-[500px]" />
-          </div>
-          <div className="lg:col-span-4">
-            <SkeletonCard className="h-[200px]" />
-          </div>
-        </div>
+        <SkeletonCard className="h-[400px]" />
       </div>
     );
   }
@@ -135,7 +71,7 @@ export function HealthActivityTab({ householdId, memberId }: HealthActivityTabPr
               <p className="text-base font-medium text-brand-deep-gray flex items-center gap-2">
                 {ageString}
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-blue/50" />
-                {t('todaysOverview')}
+                {t('tabs.activity')}
               </p>
             )}
           </div>
@@ -150,16 +86,8 @@ export function HealthActivityTab({ householdId, memberId }: HealthActivityTabPr
         </div>
       </GlassCard>
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-8 space-y-6">
-          <TimelineWidget initialLogs={logs} />
-        </div>
-
-        <div className="lg:col-span-4 space-y-8">
-          <QuickLogWidget activityTypes={activityTypes} />
-        </div>
-      </div>
+      {/* Quick Log Widget */}
+      <HealthQuickLog memberId={memberId} />
     </div>
   );
 }

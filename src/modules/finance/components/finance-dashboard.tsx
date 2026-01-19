@@ -5,17 +5,20 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import Icon from "@mdi/react";
-import { mdiPlus, mdiWallet, mdiTrendingUp, mdiTrendingDown } from "@mdi/js";
+import { mdiPlus, mdiWallet, mdiTrendingUp, mdiTrendingDown, mdiRepeat, mdiCheck, mdiClockOutline } from "@mdi/js";
 import { GlassCard } from "@/core/components/glass-card";
 import { Button } from "@/core/components/ui/button";
 import {
   FinanceAccount,
   FinanceCategory,
   FinanceTransaction,
+  FinanceRecurring,
+  FinanceRecurringStatusRecord,
 } from "../types";
 import { AccountCard } from "./account-card";
 import { TransactionItem } from "./transaction-item";
 import { TransactionDialog } from "./transaction-dialog";
+import { RecurringDialog } from "./recurring-dialog";
 
 interface FinanceDashboardProps {
   accounts: FinanceAccount[];
@@ -25,6 +28,9 @@ interface FinanceDashboardProps {
   monthlyExpense: number;
   totalBalance: number;
   householdId: string;
+  recurringItems: FinanceRecurring[];
+  statusRecords: FinanceRecurringStatusRecord[];
+  currentYearMonth: string;
 }
 
 const formatCurrency = (amount: number) => {
@@ -43,9 +49,14 @@ export function FinanceDashboard({
   monthlyExpense,
   totalBalance,
   householdId,
+  recurringItems,
+  statusRecords,
+  currentYearMonth,
 }: FinanceDashboardProps) {
   const t = useTranslations("finance");
   const [showAddTransaction, setShowAddTransaction] = useState(false);
+  const [showRecurringDialog, setShowRecurringDialog] = useState(false);
+  const [selectedRecurring, setSelectedRecurring] = useState<FinanceRecurring | null>(null);
   const [transactionType, setTransactionType] = useState<"income" | "expense">("expense");
 
   const netAmount = monthlyIncome - monthlyExpense;
@@ -122,7 +133,7 @@ export function FinanceDashboard({
       </div>
 
       {/* Quick Action Buttons */}
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-wrap">
         <Button
           onClick={handleAddExpense}
           className="bg-red-500 text-white hover:bg-red-600"
@@ -136,6 +147,13 @@ export function FinanceDashboard({
         >
           <Icon path={mdiPlus} size={0.75} className="mr-2" />
           {t("transactions.addIncome")}
+        </Button>
+        <Button
+          onClick={() => setShowRecurringDialog(true)}
+          className="bg-brand-blue text-white hover:bg-brand-blue/90"
+        >
+          <Icon path={mdiRepeat} size={0.75} className="mr-2" />
+          {t("recurring.addRecurring")}
         </Button>
       </div>
 
@@ -169,6 +187,78 @@ export function FinanceDashboard({
               <AccountCard key={account.id} account={account} />
             ))}
           </div>
+        )}
+      </div>
+
+      {/* Recurring Section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-brand-black dark:text-brand-white">
+            {t("recurring.title")}
+          </h2>
+          <Link
+            href="/finance/recurring"
+            className="text-sm text-brand-blue hover:underline"
+          >
+            {t("dashboard.viewAll")}
+          </Link>
+        </div>
+
+        {recurringItems.length === 0 ? (
+          <GlassCard className="p-8 text-center">
+            <Icon
+              path={mdiRepeat}
+              size={1.5}
+              className="mx-auto text-brand-deep-gray mb-2"
+            />
+            <p className="text-brand-deep-gray">{t("recurring.noRecurring")}</p>
+          </GlassCard>
+        ) : (
+          <GlassCard className="divide-y divide-gray-200 dark:divide-gray-700">
+            {recurringItems.slice(0, 5).map((item) => {
+              const status = statusRecords.find((s) => s.recurring_id === item.id);
+              const isPaid = status?.status === "paid";
+              return (
+                <div
+                  key={item.id}
+                  className="flex items-center gap-4 p-4 cursor-pointer hover:bg-brand-gray/10 transition-colors"
+                  onClick={() => {
+                    setSelectedRecurring(item);
+                  }}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      isPaid ? "bg-green-500 text-white" : "bg-brand-gray/30"
+                    }`}
+                  >
+                    {isPaid ? (
+                      <Icon path={mdiCheck} size={0.75} />
+                    ) : (
+                      <Icon
+                        path={mdiClockOutline}
+                        size={0.75}
+                        className="text-brand-deep-gray"
+                      />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{item.name}</p>
+                    <p className="text-sm text-brand-deep-gray">
+                      {t(`recurring.frequency.${item.frequency}`)} · {t("recurring.dueDay")} {item.due_day}
+                    </p>
+                  </div>
+                  <p
+                    className={`font-bold ${
+                      item.type === "income" ? "text-green-500" : "text-red-500"
+                    }`}
+                  >
+                    {item.type === "income" ? "+" : "-"}
+                    {formatCurrency(item.amount)}
+                  </p>
+                </div>
+              );
+            })}
+          </GlassCard>
         )}
       </div>
 
@@ -207,6 +297,27 @@ export function FinanceDashboard({
         accounts={accounts}
         categories={categories}
         householdId={householdId}
+      />
+
+      {/* Add Recurring Dialog */}
+      <RecurringDialog
+        open={showRecurringDialog}
+        onOpenChange={setShowRecurringDialog}
+        accounts={accounts}
+        categories={categories}
+        householdId={householdId}
+      />
+
+      {/* Edit Recurring Dialog */}
+      <RecurringDialog
+        open={!!selectedRecurring}
+        onOpenChange={(open) => {
+          if (!open) setSelectedRecurring(null);
+        }}
+        accounts={accounts}
+        categories={categories}
+        householdId={householdId}
+        recurring={selectedRecurring ?? undefined}
       />
     </div>
   );

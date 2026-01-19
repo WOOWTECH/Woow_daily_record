@@ -146,7 +146,7 @@ export function TaskDialog({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {tCommon('cancel')}
             </Button>
-            <Button type="submit" disabled={!title.trim()}>
+            <Button type="submit" disabled={!title.trim()} className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-sm">
               {isEditing ? tCommon('save') : t('addTask')}
             </Button>
           </div>

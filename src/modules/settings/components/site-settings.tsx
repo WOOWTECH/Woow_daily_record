@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/core/components/ui/select";
 import Icon from "@mdi/react";
-import { mdiWeatherSunny, mdiWeatherNight, mdiMonitor } from "@mdi/js";
+import { mdiWeatherSunny, mdiWeatherNight, mdiMonitor, mdiCheck } from "@mdi/js";
 import { cn } from "@/lib/utils";
 import { useSettingsStore } from "../store";
 import type { Household } from "../types";
@@ -41,6 +41,7 @@ export function SiteSettings() {
   const [language, setLanguage] = useState<Household["language"]>(household?.language || "en");
   const [timezone, setTimezone] = useState(household?.timezone || "UTC");
   const [units, setUnits] = useState<Household["units"]>(household?.units || "metric");
+  const [accentColor, setAccentColor] = useState("blue");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -51,7 +52,28 @@ export function SiteSettings() {
       setTimezone(household.timezone);
       setUnits(household.units);
     }
+    // Init accent color
+    const savedAccent = localStorage.getItem("accent-color") || "blue";
+    setAccentColor(savedAccent);
+    document.documentElement.setAttribute("data-accent", savedAccent);
   }, [household]);
+
+  const handleAccentChange = (colorValue: string) => {
+    setAccentColor(colorValue);
+    localStorage.setItem("accent-color", colorValue);
+    document.documentElement.setAttribute("data-accent", colorValue);
+    window.dispatchEvent(new Event("accent-color-change"));
+  };
+
+  const accentColors = [
+    { value: "blue", label: "Blue", color: "#6184FD" },
+    { value: "pink", label: "Pink", color: "#F45D6D" },
+    { value: "green", label: "Green", color: "#8CD37F" },
+    { value: "yellow", label: "Yellow", color: "#F2D06D" },
+    { value: "orange", label: "Orange", color: "#E66D3E" },
+    { value: "cyan", label: "Cyan", color: "#65C1E0" },
+    { value: "purple", label: "Purple", color: "#C09FE0" },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,6 +150,43 @@ export function SiteSettings() {
             </div>
           </div>
 
+          {/* Accent Color */}
+          <div className="space-y-3 mb-4">
+            <label className="text-sm font-medium text-brand-deep-gray dark:text-gray-400">
+              {t("accentColor") || "Accent Color"}
+            </label>
+            <div className="flex flex-wrap gap-3">
+              {accentColors.map((color) => {
+                const isActive = accentColor === color.value;
+                return (
+                  <button
+                    key={color.value}
+                    type="button"
+                    onClick={() => handleAccentChange(color.value)}
+                    className={cn(
+                      "relative w-10 h-10 rounded-full transition-all",
+                      "ring-2 ring-offset-2 ring-offset-white dark:ring-offset-brand-black",
+                      isActive ? "ring-brand-black dark:ring-white scale-110" : "ring-transparent hover:scale-105"
+                    )}
+                    style={{ backgroundColor: color.color }}
+                    title={color.label}
+                  >
+                    {isActive && (
+                      <Icon
+                        path={mdiCheck}
+                        size={0.7}
+                        className="absolute inset-0 m-auto text-white drop-shadow-md"
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-xs text-brand-deep-gray/70 dark:text-gray-500">
+              {t("accentColorHint") || "Choose a main color for buttons and highlights"}
+            </p>
+          </div>
+
           {/* Language */}
           <div className="flex items-center justify-between">
             <Label>{t("language")}</Label>
@@ -192,7 +251,7 @@ export function SiteSettings() {
         </section>
 
         {isOwner && (
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-sm">
             {t("saveSettings")}
           </Button>
         )}

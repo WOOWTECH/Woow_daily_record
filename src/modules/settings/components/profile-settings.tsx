@@ -118,7 +118,7 @@ export function ProfileSettings() {
           </CollapsibleContent>
         </Collapsible>
 
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting} className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-sm">
           {t("saveChanges")}
         </Button>
       </form>

@@ -11,6 +11,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Icon from "@mdi/react";
 import { mdiCamera } from "@mdi/js";
+import { useTranslations } from "next-intl";
 
 interface ProfileData {
     name: string;
@@ -41,6 +42,8 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
     const [isUploading, setIsUploading] = useState(false);
     const [isUpdatingAuth, setIsUpdatingAuth] = useState(false);
     const [hasSession, setHasSession] = useState(false);
+    const t = useTranslations('settings.profile');
+    const tAccount = useTranslations('settings.account');
 
     // Check session validity on mount
     useEffect(() => {
@@ -137,7 +140,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
     return (
         <div className="space-y-6">
             <GlassCard className="p-6 space-y-6">
-                <h2 className="text-xl font-bold text-brand-black dark:text-brand-white">Profile Settings</h2>
+                <h2 className="text-xl font-bold text-brand-black dark:text-brand-white">{t('title')}</h2>
 
                 {/* Avatar */}
                 <div className="flex items-center gap-6">
@@ -151,7 +154,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                     <div className="space-y-2">
                         <Label htmlFor="avatar-upload" className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-brand-gray/50 dark:bg-white/10 hover:bg-brand-gray/70 rounded-lg text-sm font-medium transition-colors">
                             <Icon path={mdiCamera} size={0.67} />
-                            {isUploading ? "Uploading..." : "Change Picture"}
+                            {isUploading ? t('uploading') : t('changePicture')}
                         </Label>
                         <Input
                             id="avatar-upload"
@@ -166,7 +169,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label>Display Name</Label>
+                        <Label>{t('displayName')}</Label>
                         <Input
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -174,7 +177,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label>Date of Birth</Label>
+                        <Label>{t('dateOfBirth')}</Label>
                         <Input
                             type="date"
                             value={birthDate}
@@ -186,7 +189,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label>Time Zone</Label>
+                        <Label>{t('timeZone')}</Label>
                         <select
                             value={timezone}
                             onChange={(e) => setTimezone(e.target.value)}
@@ -202,7 +205,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                         </select>
                     </div>
                     <div className="space-y-2">
-                        <Label>Language</Label>
+                        <Label>{t('language')}</Label>
                         <select
                             value={language}
                             onChange={(e) => setLanguage(e.target.value)}
@@ -223,24 +226,24 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                         disabled={isSaving}
                         className="bg-[#6184FD] text-white hover:opacity-90"
                     >
-                        {isSaving ? "Saving..." : "Save Profile"}
+                        {isSaving ? t('uploading') : t('saveProfile')}
                     </Button>
                 </div>
             </GlassCard>
 
             {/* Account Settings */}
             <GlassCard className="p-6 space-y-6">
-                <h2 className="text-xl font-bold text-brand-black dark:text-brand-white">Account Security</h2>
+                <h2 className="text-xl font-bold text-brand-black dark:text-brand-white">{tAccount('title')}</h2>
 
                 {!hasSession ? (
                     <div className="bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-900/30 rounded-lg p-4 text-sm text-yellow-800 dark:text-yellow-200">
-                        Guest accounts cannot change security settings. Please sign in to manage email and password.
+                        {tAccount('guestWarning')}
                     </div>
                 ) : (
                     <div className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                             <div className="space-y-2">
-                                <Label>Change Email</Label>
+                                <Label>{tAccount('changeEmail')}</Label>
                                 <Input
                                     type="email"
                                     placeholder={email}
@@ -254,16 +257,16 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                                 disabled={isUpdatingAuth || !newEmail}
                                 variant="outline"
                             >
-                                Update Email
+                                {tAccount('updateEmail')}
                             </Button>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                             <div className="space-y-2">
-                                <Label>Change Password</Label>
+                                <Label>{tAccount('changePassword')}</Label>
                                 <Input
                                     type="password"
-                                    placeholder="New Password"
+                                    placeholder={tAccount('newPassword')}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="bg-brand-gray/50 dark:bg-white/5"
@@ -274,7 +277,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                                 disabled={isUpdatingAuth || !password}
                                 variant="outline"
                             >
-                                Update Password
+                                {tAccount('updatePassword')}
                             </Button>
                         </div>
                     </div>

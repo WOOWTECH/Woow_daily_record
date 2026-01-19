@@ -8,6 +8,9 @@ import Icon from "@mdi/react";
 import { mdiDelete } from "@mdi/js";
 import { deleteLog } from "@/app/actions/logs";
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
+import { zhTW, zhCN, enUS } from "date-fns/locale";
 
 interface LogbookProps {
     logs: Log[];
@@ -15,11 +18,14 @@ interface LogbookProps {
 
 export function Logbook({ logs }: LogbookProps) {
     const [isPending, startTransition] = useTransition();
+    const t = useTranslations('baby.records');
+    const locale = useLocale();
+    const dateLocale = locale === 'zh-TW' ? zhTW : locale === 'zh-CN' ? zhCN : enUS;
 
     if (logs.length === 0) {
         return (
             <div className="text-center py-12 text-brand-deep-gray">
-                No records found for this period.
+                {t('noRecordsFound')}
             </div>
         );
     }
@@ -47,7 +53,7 @@ export function Logbook({ logs }: LogbookProps) {
         <div className="space-y-8">
             {sortedDates.map(dateKey => {
                 const dateLogs = groupedLogs[dateKey];
-                const dateLabel = format(new Date(dateKey), "MMMM d, yyyy (EEEE)");
+                const dateLabel = format(new Date(dateKey), locale === 'en' ? "MMMM d, yyyy (EEEE)" : "yyyy年MM月dd日 (EEEE)", { locale: dateLocale });
 
                 return (
                     <section key={dateKey} className="space-y-3">
@@ -86,7 +92,7 @@ export function Logbook({ logs }: LogbookProps) {
                                                 </span>
                                             </div>
                                             <div className="text-sm text-brand-deep-gray truncate">
-                                                {renderDetails(log)}
+                                                {renderDetails(log, t('noDetails'))}
                                             </div>
                                         </div>
 
@@ -110,9 +116,9 @@ export function Logbook({ logs }: LogbookProps) {
     );
 }
 
-function renderDetails(log: Log) {
+function renderDetails(log: Log, noDetailsText: string) {
     const parts = [];
     if (log.value) parts.push(`${log.value} ${log.unit || ""}`);
     if (log.note) parts.push(log.note);
-    return parts.length > 0 ? parts.join(" · ") : "No details";
+    return parts.length > 0 ? parts.join(" · ") : noDetailsText;
 }

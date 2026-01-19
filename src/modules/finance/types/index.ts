@@ -4,7 +4,7 @@
 // Type Aliases
 // ============================================================
 
-export type AccountType = 'bank' | 'cash' | 'credit';
+export type AccountType = string; // 'bank' | 'cash' | 'credit' or custom types
 export type TransactionType = 'income' | 'expense' | 'transfer';
 export type CategoryType = 'income' | 'expense';
 export type RecurringFrequency = 'monthly' | 'weekly' | 'yearly';
@@ -24,6 +24,7 @@ export interface FinanceAccount {
   currency: string;
   icon: string | null;
   color: string | null;
+  note: string | null;
   sort_order: number;
   created_at: string;
   updated_at: string;
@@ -107,6 +108,7 @@ export interface CreateAccountInput {
   currency?: string;
   icon?: string;
   color?: string;
+  note?: string;
 }
 
 export interface CreateTransactionInput {

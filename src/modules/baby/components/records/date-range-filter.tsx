@@ -7,6 +7,7 @@ import Icon from "@mdi/react";
 import { mdiCalendar, mdiFilter } from "@mdi/js";
 import { cn } from "@/lib/utils";
 import { GlassCard } from "@/core/components/glass-card";
+import { useTranslations } from "next-intl";
 
 export function DateRangeFilter() {
     const router = useRouter();
@@ -20,6 +21,7 @@ export function DateRangeFilter() {
     const [start, setStart] = useState(defaultStart);
     const [end, setEnd] = useState(defaultEnd);
     const [category, setCategory] = useState(defaultCategory);
+    const t = useTranslations('baby.records');
 
     const applyFilter = () => {
         const params = new URLSearchParams(searchParams);
@@ -43,7 +45,7 @@ export function DateRangeFilter() {
         <GlassCard className="p-4 flex flex-col sm:flex-row gap-4 items-center">
             <div className="flex items-center gap-2 w-full sm:w-auto">
                 <Icon path={mdiCalendar} className="text-brand-deep-gray" size={0.83} />
-                <span className="font-semibold text-brand-black dark:text-brand-white">Filter:</span>
+                <span className="font-semibold text-brand-black dark:text-brand-white">{t('filter')}</span>
             </div>
 
             {/* Category Select */}
@@ -52,13 +54,13 @@ export function DateRangeFilter() {
                 onChange={(e) => setCategory(e.target.value)}
                 className="bg-brand-gray/50 dark:bg-white/5 border border-transparent focus:border-brand-blue rounded-lg px-3 py-2 text-sm text-brand-black dark:text-brand-white outline-none transition-all w-full sm:w-auto min-w-[120px]"
             >
-                <option value="all">All Categories</option>
-                <option value="sleep">Sleep</option>
-                <option value="feeding">Feeding</option>
-                <option value="excretion">Diaper</option>
-                <option value="activity">Activity</option>
-                <option value="health">Health</option>
-                <option value="custom">Custom</option>
+                <option value="all">{t('allCategories')}</option>
+                <option value="sleep">{t('categories.sleep')}</option>
+                <option value="feeding">{t('categories.feeding')}</option>
+                <option value="excretion">{t('categories.diaper')}</option>
+                <option value="activity">{t('categories.activity')}</option>
+                <option value="health">{t('categories.health')}</option>
+                <option value="custom">{t('categories.custom')}</option>
             </select>
 
             <span className="hidden sm:inline text-brand-deep-gray">|</span>
@@ -84,7 +86,7 @@ export function DateRangeFilter() {
                 className="w-full sm:w-auto px-6 py-2 bg-[#6184FD] text-white font-medium rounded-lg hover:opacity-90 transition-colors flex items-center justify-center gap-2"
             >
                 <Icon path={mdiFilter} size={0.67} />
-                Apply
+                {t('apply')}
             </button>
         </GlassCard>
     );

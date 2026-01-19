@@ -6,6 +6,7 @@ import { startOfDay, endOfDay, subDays } from "date-fns";
 import Icon from "@mdi/react";
 import { mdiCalendar, mdiFilter } from "@mdi/js";
 import { GlassCard } from "@/core/components/glass-card";
+import { useTranslations } from "next-intl";
 
 interface AnalyticsFiltersProps {
     activityTypes?: any[]; // Pass all activity types
@@ -26,6 +27,7 @@ export function AnalyticsFilters({ activityTypes = [] }: AnalyticsFiltersProps) 
     const [end, setEnd] = useState(defaultEnd);
     const [category, setCategory] = useState(defaultCategory);
     const [typeId, setTypeId] = useState(defaultTypeId);
+    const t = useTranslations('baby.analytics');
 
     const applyFilter = () => {
         const params = new URLSearchParams(searchParams);
@@ -63,7 +65,7 @@ export function AnalyticsFilters({ activityTypes = [] }: AnalyticsFiltersProps) 
         <GlassCard className="p-4 flex flex-col xl:flex-row gap-4 items-center mb-6">
             <div className="flex items-center gap-2 w-full sm:w-auto">
                 <Icon path={mdiCalendar} className="text-brand-deep-gray" size={0.83} />
-                <span className="font-semibold text-brand-black dark:text-brand-white">Filter:</span>
+                <span className="font-semibold text-brand-black dark:text-brand-white">{t('filter')}</span>
             </div>
 
             {/* Specific Type Select (Flat List) */}
@@ -72,9 +74,9 @@ export function AnalyticsFilters({ activityTypes = [] }: AnalyticsFiltersProps) 
                 onChange={(e) => setTypeId(e.target.value)}
                 className="bg-brand-gray/50 dark:bg-white/5 border border-transparent focus:border-brand-blue rounded-lg px-3 py-2 text-sm text-brand-black dark:text-brand-white outline-none transition-all w-full sm:w-auto min-w-[200px]"
             >
-                <option value="all">All Items</option>
-                {sortedTypes.map(t => (
-                    <option key={t.id} value={t.id}>{t.name}</option>
+                <option value="all">{t('allItems')}</option>
+                {sortedTypes.map(type => (
+                    <option key={type.id} value={type.id}>{type.name}</option>
                 ))}
             </select>
 
@@ -102,7 +104,7 @@ export function AnalyticsFilters({ activityTypes = [] }: AnalyticsFiltersProps) 
                 className="w-full sm:w-auto px-6 py-2 bg-[#6184FD] text-white font-medium rounded-lg hover:opacity-90 transition-colors flex items-center justify-center gap-2 shadow-md dark:shadow-none"
             >
                 <Icon path={mdiFilter} size={0.67} />
-                Apply
+                {t('apply')}
             </button>
         </GlassCard>
     );

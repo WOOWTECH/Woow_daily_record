@@ -4,6 +4,7 @@ import { GlassCard } from "@/core/components/glass-card";
 import { format } from "date-fns";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useAccentColor } from "@/core/hooks/use-accent-color";
+import { useTranslations } from "next-intl";
 
 interface DailyTrendChartProps {
     data: any[];
@@ -12,6 +13,7 @@ interface DailyTrendChartProps {
 
 export function DailyTrendChart({ data, category }: DailyTrendChartProps) {
     const accentColor = useAccentColor();
+    const t = useTranslations('baby.analytics');
     // Determine Metric based on category
     // Feeding -> Sum Volume
     // Sleep -> Sum Duration
@@ -77,11 +79,11 @@ export function DailyTrendChart({ data, category }: DailyTrendChartProps) {
     }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     const isAverage = category === "health";
-    const label = category === "feeding" ? "Volume" : (category === "sleep" ? "Hours" : (isAverage ? "Average" : "Count"));
+    const label = category === "feeding" ? t('volume') : (category === "sleep" ? t('hours') : (isAverage ? t('average') : t('count')));
 
     return (
         <GlassCard className="p-6">
-            <h2 className="text-xl font-bold mb-4 text-brand-black dark:text-brand-white">Daily Trend ({label})</h2>
+            <h2 className="text-xl font-bold mb-4 text-brand-black dark:text-brand-white">{t('dailyTrend')} ({label})</h2>
             <div className="h-[300px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     {isAverage ? (

@@ -10,6 +10,7 @@ import Icon from "@mdi/react";
 import { mdiPlus, mdiDelete } from "@mdi/js";
 import { deleteActivityType } from "@/app/actions/activity-types";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 const STORAGE_KEY_CUSTOM_ACTIVITIES = "woowtech_custom_activities";
 
@@ -21,6 +22,7 @@ export function QuickLogWidget({ activityTypes }: QuickLogWidgetProps) {
     const [selectedActivity, setSelectedActivity] = useState<ActivityType | null>(null);
     const [isLogModalOpen, setIsLogModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const t = useTranslations('baby.activity');
 
     const handleActivityClick = (activity: ActivityType) => {
         setSelectedActivity(activity);
@@ -90,7 +92,7 @@ export function QuickLogWidget({ activityTypes }: QuickLogWidgetProps) {
     return (
         <>
             <GlassCard className="p-6">
-                <h2 className="text-xl font-bold mb-6 text-brand-black dark:text-brand-white">Quick Actions</h2>
+                <h2 className="text-xl font-bold mb-6 text-brand-black dark:text-brand-white">{t('quickLog')}</h2>
 
                 <div className="grid grid-cols-3 gap-4">
                     {activityTypes.map(renderActivityButton)}
@@ -108,7 +110,7 @@ export function QuickLogWidget({ activityTypes }: QuickLogWidgetProps) {
                             <Icon path={mdiPlus} size={0.83} className="text-brand-deep-gray group-hover:text-brand-blue" />
                         </div>
                         <span className="text-xs font-semibold text-brand-deep-gray group-hover:text-brand-blue">
-                            Add New
+                            {t('addNew')}
                         </span>
                     </button>
                 </div>

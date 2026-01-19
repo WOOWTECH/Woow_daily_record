@@ -17,6 +17,7 @@ import { createActivityType } from "@/app/actions/activity-types";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Icon from "@mdi/react";
+import { useTranslations } from "next-intl";
 
 // Available icons for selection
 const ICON_OPTIONS = Object.keys(ICONS).filter(name => name !== "Circle");
@@ -30,6 +31,7 @@ interface AddActivityModalProps {
 }
 
 export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
+    const t = useTranslations('baby.activity.createActivity');
     const router = useRouter();
     const [name, setName] = useState("");
     const [selectedIcon, setSelectedIcon] = useState(ICON_OPTIONS[0]);
@@ -69,7 +71,7 @@ export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
             <DialogContent className="sm:max-w-[425px] bg-white dark:bg-neutral-900 border border-white/10 shadow-2xl">
                 <DialogHeader>
                     <DialogTitle className="text-xl text-brand-black dark:text-brand-white">
-                        Create Custom Activity
+                        {t('title')}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -77,13 +79,13 @@ export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
                     {/* Name Input */}
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="activity-name" className="text-right">
-                            Name
+                            {t('name')}
                         </Label>
                         <Input
                             id="activity-name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder="e.g., Tummy Time"
+                            placeholder={t('namePlaceholder')}
                             className="col-span-3 bg-brand-gray/50 dark:bg-white/5 border-none"
                             disabled={isPending}
                         />
@@ -91,7 +93,7 @@ export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
 
                     {/* Icon Selection */}
                     <div className="grid grid-cols-4 items-start gap-4">
-                        <Label className="text-right pt-2">Icon</Label>
+                        <Label className="text-right pt-2">{t('icon')}</Label>
                         <div className="col-span-3 grid grid-cols-5 gap-2 max-h-[150px] overflow-y-auto pr-2">
                             {ICON_OPTIONS.map((iconName) => {
                                 const iconPath = ICONS[iconName];
@@ -119,7 +121,7 @@ export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
 
                     {/* Preview */}
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right">Preview</Label>
+                        <Label className="text-right">{t('preview')}</Label>
                         <div className="col-span-3">
                             <div className={cn(
                                 "inline-flex items-center gap-2 px-4 py-2 rounded-full",
@@ -130,7 +132,7 @@ export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
                                     const iconPath = ICONS[selectedIcon];
                                     return <Icon path={iconPath} size={0.75} />;
                                 })()}
-                                <span className="font-medium">{name || "Activity Name"}</span>
+                                <span className="font-medium">{name || t('activityName')}</span>
                             </div>
                         </div>
                     </div>
@@ -142,14 +144,14 @@ export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
                             onClick={onClose}
                             disabled={isPending}
                         >
-                            Cancel
+                            {t('cancel')}
                         </Button>
                         <Button
                             type="submit"
                             disabled={!name.trim() || isPending}
                             className="bg-[#6184FD] text-white rounded-full hover:opacity-90"
                         >
-                            {isPending ? "Creating..." : "Create Activity"}
+                            {isPending ? t('creating') : t('create')}
                         </Button>
                     </DialogFooter>
                 </form>
