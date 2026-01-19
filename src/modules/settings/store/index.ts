@@ -7,7 +7,7 @@ import type {
   NewInvitation,
   UserProfile,
   ProfileUpdate,
-  PageName,
+  ModuleName,
   AccessLevel,
 } from "../types";
 import {
@@ -52,7 +52,7 @@ interface SettingsState {
   fetchMembers: () => Promise<void>;
   updateMemberPermission: (
     memberId: string,
-    page: PageName,
+    module: ModuleName,
     level: AccessLevel
   ) => Promise<void>;
   removeMember: (memberId: string) => Promise<void>;
@@ -119,9 +119,8 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     try {
       const result = await fetchHouseholdAction();
       if (result.success && result.data) {
-        const { profile } = get();
-        const isOwner = profile?.id === result.data.owner_id;
-        set({ household: result.data, isOwner, isHouseholdLoading: false });
+        const { isOwner, ...household } = result.data;
+        set({ household, isOwner, isHouseholdLoading: false });
       } else {
         set({ error: result.error, isHouseholdLoading: false });
       }
@@ -167,19 +166,19 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     }
   },
 
-  updateMemberPermission: async (memberId, page, level) => {
+  updateMemberPermission: async (memberId, module, level) => {
     const { members } = get();
 
     // Optimistic update
     const updatedMembers = members.map((m) =>
       m.id === memberId
-        ? { ...m, permissions: { ...m.permissions, [page]: level } }
+        ? { ...m, permissions: { ...m.permissions, [module]: level } }
         : m
     );
     set({ members: updatedMembers });
 
     try {
-      const result = await updateMemberPermissionsAction(memberId, page, level);
+      const result = await updateMemberPermissionsAction(memberId, module, level);
       if (!result.success) {
         // Rollback on error
         set({ members, error: result.error });
