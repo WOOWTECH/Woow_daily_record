@@ -12,7 +12,8 @@
     "back": "返回",
     "close": "关闭",
     "submit": "提交",
-    "reset": "重置"
+    "reset": "重置",
+    "saving": "保存中..."
   },
   "nav": {
     "home": "首页",
@@ -465,6 +466,8 @@
       "title": "固定收支",
       "addRecurring": "新增固定项目",
       "editRecurring": "编辑固定项目",
+      "deleteRecurring": "删除",
+      "deleteConfirm": "确定要删除此固定项目？",
       "noRecurring": "尚无固定收支",
       "thisMonth": "本月状态",
       "status": {
@@ -500,7 +503,15 @@
       "selectAccount": "选择账户",
       "selectCategory": "选择分类",
       "transferTo": "转入账户",
-      "color": "颜色"
+      "color": "颜色",
+      "addCategory": "新增自定义分类",
+      "newCategoryPlaceholder": "输入分类名称...",
+      "categoryNameRequired": "分类名称不能为空",
+      "addType": "新增类型",
+      "newTypePlaceholder": "输入类型名称...",
+      "typeNameRequired": "类型名称不能为空",
+      "note": "备注",
+      "notePlaceholder": "选填备注..."
     },
     "toast": {
       "accountAdded": "账户已添加",
@@ -512,7 +523,9 @@
       "recurringAdded": "固定项目已添加",
       "recurringUpdated": "固定项目已更新",
       "recurringDeleted": "固定项目已删除",
-      "markedAsPaid": "已标记为已付款"
+      "markedAsPaid": "已标记为已付款",
+      "categoryCreated": "分类已创建",
+      "typeCreated": "类型已创建"
     }
   }
 }

@@ -12,7 +12,8 @@
     "back": "返回",
     "close": "關閉",
     "submit": "提交",
-    "reset": "重設"
+    "reset": "重設",
+    "saving": "儲存中..."
   },
   "nav": {
     "home": "首頁",
@@ -465,6 +466,8 @@
       "title": "固定收支",
       "addRecurring": "新增固定項目",
       "editRecurring": "編輯固定項目",
+      "deleteRecurring": "刪除",
+      "deleteConfirm": "確定要刪除此固定項目？",
       "noRecurring": "尚無固定收支",
       "thisMonth": "本月狀態",
       "status": {
@@ -500,7 +503,15 @@
       "selectAccount": "選擇帳戶",
       "selectCategory": "選擇分類",
       "transferTo": "轉入帳戶",
-      "color": "顏色"
+      "color": "顏色",
+      "addCategory": "新增自訂分類",
+      "newCategoryPlaceholder": "輸入分類名稱...",
+      "categoryNameRequired": "分類名稱不能為空",
+      "addType": "新增類型",
+      "newTypePlaceholder": "輸入類型名稱...",
+      "typeNameRequired": "類型名稱不能為空",
+      "note": "備註",
+      "notePlaceholder": "選填備註..."
     },
     "toast": {
       "accountAdded": "帳戶已新增",
@@ -512,7 +523,9 @@
       "recurringAdded": "固定項目已新增",
       "recurringUpdated": "固定項目已更新",
       "recurringDeleted": "固定項目已刪除",
-      "markedAsPaid": "已標記為已付款"
+      "markedAsPaid": "已標記為已付款",
+      "categoryCreated": "分類已建立",
+      "typeCreated": "類型已建立"
     }
   }
 }

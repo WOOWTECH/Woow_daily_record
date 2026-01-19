@@ -12,7 +12,8 @@
     "back": "Back",
     "close": "Close",
     "submit": "Submit",
-    "reset": "Reset"
+    "reset": "Reset",
+    "saving": "Saving..."
   },
   "nav": {
     "home": "Home",
@@ -465,6 +466,8 @@
       "title": "Recurring",
       "addRecurring": "Add Recurring Item",
       "editRecurring": "Edit Recurring Item",
+      "deleteRecurring": "Delete",
+      "deleteConfirm": "Delete this recurring item?",
       "noRecurring": "No recurring items yet",
       "thisMonth": "This Month",
       "status": {
@@ -500,7 +503,15 @@
       "selectAccount": "Select Account",
       "selectCategory": "Select Category",
       "transferTo": "Transfer To",
-      "color": "Color"
+      "color": "Color",
+      "addCategory": "Add Custom Category",
+      "newCategoryPlaceholder": "Enter category name...",
+      "categoryNameRequired": "Category name is required",
+      "addType": "Add Type",
+      "newTypePlaceholder": "Enter type name...",
+      "typeNameRequired": "Type name is required",
+      "note": "Note",
+      "notePlaceholder": "Optional note..."
     },
     "toast": {
       "accountAdded": "Account added",
@@ -512,7 +523,9 @@
       "recurringAdded": "Recurring item added",
       "recurringUpdated": "Recurring item updated",
       "recurringDeleted": "Recurring item deleted",
-      "markedAsPaid": "Marked as paid"
+      "markedAsPaid": "Marked as paid",
+      "categoryCreated": "Category created",
+      "typeCreated": "Type created"
     }
   }
 }
