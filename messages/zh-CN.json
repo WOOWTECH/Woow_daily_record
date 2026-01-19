@@ -99,61 +99,74 @@
   },
   "settings": {
     "title": "设置",
-    "subtitle": "管理个人资料与家庭偏好设置",
-    "manageFamilyMembers": "在健康设置中管理家庭成员",
-    "appearance": "外观",
-    "language": "语言",
-    "theme": "主题模式",
-    "themeLight": "浅色",
-    "themeDark": "深色",
-    "themeSystem": "跟随系统",
-    "accentColor": "主色调",
-    "accentColorHint": "选择应用程序的主色调",
+    "nav": {
+      "profile": "个人资料",
+      "site": "站点",
+      "members": "成员"
+    },
     "profile": {
-      "title": "个人设置",
-      "changePicture": "更换头像",
-      "uploading": "上传中...",
+      "title": "个人资料设置",
+      "subtitle": "管理您的个人信息",
       "displayName": "显示名称",
-      "dateOfBirth": "出生日期",
-      "timeZone": "时区",
-      "language": "语言",
-      "saveProfile": "保存个人资料"
-    },
-    "baby": {
-      "title": "宝宝设置",
-      "noChildren": "尚未添加宝宝",
-      "uploadPhoto": "上传照片",
-      "uploading": "上传中...",
-      "photoRecommend": "推荐：正方形 JPG/PNG",
-      "name": "名称",
-      "dateOfBirth": "出生日期",
-      "gender": "性别",
-      "boy": "男孩",
-      "girl": "女孩",
-      "other": "其他",
-      "detailsNotes": "详情/备注",
-      "detailsPlaceholder": "过敏信息、医疗记录或成长里程碑...",
-      "saveChanges": "保存更改",
-      "saving": "保存中...",
-      "deleteBaby": "删除宝宝",
-      "deleteConfirmTitle": "确定要删除吗？",
-      "deleteConfirmDesc": "这会永久删除 {name} 及其所有成长记录、日志和照片。此操作无法撤销。",
-      "deleting": "删除中...",
-      "deleteForever": "永久删除",
-      "cancel": "取消"
-    },
-    "account": {
-      "title": "账户安全",
-      "changeEmail": "更改邮箱",
-      "email": "电子邮箱",
-      "newEmail": "新邮箱地址",
-      "updateEmail": "更新邮箱",
-      "changePassword": "更改密码",
-      "password": "密码",
+      "email": "电子邮件",
+      "changePhoto": "更换头像",
+      "changePassword": "修改密码",
+      "currentPassword": "当前密码",
       "newPassword": "新密码",
-      "updatePassword": "更新密码",
-      "signInRequired": "您必须登录才能管理账户安全",
-      "guestWarning": "访客账户无法更改安全设置。请登录以管理电子邮箱和密码。"
+      "confirmPassword": "确认密码",
+      "saveChanges": "保存更改",
+      "saved": "个人资料已保存"
+    },
+    "site": {
+      "title": "站点设置",
+      "subtitle": "自定义您的家庭偏好",
+      "household": "家庭",
+      "householdName": "家庭名称",
+      "appearance": "外观",
+      "theme": "主题",
+      "themeLight": "浅色",
+      "themeDark": "深色",
+      "themeSystem": "跟随系统",
+      "language": "语言",
+      "regional": "地区",
+      "timezone": "时区",
+      "units": "计量单位",
+      "unitsMetric": "公制 (kg, cm)",
+      "unitsImperial": "英制 (lb, in)",
+      "saveSettings": "保存设置",
+      "saved": "设置已保存"
+    },
+    "members": {
+      "title": "成员访问",
+      "subtitle": "管理谁可以访问您的家庭",
+      "inviteMember": "邀请成员",
+      "pendingInvitations": "待处理邀请",
+      "activeMembers": "成员",
+      "copyLink": "复制链接",
+      "linkCopied": "邀请链接已复制",
+      "expires": "过期时间",
+      "owner": "所有者",
+      "pageAccess": "页面访问",
+      "accessClose": "关闭",
+      "accessView": "查看",
+      "accessPartial": "部分",
+      "accessEdit": "编辑",
+      "removeMember": "移除成员",
+      "removeConfirm": "确定要移除此成员吗？",
+      "memberRemoved": "成员已移除",
+      "invite": {
+        "title": "邀请成员",
+        "subtitle": "发送邀请加入您的家庭",
+        "email": "电子邮件地址",
+        "emailPlaceholder": "name@example.com",
+        "defaultAccess": "默认访问级别",
+        "defaultAccessHint": "初始应用于所有页面。加入后可以逐页自定义。",
+        "sendInvite": "发送邀请",
+        "cancel": "取消",
+        "sending": "发送中...",
+        "sent": "邀请已发送至",
+        "done": "完成"
+      }
     }
   },
   "notifications": {
@@ -611,7 +624,11 @@
     "deleting": "删除中...",
     "deleteForever": "永久删除",
     "memberDeleted": "成员已删除",
-    "deleteFailed": "删除失败"
+    "deleteFailed": "删除失败",
+    "memberAdded": "成员添加成功",
+    "memberUpdated": "成员更新成功",
+    "addError": "添加成员失败",
+    "updateError": "更新成员失败"
   },
   "healthMemberSwitcher": {
     "selectMember": "选择成员",
@@ -634,6 +651,13 @@
     "goToSettings": "前往设置添加家庭成员",
     "error": {
       "initFailed": "无法初始化工作区"
+    },
+    "comingSoon": {
+      "title": "活动追踪即将推出",
+      "description": "为您的家庭成员追踪日常活动、健康指标等信息。"
+    },
+    "quickLog": {
+      "title": "快速记录"
     }
   }
 }

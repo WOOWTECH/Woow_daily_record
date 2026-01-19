@@ -99,61 +99,74 @@
   },
   "settings": {
     "title": "Settings",
-    "subtitle": "Manage your profile and family preferences",
-    "manageFamilyMembers": "Manage family members in Health settings",
-    "appearance": "Appearance",
-    "language": "Language",
-    "theme": "Theme Mode",
-    "themeLight": "Light",
-    "themeDark": "Dark",
-    "themeSystem": "System",
-    "accentColor": "Accent Color",
-    "accentColorHint": "Choose a color that appears throughout the app",
+    "nav": {
+      "profile": "Profile",
+      "site": "Site",
+      "members": "Members"
+    },
     "profile": {
       "title": "Profile Settings",
-      "changePicture": "Change Picture",
-      "uploading": "Uploading...",
+      "subtitle": "Manage your personal information",
       "displayName": "Display Name",
-      "dateOfBirth": "Date of Birth",
-      "timeZone": "Time Zone",
-      "language": "Language",
-      "saveProfile": "Save Profile"
-    },
-    "baby": {
-      "title": "Baby Settings",
-      "noChildren": "No babies added yet.",
-      "uploadPhoto": "Upload Photo",
-      "uploading": "Uploading...",
-      "photoRecommend": "Recommended: Square JPG/PNG",
-      "name": "Name",
-      "dateOfBirth": "Date of Birth",
-      "gender": "Gender",
-      "boy": "Boy",
-      "girl": "Girl",
-      "other": "Other",
-      "detailsNotes": "Details / Notes",
-      "detailsPlaceholder": "Allergies, medical notes, or cute timeline milestones...",
-      "saveChanges": "Save Changes",
-      "saving": "Saving...",
-      "deleteBaby": "Delete Baby",
-      "deleteConfirmTitle": "Are you absolutely sure?",
-      "deleteConfirmDesc": "This will permanently delete {name} and all their growth records, logs, and photos. This action cannot be undone.",
-      "deleting": "Deleting...",
-      "deleteForever": "Delete Permanently",
-      "cancel": "Cancel"
-    },
-    "account": {
-      "title": "Account Security",
-      "changeEmail": "Change Email",
       "email": "Email",
-      "newEmail": "New Email Address",
-      "updateEmail": "Update Email",
+      "changePhoto": "Change Photo",
       "changePassword": "Change Password",
-      "password": "Password",
+      "currentPassword": "Current Password",
       "newPassword": "New Password",
-      "updatePassword": "Update Password",
-      "signInRequired": "You must be signed in to manage account security.",
-      "guestWarning": "Guest accounts cannot change security settings. Please sign in to manage email and password."
+      "confirmPassword": "Confirm Password",
+      "saveChanges": "Save Changes",
+      "saved": "Profile saved"
+    },
+    "site": {
+      "title": "Site Settings",
+      "subtitle": "Customize your household preferences",
+      "household": "Household",
+      "householdName": "Household Name",
+      "appearance": "Appearance",
+      "theme": "Theme",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "themeSystem": "System",
+      "language": "Language",
+      "regional": "Regional",
+      "timezone": "Timezone",
+      "units": "Measurement Units",
+      "unitsMetric": "Metric (kg, cm)",
+      "unitsImperial": "Imperial (lb, in)",
+      "saveSettings": "Save Settings",
+      "saved": "Settings saved"
+    },
+    "members": {
+      "title": "Member Access",
+      "subtitle": "Manage who can access your household",
+      "inviteMember": "Invite Member",
+      "pendingInvitations": "Pending Invitations",
+      "activeMembers": "Members",
+      "copyLink": "Copy Link",
+      "linkCopied": "Invite link copied",
+      "expires": "Expires",
+      "owner": "Owner",
+      "pageAccess": "Page Access",
+      "accessClose": "Close",
+      "accessView": "View",
+      "accessPartial": "Partial",
+      "accessEdit": "Edit",
+      "removeMember": "Remove Member",
+      "removeConfirm": "Are you sure you want to remove this member?",
+      "memberRemoved": "Member removed",
+      "invite": {
+        "title": "Invite Member",
+        "subtitle": "Send an invitation to join your household",
+        "email": "Email Address",
+        "emailPlaceholder": "name@example.com",
+        "defaultAccess": "Default Access Level",
+        "defaultAccessHint": "Applied to all pages initially. You can customize per-page after they join.",
+        "sendInvite": "Send Invite",
+        "cancel": "Cancel",
+        "sending": "Sending...",
+        "sent": "Invitation sent to",
+        "done": "Done"
+      }
     }
   },
   "notifications": {
@@ -611,7 +624,11 @@
     "deleting": "Deleting...",
     "deleteForever": "Delete Permanently",
     "memberDeleted": "Member deleted",
-    "deleteFailed": "Failed to delete member"
+    "deleteFailed": "Failed to delete member",
+    "memberAdded": "Member added successfully",
+    "memberUpdated": "Member updated successfully",
+    "addError": "Failed to add member",
+    "updateError": "Failed to update member"
   },
   "healthMemberSwitcher": {
     "selectMember": "Select Member",
@@ -634,6 +651,13 @@
     "goToSettings": "Go to Settings to add a family member",
     "error": {
       "initFailed": "Could not initialize workspace"
+    },
+    "comingSoon": {
+      "title": "Activity Tracking Coming Soon",
+      "description": "Track daily activities, health metrics, and more for your family members."
+    },
+    "quickLog": {
+      "title": "Quick Log"
     }
   }
 }
