@@ -5,11 +5,9 @@ import { useEffect, useState } from "react";
 import Icon from "@mdi/react";
 import {
   mdiHome,
-  mdiBabyCarriage,
+  mdiHeartPulse,
   mdiCurrencyUsd,
-  mdiFormatListChecks,
-  mdiCalendar,
-  mdiNoteText,
+  mdiLightbulbOnOutline,
   mdiWrench,
   mdiCog,
   mdiLogout,
@@ -28,11 +26,9 @@ export function Sidebar() {
 
   const navItems = [
     { icon: mdiHome, label: t('home'), href: "/" },
-    { icon: mdiBabyCarriage, label: t('baby'), href: "/baby" },
+    { icon: mdiHeartPulse, label: t('health'), href: "/health" },
     { icon: mdiCurrencyUsd, label: t('finance'), href: "/finance" },
-    { icon: mdiFormatListChecks, label: t('todos'), href: "/todos" },
-    { icon: mdiCalendar, label: t('calendar'), href: "/calendar" },
-    { icon: mdiNoteText, label: t('notes'), href: "/notes" },
+    { icon: mdiLightbulbOnOutline, label: t('productivity'), href: "/productivity" },
     { icon: mdiWrench, label: t('devices'), href: "/devices" },
   ];
 

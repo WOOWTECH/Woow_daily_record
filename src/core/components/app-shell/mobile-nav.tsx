@@ -8,11 +8,9 @@ import Icon from "@mdi/react";
 import {
   mdiMenu,
   mdiHome,
-  mdiBabyCarriage,
+  mdiHeartPulse,
   mdiCurrencyUsd,
-  mdiFormatListChecks,
-  mdiCalendar,
-  mdiNoteText,
+  mdiLightbulbOnOutline,
   mdiWrench,
   mdiCog,
   mdiLogout,
@@ -30,11 +28,9 @@ export function MobileNav() {
 
   const navItems = [
     { icon: mdiHome, label: t('home'), href: "/" },
-    { icon: mdiBabyCarriage, label: t('baby'), href: "/baby" },
+    { icon: mdiHeartPulse, label: t('health'), href: "/health" },
     { icon: mdiCurrencyUsd, label: t('finance'), href: "/finance" },
-    { icon: mdiFormatListChecks, label: t('todos'), href: "/todos" },
-    { icon: mdiCalendar, label: t('calendar'), href: "/calendar" },
-    { icon: mdiNoteText, label: t('notes'), href: "/notes" },
+    { icon: mdiLightbulbOnOutline, label: t('productivity'), href: "/productivity" },
     { icon: mdiWrench, label: t('devices'), href: "/devices" },
     { icon: mdiCog, label: t('settings'), href: "/settings" },
   ];
@@ -88,18 +84,6 @@ export function MobileNav() {
           <nav className="p-2 space-y-1">
             {navItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
-
-              if (item.disabled) {
-                return (
-                  <div
-                    key={item.href}
-                    className="flex items-center gap-3 rounded-xl px-3 py-3 opacity-40 cursor-not-allowed text-brand-deep-gray"
-                  >
-                    <Icon path={item.icon} size={0.92} />
-                    <span className="font-medium text-sm">{item.label}</span>
-                  </div>
-                );
-              }
 
               return (
                 <Link

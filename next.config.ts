@@ -14,6 +14,35 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/todos",
+        destination: "/productivity?tab=todos",
+        permanent: true,
+      },
+      {
+        source: "/notes",
+        destination: "/productivity?tab=notes",
+        permanent: true,
+      },
+      {
+        source: "/calendar",
+        destination: "/productivity?tab=calendar",
+        permanent: true,
+      },
+      {
+        source: "/baby",
+        destination: "/health",
+        permanent: true,
+      },
+      {
+        source: "/baby/:path*",
+        destination: "/health",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);
