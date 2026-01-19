@@ -38,6 +38,7 @@ export async function createAccountAction(householdId: string, input: CreateAcco
       currency: input.currency ?? 'TWD',
       icon: input.icon ?? null,
       color: input.color ?? null,
+      note: input.note ?? null,
     })
     .select()
     .single();
@@ -371,6 +372,18 @@ export async function deleteRecurringAction(recurringId: string) {
     throw new Error("Unauthorized");
   }
 
+  // Delete status records first (foreign key constraint)
+  const { error: statusError } = await supabase
+    .from('finance_recurring_status')
+    .delete()
+    .eq('recurring_id', recurringId);
+
+  if (statusError) {
+    console.error("Delete recurring status error:", statusError);
+    // Continue anyway - status records may not exist
+  }
+
+  // Delete the recurring item
   const { error } = await supabase
     .from('finance_recurring')
     .delete()
@@ -381,6 +394,7 @@ export async function deleteRecurringAction(recurringId: string) {
     throw new Error(error.message || "Failed to delete recurring");
   }
 
+  revalidatePath("/finance/recurring");
   revalidatePath("/finance");
 }
 
@@ -518,6 +532,44 @@ export async function createCategoryAction(
   if (error) {
     console.error("Create category error:", error);
     throw new Error(error.message || "Failed to create category");
+  }
+
+  revalidatePath("/finance");
+  return data;
+}
+
+// ============================================================
+// Account Type Actions
+// ============================================================
+
+export async function createAccountTypeAction(
+  householdId: string,
+  name: string
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  if (!name?.trim()) {
+    throw new Error("Type name is required");
+  }
+
+  const { data, error } = await supabase
+    .from('finance_account_types')
+    .insert({
+      household_id: householdId,
+      name: name.trim(),
+      is_system: false,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Create account type error:", error);
+    throw new Error(error.message || "Failed to create account type");
   }
 
   revalidatePath("/finance");
