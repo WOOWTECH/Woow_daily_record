@@ -1,12 +1,11 @@
 import { GlassCard } from "@/core/components/glass-card";
-import Icon from "@mdi/react";
-import { mdiCrown } from "@mdi/js";
-import { Button } from "@/core/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { ProfileForm } from "@/components/settings/profile-form";
-import { BabySettingsForm } from "@/components/settings/baby-form";
 import { AppearanceForm } from "@/components/settings/appearance-form";
 import { getTranslations } from 'next-intl/server';
+import Link from "next/link";
+import Icon from "@mdi/react";
+import { mdiAccountChildCircle } from "@mdi/js";
 
 export const dynamic = "force-dynamic";
 
@@ -26,14 +25,6 @@ export default async function SettingsPage() {
         .eq("id", userId)
         .single();
 
-    // 2. Get Children
-    // Query children using user_id (not parent_id)
-    const { data: children } = await supabase
-        .from("children")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: true });
-
     return (
         <div className="space-y-6 max-w-2xl pb-20">
             {/* Header - Floating Glass */}
@@ -49,8 +40,16 @@ export default async function SettingsPage() {
             {/* Appearance Settings */}
             <AppearanceForm />
 
-            {/* Baby Settings */}
-            <BabySettingsForm childrenList={children || []} />
+            {/* Family Members Link */}
+            <GlassCard className="p-6">
+                <Link
+                    href="/health?tab=settings"
+                    className="flex items-center gap-3 text-brand-deep-gray hover:text-brand-black dark:hover:text-brand-white transition-colors"
+                >
+                    <Icon path={mdiAccountChildCircle} size={1} className="text-brand-coral" />
+                    <span className="font-medium">{t('manageFamilyMembers')}</span>
+                </Link>
+            </GlassCard>
 
             {/* Profile Settings */}
             <ProfileForm

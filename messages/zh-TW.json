@@ -100,6 +100,7 @@
   "settings": {
     "title": "設定",
     "subtitle": "管理個人資料與家庭偏好設定",
+    "manageFamilyMembers": "在健康設定中管理家庭成員",
     "appearance": "外觀",
     "language": "語言",
     "theme": "主題模式",
