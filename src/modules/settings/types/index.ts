@@ -22,9 +22,31 @@ export type HouseholdUpdate = Partial<
 // ============================================
 // Member Access
 // ============================================
-export type AccessLevel = 'close' | 'view' | 'partial' | 'edit';
-export type PageName = 'activity' | 'records' | 'growth' | 'analytics' | 'settings';
+export type AccessLevel = 'close' | 'view' | 'control' | 'full';
+export type ModuleName = 'health' | 'productivity' | 'devices' | 'finance';
 export type MemberRole = 'owner' | 'member';
+
+// Access level constants for cycling
+export const ACCESS_LEVELS: AccessLevel[] = ['close', 'view', 'control', 'full'];
+
+// Module name constants
+export const MODULE_NAMES: ModuleName[] = ['health', 'productivity', 'devices', 'finance'];
+
+// Access level configuration with icons and labels
+export const ACCESS_LEVEL_CONFIG: Record<AccessLevel, { icon: string; label: string }> = {
+  close: { icon: '🚫', label: 'No Access' },
+  view: { icon: '👁', label: 'View Only' },
+  control: { icon: '✏️', label: 'Control' },
+  full: { icon: '⭐', label: 'Full Access' },
+};
+
+// Module configuration with icons and labels
+export const MODULE_CONFIG: Record<ModuleName, { icon: string; label: string }> = {
+  health: { icon: '🏥', label: 'Health' },
+  productivity: { icon: '📋', label: 'Productivity' },
+  devices: { icon: '📱', label: 'Devices' },
+  finance: { icon: '💰', label: 'Finance' },
+};
 
 export interface HouseholdMember {
   id: string;
@@ -36,14 +58,14 @@ export interface HouseholdMember {
   name: string;
   email: string;
   avatar_url: string | null;
-  // Joined from page_permissions
-  permissions: Record<PageName, AccessLevel>;
+  // Joined from module_permissions
+  permissions: Record<ModuleName, AccessLevel>;
 }
 
-export interface PagePermission {
+export interface ModulePermission {
   id: string;
   household_member_id: string;
-  page: PageName;
+  module: ModuleName;
   access_level: AccessLevel;
 }
 
