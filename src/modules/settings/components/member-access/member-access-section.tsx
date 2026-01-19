@@ -16,11 +16,11 @@ import {
   AlertDialogTitle,
 } from "@/core/components/ui/alert-dialog";
 import Icon from "@mdi/react";
-import { mdiAccountPlus, mdiContentCopy, mdiClose } from "@mdi/js";
+import { mdiAccountPlus, mdiContentCopy, mdiClose, mdiAccountRemove } from "@mdi/js";
 import { useSettingsStore } from "../../store";
-import { MemberCard } from "./member-card";
+import { PermissionMatrix } from "./permission-matrix";
 import { InviteDialog } from "./invite-dialog";
-import type { HouseholdMember, PageName, AccessLevel } from "../../types";
+import type { HouseholdMember, ModuleName, AccessLevel } from "../../types";
 
 export function MemberAccessSection() {
   const t = useTranslations("settings.members");
@@ -59,17 +59,18 @@ export function MemberAccessSection() {
 
   const handleUpdatePermission = async (
     memberId: string,
-    page: PageName,
+    module: ModuleName,
     level: AccessLevel
   ) => {
     try {
-      await updateMemberPermission(memberId, page, level);
+      await updateMemberPermission(memberId, module, level);
     } catch (error) {
       toast.error((error as Error).message);
     }
   };
 
   const pendingInvites = invitations.filter((i) => !i.accepted_at);
+  const nonOwnerMembers = members.filter((m) => m.role !== "owner");
 
   return (
     <GlassCard className="p-6">
@@ -80,7 +81,10 @@ export function MemberAccessSection() {
           </h2>
           <p className="text-sm text-brand-deep-gray">{t("subtitle")}</p>
         </div>
-        <Button onClick={() => setIsInviteOpen(true)}>
+        <Button
+          onClick={() => setIsInviteOpen(true)}
+          className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-sm"
+        >
           <Icon path={mdiAccountPlus} size={0.67} className="mr-1" />
           {t("inviteMember")}
         </Button>
@@ -127,24 +131,39 @@ export function MemberAccessSection() {
         </div>
       )}
 
-      {/* Members List */}
-      <div>
-        <h3 className="text-sm text-brand-deep-gray mb-2">
-          {t("activeMembers")} ({members.length})
+      {/* Permission Matrix */}
+      <div className="mb-6">
+        <h3 className="text-sm text-brand-deep-gray mb-3">
+          {t("permissionMatrix")}
         </h3>
-        <div className="space-y-3">
-          {members.map((member) => (
-            <MemberCard
-              key={member.id}
-              member={member}
-              onUpdatePermission={(page, level) =>
-                handleUpdatePermission(member.id, page, level)
-              }
-              onRemove={() => setMemberToRemove(member)}
-            />
-          ))}
-        </div>
+        <PermissionMatrix
+          members={members}
+          onUpdatePermission={handleUpdatePermission}
+        />
       </div>
+
+      {/* Remove Member Buttons */}
+      {nonOwnerMembers.length > 0 && (
+        <div className="pt-4 border-t border-white/20">
+          <h3 className="text-sm text-brand-deep-gray mb-2">
+            {t("removeMembers")}
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {nonOwnerMembers.map((member) => (
+              <Button
+                key={member.id}
+                variant="outline"
+                size="sm"
+                onClick={() => setMemberToRemove(member)}
+                className="text-red-500 border-red-200 hover:bg-red-50 hover:border-red-300"
+              >
+                <Icon path={mdiAccountRemove} size={0.5} className="mr-1" />
+                {member.name}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Invite Dialog */}
       <InviteDialog open={isInviteOpen} onOpenChange={setIsInviteOpen} />
