@@ -607,12 +607,31 @@
     "deleteConfirmInstruction": "To confirm, please type \"{name}\" below:",
     "typeMemberName": "Type member name to confirm",
     "deleting": "Deleting...",
-    "deleteForever": "Delete Permanently"
+    "deleteForever": "Delete Permanently",
+    "memberDeleted": "Member deleted",
+    "deleteFailed": "Failed to delete member"
   },
   "healthMemberSwitcher": {
     "selectMember": "Select Member",
     "switchMember": "Tap to switch",
     "familyMembers": "Family Members",
     "noMembers": "No members added"
+  },
+  "health": {
+    "title": "Family Health Hub",
+    "subtitle": "Track health activities and growth for all family members",
+    "loading": "Loading...",
+    "tabs": {
+      "activity": "Activity",
+      "records": "Records",
+      "growth": "Growth",
+      "analytics": "Analytics",
+      "settings": "Settings"
+    },
+    "selectMemberPrompt": "Please select a family member to view their health data.",
+    "goToSettings": "Go to Settings to add a family member",
+    "error": {
+      "initFailed": "Could not initialize workspace"
+    }
   }
 }

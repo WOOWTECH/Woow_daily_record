@@ -13,7 +13,9 @@
     "close": "關閉",
     "submit": "提交",
     "reset": "重設",
-    "saving": "儲存中..."
+    "saving": "儲存中...",
+    "confirmDelete": "確認刪除",
+    "deleteConfirm": "確定要刪除嗎？"
   },
   "nav": {
     "home": "首頁",
@@ -23,6 +25,7 @@
     "notes": "筆記",
     "devices": "設備管理",
     "finance": "財務",
+    "productivity": "效率",
     "settings": "設定",
     "signOut": "登出"
   },
@@ -75,6 +78,22 @@
       "saving": "儲存中...",
       "updateDevice": "更新設備",
       "nameRequired": "請輸入設備名稱"
+    },
+    "detail": {
+      "serialNumber": "序號",
+      "noContent": "尚無內容",
+      "deleteConfirmTitle": "確定要刪除此設備？",
+      "deleteConfirmDescription": "此操作無法復原，設備「{name}」的所有資料將被永久刪除。",
+      "purchaseDate": "購買日期",
+      "price": "金額",
+      "warrantyExpiry": "保固至",
+      "expired": "已過期",
+      "manual": "使用說明",
+      "maintenance": "維修紀錄"
+    },
+    "toast": {
+      "deleted": "設備已刪除",
+      "deleteFailed": "刪除失敗"
     }
   },
   "settings": {
@@ -398,6 +417,12 @@
   "finance": {
     "title": "財務",
     "subtitle": "管理家庭收支與帳戶",
+    "tabs": {
+      "dashboard": "總覽",
+      "accounts": "帳戶",
+      "transactions": "交易",
+      "analytics": "分析"
+    },
     "dashboard": {
       "totalBalance": "總資產",
       "monthlyIncome": "本月收入",
@@ -526,6 +551,87 @@
       "markedAsPaid": "已標記為已付款",
       "categoryCreated": "分類已建立",
       "typeCreated": "類型已建立"
+    }
+  },
+  "productivity": {
+    "title": "效率",
+    "subtitle": "在一處管理任務、筆記和行事曆",
+    "sidebar": {
+      "overview": "總覽",
+      "todos": "任務",
+      "notes": "筆記",
+      "calendar": "行事曆"
+    },
+    "tabs": {
+      "overview": "總覽",
+      "todos": "任務",
+      "notes": "筆記",
+      "calendar": "行事曆"
+    },
+    "overview": {
+      "todos": "任務",
+      "notes": "筆記",
+      "calendar": "行事曆",
+      "activeTasks": "進行中任務",
+      "completedToday": "今日完成",
+      "totalNotes": "筆記總數",
+      "pinnedNotes": "已釘選",
+      "eventsToday": "今日事件",
+      "upcomingThisWeek": "本週即將到來"
+    }
+  },
+  "healthSettings": {
+    "title": "家庭成員",
+    "subtitle": "管理家庭成員的健康追蹤",
+    "addMember": "新增成員",
+    "editMember": "編輯成員",
+    "noMembers": "尚未新增家庭成員。",
+    "addFirstMember": "新增您的第一位家庭成員",
+    "ageMonths": "{count, plural, =0 {新生兒} =1 {1 個月} other {# 個月}}",
+    "ageYears": "{count, plural, =1 {1 歲} other {# 歲}}",
+    "name": "姓名",
+    "namePlaceholder": "輸入姓名",
+    "dateOfBirth": "出生日期",
+    "gender": "性別",
+    "selectGender": "選擇性別",
+    "genderBoy": "男孩",
+    "genderGirl": "女孩",
+    "genderOther": "其他",
+    "details": "備註 / 詳情",
+    "detailsPlaceholder": "過敏、病歷或其他重要資訊...",
+    "uploadPhoto": "上傳",
+    "uploading": "上傳中...",
+    "photoAlt": "成員照片",
+    "deleteConfirmTitle": "刪除家庭成員",
+    "deleteConfirmWarning": "這將永久刪除 {name} 及其所有健康記錄、成長數據和活動日誌。此操作無法撤銷。",
+    "deleteConfirmInstruction": "請在下方輸入「{name}」以確認：",
+    "typeMemberName": "輸入成員姓名以確認",
+    "deleting": "刪除中...",
+    "deleteForever": "永久刪除",
+    "memberDeleted": "成員已刪除",
+    "deleteFailed": "刪除失敗"
+  },
+  "healthMemberSwitcher": {
+    "selectMember": "選擇成員",
+    "switchMember": "點擊切換",
+    "familyMembers": "家庭成員",
+    "noMembers": "尚未新增成員"
+  },
+  "health": {
+    "title": "家庭健康中心",
+    "subtitle": "追蹤所有家庭成員的健康活動和成長",
+    "loading": "載入中...",
+    "tabs": {
+      "activity": "活動",
+      "records": "記錄",
+      "growth": "成長",
+      "analytics": "分析",
+      "settings": "設定"
+    },
+    "selectMemberPrompt": "請選擇一位家庭成員以查看其健康數據。",
+    "goToSettings": "前往設定新增家庭成員",
+    "error": {
+      "initFailed": "無法初始化工作區"
     }
   }
 }
