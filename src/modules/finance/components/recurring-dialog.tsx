@@ -12,8 +12,8 @@ import {
 import { Button } from "@/core/components/ui/button";
 import { Input } from "@/core/components/ui/input";
 import { Label } from "@/core/components/ui/label";
-import { createRecurringAction } from "@/app/actions/finance";
-import type { FinanceAccount, FinanceCategory, RecurringFrequency } from "../types";
+import { createRecurringAction, updateRecurringAction, deleteRecurringAction } from "@/app/actions/finance";
+import type { FinanceAccount, FinanceCategory, FinanceRecurring, RecurringFrequency } from "../types";
 import { toast } from "sonner";
 
 interface RecurringDialogProps {
@@ -22,6 +22,7 @@ interface RecurringDialogProps {
   accounts: FinanceAccount[];
   categories: FinanceCategory[];
   householdId: string;
+  recurring?: FinanceRecurring; // If provided, edit mode
 }
 
 export function RecurringDialog({
@@ -30,9 +31,12 @@ export function RecurringDialog({
   accounts,
   categories,
   householdId,
+  recurring,
 }: RecurringDialogProps) {
   const t = useTranslations("finance");
   const tCommon = useTranslations("common");
+
+  const isEditing = !!recurring;
 
   const [name, setName] = useState("");
   const [type, setType] = useState<"income" | "expense">("expense");
@@ -42,21 +46,36 @@ export function RecurringDialog({
   const [frequency, setFrequency] = useState<RecurringFrequency>("monthly");
   const [dueDay, setDueDay] = useState("1");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const filteredCategories = categories.filter((c) => c.type === type);
 
-  // Reset form when dialog opens
+  // Reset form when dialog opens or recurring changes
   useEffect(() => {
     if (open) {
-      setName("");
-      setType("expense");
-      setAmount("");
-      setAccountId(accounts[0]?.id || "");
-      setCategoryId("");
-      setFrequency("monthly");
-      setDueDay("1");
+      if (recurring) {
+        // Edit mode - pre-fill from existing data
+        setName(recurring.name);
+        setType(recurring.type as "income" | "expense");
+        setAmount(recurring.amount.toString());
+        setAccountId(recurring.account_id);
+        setCategoryId(recurring.category_id || "");
+        setFrequency(recurring.frequency as RecurringFrequency);
+        setDueDay(recurring.due_day.toString());
+      } else {
+        // Add mode - reset to defaults
+        setName("");
+        setType("expense");
+        setAmount("");
+        setAccountId(accounts[0]?.id || "");
+        setCategoryId("");
+        setFrequency("monthly");
+        setDueDay("1");
+      }
+      setShowDeleteConfirm(false);
     }
-  }, [open, accounts]);
+  }, [open, recurring, accounts]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +83,7 @@ export function RecurringDialog({
 
     setIsSubmitting(true);
     try {
-      await createRecurringAction(householdId, {
+      const data = {
         name,
         type,
         amount: parseFloat(amount),
@@ -72,16 +91,17 @@ export function RecurringDialog({
         category_id: categoryId || undefined,
         frequency,
         due_day: parseInt(dueDay),
-      });
+      };
 
-      toast.success(t("toast.recurringAdded"));
+      if (isEditing && recurring) {
+        await updateRecurringAction(recurring.id, data);
+        toast.success(t("toast.recurringUpdated"));
+      } else {
+        await createRecurringAction(householdId, data);
+        toast.success(t("toast.recurringAdded"));
+      }
+
       onOpenChange(false);
-
-      // Reset form
-      setName("");
-      setAmount("");
-      setCategoryId("");
-      setDueDay("1");
     } catch (error) {
       toast.error(String(error));
     } finally {
@@ -89,11 +109,29 @@ export function RecurringDialog({
     }
   };
 
+  const handleDelete = async () => {
+    if (!recurring) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteRecurringAction(recurring.id);
+      toast.success(t("toast.recurringDeleted"));
+      onOpenChange(false);
+    } catch (error) {
+      toast.error(String(error));
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{t("recurring.addRecurring")}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? t("recurring.editRecurring") : t("recurring.addRecurring")}
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -207,24 +245,65 @@ export function RecurringDialog({
             />
           </div>
 
+          {/* Delete Confirmation */}
+          {showDeleteConfirm && (
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+              <p className="text-sm text-red-600 dark:text-red-400 mb-3">
+                {t("recurring.deleteConfirm")}
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
+                >
+                  {tCommon("cancel")}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  className="bg-red-500 text-white hover:bg-red-600"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? tCommon("loading") : t("recurring.deleteRecurring")}
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* Actions */}
-          <div className="flex gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={() => onOpenChange(false)}
-            >
-              {tCommon("cancel")}
-            </Button>
-            <Button
-              type="submit"
-              className="flex-1 bg-brand-blue text-white"
-              disabled={isSubmitting || !name || !amount || !accountId}
-            >
-              {isSubmitting ? tCommon("loading") : tCommon("save")}
-            </Button>
-          </div>
+          {!showDeleteConfirm && (
+            <div className="flex gap-3 pt-4">
+              {isEditing && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="text-red-500 border-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  {t("recurring.deleteRecurring")}
+                </Button>
+              )}
+              <div className="flex-1" />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                {tCommon("cancel")}
+              </Button>
+              <Button
+                type="submit"
+                className="bg-brand-blue text-white"
+                disabled={isSubmitting || !name || !amount || !accountId}
+              >
+                {isSubmitting ? tCommon("loading") : tCommon("save")}
+              </Button>
+            </div>
+          )}
         </form>
       </DialogContent>
     </Dialog>
