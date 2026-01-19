@@ -134,7 +134,9 @@
       "unitsMetric": "公制 (kg, cm)",
       "unitsImperial": "英制 (lb, in)",
       "saveSettings": "保存设置",
-      "saved": "设置已保存"
+      "saved": "设置已保存",
+      "accentColor": "主题色",
+      "accentColorHint": "选择按钮和强调内容的主颜色"
     },
     "members": {
       "title": "成员访问",
@@ -154,6 +156,11 @@
       "removeMember": "移除成员",
       "removeConfirm": "确定要移除此成员吗？",
       "memberRemoved": "成员已移除",
+      "user": "用户",
+      "permissionMatrix": "权限矩阵",
+      "clickToChange": "点击更改权限",
+      "ownerFullAccess": "所有者拥有完全访问权限",
+      "removeMembers": "移除成员",
       "invite": {
         "title": "邀请成员",
         "subtitle": "发送邀请加入您的家庭",

@@ -134,7 +134,9 @@
       "unitsMetric": "公制 (kg, cm)",
       "unitsImperial": "英制 (lb, in)",
       "saveSettings": "儲存設定",
-      "saved": "設定已儲存"
+      "saved": "設定已儲存",
+      "accentColor": "主題色",
+      "accentColorHint": "選擇按鈕和強調內容的主顏色"
     },
     "members": {
       "title": "成員存取",
@@ -154,6 +156,11 @@
       "removeMember": "移除成員",
       "removeConfirm": "確定要移除此成員嗎？",
       "memberRemoved": "成員已移除",
+      "user": "用戶",
+      "permissionMatrix": "權限矩陣",
+      "clickToChange": "點擊更改權限",
+      "ownerFullAccess": "所有者擁有完全存取權限",
+      "removeMembers": "移除成員",
       "invite": {
         "title": "邀請成員",
         "subtitle": "發送邀請加入您的家庭",

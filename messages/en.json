@@ -134,7 +134,9 @@
       "unitsMetric": "Metric (kg, cm)",
       "unitsImperial": "Imperial (lb, in)",
       "saveSettings": "Save Settings",
-      "saved": "Settings saved"
+      "saved": "Settings saved",
+      "accentColor": "Accent Color",
+      "accentColorHint": "Choose a main color for buttons and highlights"
     },
     "members": {
       "title": "Member Access",
@@ -154,6 +156,11 @@
       "removeMember": "Remove Member",
       "removeConfirm": "Are you sure you want to remove this member?",
       "memberRemoved": "Member removed",
+      "user": "User",
+      "permissionMatrix": "Permission Matrix",
+      "clickToChange": "Click to change permission",
+      "ownerFullAccess": "Owner has full access",
+      "removeMembers": "Remove Members",
       "invite": {
         "title": "Invite Member",
         "subtitle": "Send an invitation to join your household",
