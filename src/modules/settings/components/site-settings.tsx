@@ -127,9 +127,9 @@ export function SiteSettings() {
           <h3 className="text-sm font-medium mb-3">{t("appearance")}</h3>
 
           {/* Theme */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-0 mb-4">
             <Label>{t("theme")}</Label>
-            <div className="flex gap-1 bg-white/30 rounded-lg p-1">
+            <div className="flex gap-1 bg-white/30 rounded-lg p-1 w-full md:w-auto">
               {themeOptions.map((option) => (
                 <button
                   key={option.value}
@@ -188,10 +188,10 @@ export function SiteSettings() {
           </div>
 
           {/* Language */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-0">
             <Label>{t("language")}</Label>
             <Select value={language} onValueChange={(v) => isOwner && setLanguage(v as Household["language"])} disabled={!isOwner}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full md:w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -210,10 +210,10 @@ export function SiteSettings() {
           <h3 className="text-sm font-medium mb-3">{t("regional")}</h3>
 
           {/* Timezone */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-0 mb-4">
             <Label>{t("timezone")}</Label>
             <Select value={timezone} onValueChange={setTimezone} disabled={!isOwner}>
-              <SelectTrigger className="w-56">
+              <SelectTrigger className="w-full md:w-56">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -227,9 +227,9 @@ export function SiteSettings() {
           </div>
 
           {/* Units */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-0">
             <Label>{t("units")}</Label>
-            <div className="flex gap-1 bg-white/30 rounded-lg p-1">
+            <div className="flex gap-1 bg-white/30 rounded-lg p-1 w-full md:w-auto">
               {(["metric", "imperial"] as const).map((u) => (
                 <button
                   key={u}
