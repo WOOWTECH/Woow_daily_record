@@ -74,7 +74,7 @@ export function FinanceDashboard({
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {/* Total Balance */}
         <GlassCard className="p-4">
           <div className="flex items-center gap-3 mb-2">
@@ -182,7 +182,7 @@ export function FinanceDashboard({
             </Link>
           </GlassCard>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {accounts.map((account) => (
               <AccountCard key={account.id} account={account} />
             ))}
@@ -214,7 +214,7 @@ export function FinanceDashboard({
             <p className="text-brand-deep-gray">{t("recurring.noRecurring")}</p>
           </GlassCard>
         ) : (
-          <GlassCard className="divide-y divide-gray-200 dark:divide-gray-700">
+          <GlassCard className="divide-y divide-gray-200 dark:divide-gray-700 overflow-x-auto">
             {recurringItems.slice(0, 5).map((item) => {
               const status = statusRecords.find((s) => s.recurring_id === item.id);
               const isPaid = status?.status === "paid";
@@ -281,7 +281,7 @@ export function FinanceDashboard({
             <p className="text-brand-deep-gray">{t("transactions.noTransactions")}</p>
           </GlassCard>
         ) : (
-          <GlassCard className="divide-y divide-gray-200 dark:divide-gray-700">
+          <GlassCard className="divide-y divide-gray-200 dark:divide-gray-700 overflow-x-auto">
             {recentTransactions.map((transaction) => (
               <TransactionItem key={transaction.id} transaction={transaction} />
             ))}
