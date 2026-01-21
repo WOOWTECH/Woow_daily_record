@@ -41,7 +41,7 @@ export function ProfileSettings() {
   };
 
   return (
-    <GlassCard className="p-6">
+    <GlassCard className="p-4 md:p-6">
       <div className="mb-6">
         <h2 className="text-lg font-semibold text-brand-black dark:text-brand-white">
           {t("title")}
@@ -51,7 +51,7 @@ export function ProfileSettings() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Avatar */}
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col items-center md:flex-row md:items-start gap-4">
           <div className="h-20 w-20 rounded-full bg-brand-gray border border-white/50 flex items-center justify-center overflow-hidden">
             {profile?.avatar_url ? (
               <img
@@ -63,7 +63,7 @@ export function ProfileSettings() {
               <Icon path={mdiAccount} size={2} className="text-brand-deep-gray" />
             )}
           </div>
-          <Button type="button" variant="outline" size="sm">
+          <Button type="button" variant="outline" size="sm" className="w-full md:w-auto">
             {t("changePhoto")}
           </Button>
         </div>
@@ -118,7 +118,7 @@ export function ProfileSettings() {
           </CollapsibleContent>
         </Collapsible>
 
-        <Button type="submit" disabled={isSubmitting} className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-sm">
+        <Button type="submit" disabled={isSubmitting} className="w-full md:w-auto bg-brand-blue hover:bg-brand-blue/90 text-white shadow-sm">
           {t("saveChanges")}
         </Button>
       </form>
