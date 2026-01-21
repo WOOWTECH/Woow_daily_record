@@ -15,7 +15,9 @@
     "reset": "重設",
     "saving": "儲存中...",
     "confirmDelete": "確認刪除",
-    "deleteConfirm": "確定要刪除嗎？"
+    "deleteConfirm": "確定要刪除嗎？",
+    "filters": "篩選",
+    "noData": "無資料"
   },
   "nav": {
     "home": "首頁",
