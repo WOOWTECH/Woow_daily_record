@@ -32,6 +32,55 @@
     "settings": "設定",
     "signOut": "登出"
   },
+  "siteSwitcher": {
+    "currentSite": "目前場域",
+    "switchSite": "切換場域",
+    "createSite": "建立場域",
+    "createFirstSite": "建立您的第一個場域",
+    "mySites": "我的場域",
+    "noSites": "尚無場域",
+    "default": "預設"
+  },
+  "createSite": {
+    "title": "建立新場域",
+    "subtitle": "為您的家庭、辦公室或其他空間建立獨立記錄",
+    "name": "場域名稱",
+    "namePlaceholder": "例如：我的家、辦公室",
+    "description": "描述（選填）",
+    "descriptionPlaceholder": "簡短描述此場域",
+    "create": "建立場域",
+    "creating": "建立中...",
+    "cancel": "取消",
+    "success": "場域建立成功",
+    "error": "建立場域失敗",
+    "limitReached": "您已達到擁有場域的上限（最多 {max} 個）"
+  },
+  "onboarding": {
+    "welcomeTitle": "歡迎使用 Woowtech!",
+    "welcomeSubtitle": "讓我們開始建立您的第一個場域來記錄生活吧",
+    "featureMembers": "邀請家人一起管理",
+    "featureHA": "連接 Home Assistant 智慧家居",
+    "featureTracking": "記錄健康、財務、生活大小事",
+    "getStarted": "開始設定",
+    "createTitle": "建立您的場域",
+    "createSubtitle": "場域是您記錄的獨立空間，例如家庭或辦公室",
+    "siteName": "場域名稱",
+    "siteNamePlaceholder": "例如：我的家",
+    "siteDescription": "描述（選填）",
+    "siteDescPlaceholder": "簡短描述此場域的用途",
+    "back": "返回",
+    "createSite": "建立場域",
+    "creating": "建立中...",
+    "nameRequired": "請輸入場域名稱",
+    "createError": "建立場域失敗，請重試",
+    "completeTitle": "設定完成！",
+    "completeSubtitle": "您的場域「{name}」已建立成功",
+    "nextSteps": "接下來您可以：",
+    "stepInvite": "邀請家人加入場域",
+    "stepHA": "連接 Home Assistant",
+    "stepRecord": "開始記錄生活",
+    "enterSite": "進入場域"
+  },
   "devices": {
     "title": "設備管理",
     "subtitle": "管理家中設備的使用說明與維修紀錄",
@@ -54,6 +103,8 @@
       "furniture": "傢俱",
       "outdoor": "戶外",
       "appliance": "家電",
+      "appliances": "家電",
+      "baby": "嬰兒用品",
       "other": "其他"
     },
     "form": {
@@ -99,12 +150,48 @@
       "deleteFailed": "刪除失敗"
     }
   },
+  "roles": {
+    "owner": "擁有者",
+    "admin": "管理員",
+    "member": "使用者",
+    "viewer": "檢視者"
+  },
+  "permissions": {
+    "close": "關閉",
+    "view": "檢視",
+    "limited": "有限",
+    "full": "編輯",
+    "closeDesc": "無法存取此頁面",
+    "viewDesc": "只能查看，不能修改",
+    "limitedDesc": "可新增/編輯紀錄，不能管理設定",
+    "fullDesc": "完整權限，包含所有功能"
+  },
+  "pages": {
+    "home": "首頁",
+    "health": "健康",
+    "finance": "財務",
+    "productivity": "效率",
+    "devices": "設備",
+    "settings": "設定"
+  },
   "settings": {
     "title": "設定",
     "nav": {
       "profile": "個人資料",
-      "site": "網站",
+      "sites": "場域管理",
+      "site": "場域設定",
       "members": "成員"
+    },
+    "sites": {
+      "title": "場域管理",
+      "subtitle": "管理您的所有場域，切換或建立新場域",
+      "mySites": "我的場域",
+      "noSites": "您還沒有加入任何場域",
+      "createNew": "建立新場域",
+      "createFirst": "建立第一個場域",
+      "current": "目前使用中",
+      "switched": "已切換場域",
+      "ownedCount": "您擁有的場域：{count}/{max} 個"
     },
     "profile": {
       "title": "個人資料設定",
@@ -120,10 +207,10 @@
       "saved": "個人資料已儲存"
     },
     "site": {
-      "title": "網站設定",
-      "subtitle": "自訂您的家庭偏好",
-      "household": "家庭",
-      "householdName": "家庭名稱",
+      "title": "場域設定",
+      "subtitle": "自訂您的場域偏好",
+      "household": "場域",
+      "householdName": "場域名稱",
       "appearance": "外觀",
       "theme": "主題",
       "themeLight": "淺色",
@@ -138,11 +225,36 @@
       "saveSettings": "儲存設定",
       "saved": "設定已儲存",
       "accentColor": "主題色",
-      "accentColorHint": "選擇按鈕和強調內容的主顏色"
+      "accentColorHint": "選擇按鈕和強調內容的主顏色",
+      "homeAssistant": "Home Assistant 整合",
+      "haUrl": "Home Assistant URL",
+      "haUrlPlaceholder": "https://your-ha.duckdns.org",
+      "haUrlHint": "輸入您的 HA 網址，系統會自動轉換為 WebSocket 連線",
+      "haToken": "API Token",
+      "haTokenPlaceholder": "輸入長效存取權杖",
+      "haStatus": "連線狀態",
+      "haConnected": "Connected",
+      "haDisconnected": "Disconnected",
+      "haReconnect": "重新連線",
+      "haConnecting": "連線中...",
+      "haConnectionFailed": "連線失敗",
+      "haConnectionSuccess": "連線成功",
+      "dangerZone": "危險區域",
+      "dangerZoneDesc": "以下操作不可復原，請謹慎操作",
+      "leaveSite": "離開場域",
+      "leaveSiteDesc": "您將不再是此場域的成員",
+      "leaveSiteConfirm": "確定要離開「{name}」嗎？",
+      "leaveSiteSuccess": "已離開場域",
+      "deleteSite": "刪除場域",
+      "deleteSiteDesc": "永久刪除此場域及所有資料",
+      "deleteSiteConfirm": "確定要刪除「{name}」嗎？此操作無法復原。",
+      "deleteSiteHint": "請輸入場域名稱以確認刪除：",
+      "deleteSiteSuccess": "場域已刪除",
+      "cannotLeaveAsOwner": "擁有者無法離開場域，請先刪除場域或轉移擁有權"
     },
     "members": {
       "title": "成員存取",
-      "subtitle": "管理誰可以存取您的家庭",
+      "subtitle": "管理誰可以存取您的場域",
       "inviteMember": "邀請成員",
       "pendingInvitations": "待處理邀請",
       "activeMembers": "成員",
@@ -165,11 +277,14 @@
       "removeMembers": "移除成員",
       "invite": {
         "title": "邀請成員",
-        "subtitle": "發送邀請加入您的家庭",
+        "subtitle": "發送邀請加入您的場域",
         "email": "電子郵件地址",
         "emailPlaceholder": "name@example.com",
+        "role": "成員角色",
+        "roleHint": "管理員可管理成員和設定，使用者只能存取被授權的頁面。",
         "defaultAccess": "預設存取等級",
         "defaultAccessHint": "初始套用於所有頁面。加入後可以逐頁自訂。",
+        "adminDefaultHint": "管理員預設擁有所有頁面的完整權限。",
         "sendInvite": "發送邀請",
         "cancel": "取消",
         "sending": "傳送中...",
@@ -466,7 +581,9 @@
       "types": {
         "bank": "銀行帳戶",
         "cash": "現金",
-        "credit": "信用卡"
+        "credit": "信用卡",
+        "checking": "支票帳戶",
+        "savings": "儲蓄帳戶"
       }
     },
     "transactions": {
@@ -667,6 +784,10 @@
     },
     "quickLog": {
       "title": "快速記錄"
+    },
+    "overview": {
+      "eventsToday": "今日活動",
+      "recentActivity": "近期活動"
     }
   }
 }

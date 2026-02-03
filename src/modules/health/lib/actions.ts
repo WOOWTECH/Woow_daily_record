@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import type { FamilyMember, NewFamilyMember } from "../types";
 
 export async function createFamilyMemberAction(
+  householdId: string,
   member: NewFamilyMember
 ): Promise<{ success: boolean; data?: FamilyMember; error?: string }> {
   const supabase = await createClient();
@@ -38,11 +39,12 @@ export async function createFamilyMemberAction(
     }
   }
 
-  // Insert family member into children table
+  // Insert family member into children table with household_id
   const { data: newMember, error } = await supabase
     .from("children")
     .insert({
-      parent_id: parentId,
+      user_id: parentId,
+      household_id: householdId,
       name: member.name,
       dob: member.date_of_birth || null,
       gender: member.gender || "other",
@@ -61,7 +63,7 @@ export async function createFamilyMemberAction(
   // Map to FamilyMember interface
   const result: FamilyMember = {
     id: newMember.id,
-    household_id: "",
+    household_id: newMember.household_id || householdId,
     name: newMember.name,
     date_of_birth: newMember.dob,
     gender: newMember.gender,
@@ -74,7 +76,7 @@ export async function createFamilyMemberAction(
   return { success: true, data: result };
 }
 
-export async function fetchFamilyMembersAction(): Promise<{
+export async function fetchFamilyMembersAction(householdId: string): Promise<{
   success: boolean;
   data?: FamilyMember[];
   error?: string;
@@ -87,10 +89,11 @@ export async function fetchFamilyMembersAction(): Promise<{
     return { success: false, error: "Not authenticated" };
   }
 
+  // Query by household_id instead of user_id
   const { data, error } = await supabase
     .from("children")
     .select("*")
-    .eq("parent_id", user.id)
+    .eq("household_id", householdId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -101,7 +104,7 @@ export async function fetchFamilyMembersAction(): Promise<{
   // Map to FamilyMember interface
   const members: FamilyMember[] = (data || []).map((child) => ({
     id: child.id,
-    household_id: "",
+    household_id: child.household_id || householdId,
     name: child.name,
     date_of_birth: child.dob,
     gender: child.gender,
@@ -143,7 +146,7 @@ export async function updateFamilyMemberAction(
 
   const result: FamilyMember = {
     id: data.id,
-    household_id: "",
+    household_id: data.household_id || "",
     name: data.name,
     date_of_birth: data.dob,
     gender: data.gender,

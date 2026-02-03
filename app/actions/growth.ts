@@ -2,10 +2,34 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
-export async function addGrowthRecord(formData: FormData) {
+// Error response type for consistency
+interface ActionResult<T = void> {
+    success: boolean;
+    data?: T;
+    error?: string;
+    errorCode?: string;
+}
+
+// Helper to check authentication
+async function requireAuth(supabase: Awaited<ReturnType<typeof createClient>>) {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+        return { authenticated: false as const, error: "Authentication required. Please log in." };
+    }
+
+    return { authenticated: true as const, user };
+}
+
+export async function addGrowthRecord(formData: FormData): Promise<ActionResult> {
     const supabase = await createClient();
+
+    // Verify authentication
+    const authResult = await requireAuth(supabase);
+    if (!authResult.authenticated) {
+        return { success: false, error: authResult.error, errorCode: "AUTH_REQUIRED" };
+    }
 
     const childId = formData.get("childId") as string;
     const date = formData.get("date") as string;
@@ -15,31 +39,20 @@ export async function addGrowthRecord(formData: FormData) {
 
     // Parse custom measurements
     const customMeasurements: Record<string, number> = {};
-    for (const [key, value] of formData.entries()) {
-        if (key.startsWith("custom_")) {
-            // Format: custom_name_index or custom_value_index
-            // We'll rely on a simpler convention for formData: "custom_key_0", "custom_val_0"
-            // Actually, let's use the pattern from the form.
-            // Simplified approach: The form will send specific custom keys if we prefix them or we just look for known exclusions.
-            // Better: Form sends dynamic keys. Let's assume keys NOT in [childId, date, height, weight, headCircumference] are custom.
-        }
-    }
-
-    // Improved parsing strategy: 
-    // The client will send arrays or we process all keys. 
-    // Let's implement dynamic key parsing.
     Array.from(formData.entries()).forEach(([key, value]) => {
         if (key.startsWith("custom_metric_")) {
-            // format: custom_metric_<name>
             const metricName = key.replace("custom_metric_", "");
             if (value && typeof value === "string") {
-                customMeasurements[metricName] = parseFloat(value);
+                const parsed = parseFloat(value);
+                if (!isNaN(parsed)) {
+                    customMeasurements[metricName] = parsed;
+                }
             }
         }
     });
 
     if (!childId || !date) {
-        throw new Error("Missing required fields");
+        return { success: false, error: "Missing required fields (childId, date)", errorCode: "VALIDATION_ERROR" };
     }
 
     const { error } = await supabase.from("growth_records").insert({
@@ -48,20 +61,30 @@ export async function addGrowthRecord(formData: FormData) {
         height,
         weight,
         head_circumference: headCircumference,
-        custom_measurements: customMeasurements,
+        custom_measurements: Object.keys(customMeasurements).length > 0 ? customMeasurements : null,
     });
 
     if (error) {
-        console.error("Error adding growth record:", error);
-        console.error("Error details:", JSON.stringify(error, null, 2));
-        throw new Error("Failed to add record: " + error.message);
+        // Check for RLS policy violation
+        if (error.code === "42501" || error.message.includes("policy")) {
+            return { success: false, error: "Permission denied. You can only add records for your own children.", errorCode: "RLS_ERROR" };
+        }
+        return { success: false, error: "Failed to add record: " + error.message, errorCode: "DB_ERROR" };
     }
 
     revalidatePath("/growth");
+    revalidatePath("/health");
+    return { success: true };
 }
 
-export async function updateGrowthRecord(formData: FormData) {
+export async function updateGrowthRecord(formData: FormData): Promise<ActionResult> {
     const supabase = await createClient();
+
+    // Verify authentication
+    const authResult = await requireAuth(supabase);
+    if (!authResult.authenticated) {
+        return { success: false, error: authResult.error, errorCode: "AUTH_REQUIRED" };
+    }
 
     const recordId = formData.get("recordId") as string;
     const date = formData.get("date") as string;
@@ -75,13 +98,16 @@ export async function updateGrowthRecord(formData: FormData) {
         if (key.startsWith("custom_metric_")) {
             const metricName = key.replace("custom_metric_", "");
             if (value && typeof value === "string") {
-                customMeasurements[metricName] = parseFloat(value);
+                const parsed = parseFloat(value);
+                if (!isNaN(parsed)) {
+                    customMeasurements[metricName] = parsed;
+                }
             }
         }
     });
 
     if (!recordId || !date) {
-        throw new Error("Missing required fields");
+        return { success: false, error: "Missing required fields (recordId, date)", errorCode: "VALIDATION_ERROR" };
     }
 
     const { error } = await supabase
@@ -91,21 +117,66 @@ export async function updateGrowthRecord(formData: FormData) {
             height,
             weight,
             head_circumference: headCircumference,
-            custom_measurements: customMeasurements,
+            custom_measurements: Object.keys(customMeasurements).length > 0 ? customMeasurements : null,
         })
         .eq("id", recordId);
 
     if (error) {
-        console.error("Error updating growth record:", error);
-        console.error("Error details:", JSON.stringify(error, null, 2));
-        throw new Error("Failed to update record: " + error.message);
+        // Check for RLS policy violation
+        if (error.code === "42501" || error.message.includes("policy")) {
+            return { success: false, error: "Permission denied. You can only update your own records.", errorCode: "RLS_ERROR" };
+        }
+        return { success: false, error: "Failed to update record: " + error.message, errorCode: "DB_ERROR" };
     }
 
     revalidatePath("/growth");
+    revalidatePath("/health");
+    return { success: true };
 }
 
-export async function getCustomMetricTypes(childId: string) {
+export async function deleteGrowthRecord(recordId: string): Promise<ActionResult> {
     const supabase = await createClient();
+
+    // Verify authentication
+    const authResult = await requireAuth(supabase);
+    if (!authResult.authenticated) {
+        return { success: false, error: authResult.error, errorCode: "AUTH_REQUIRED" };
+    }
+
+    if (!recordId) {
+        return { success: false, error: "Record ID is required", errorCode: "VALIDATION_ERROR" };
+    }
+
+    const { error } = await supabase
+        .from("growth_records")
+        .delete()
+        .eq("id", recordId);
+
+    if (error) {
+        if (error.code === "42501" || error.message.includes("policy")) {
+            return { success: false, error: "Permission denied. You can only delete your own records.", errorCode: "RLS_ERROR" };
+        }
+        return { success: false, error: "Failed to delete record: " + error.message, errorCode: "DB_ERROR" };
+    }
+
+    revalidatePath("/growth");
+    revalidatePath("/health");
+    return { success: true };
+}
+
+export async function getCustomMetricTypes(childId: string): Promise<ActionResult<Array<{ id: string; name: string; child_id: string }>>> {
+    const supabase = await createClient();
+
+    // Verify authentication
+    const authResult = await requireAuth(supabase);
+    if (!authResult.authenticated) {
+        return { success: false, error: authResult.error, errorCode: "AUTH_REQUIRED" };
+    }
+
+    if (!childId) {
+        return { success: false, error: "Child ID is required", errorCode: "VALIDATION_ERROR" };
+    }
+
     const { data, error } = await supabase
         .from("custom_measurement_types")
         .select("*")
@@ -113,36 +184,71 @@ export async function getCustomMetricTypes(childId: string) {
         .order("name");
 
     if (error) {
-        console.error("Error fetching metric types:", error);
-        return [];
+        return { success: false, error: "Failed to fetch metric types: " + error.message, errorCode: "DB_ERROR" };
     }
-    return data;
+
+    return { success: true, data: data || [] };
 }
 
-export async function createCustomMetricType(childId: string, name: string) {
+export async function createCustomMetricType(childId: string, name: string): Promise<ActionResult> {
     const supabase = await createClient();
-    // Check existence first to avoid error spam? UNIQUE constraint handles it but let's be clean.
+
+    // Verify authentication
+    const authResult = await requireAuth(supabase);
+    if (!authResult.authenticated) {
+        return { success: false, error: authResult.error, errorCode: "AUTH_REQUIRED" };
+    }
+
+    if (!childId || !name?.trim()) {
+        return { success: false, error: "Child ID and metric name are required", errorCode: "VALIDATION_ERROR" };
+    }
+
     const { error } = await supabase
         .from("custom_measurement_types")
-        .insert({ child_id: childId, name });
+        .insert({ child_id: childId, name: name.trim() });
 
     if (error) {
-        // Ignore duplicate errors silently or throw?
-        if (error.code === '23505') return; // Duplicate key
-        throw new Error(error.message);
+        // Ignore duplicate key errors (metric type already exists)
+        if (error.code === '23505') {
+            return { success: true }; // Silently succeed for duplicates
+        }
+        if (error.code === "42501" || error.message.includes("policy")) {
+            return { success: false, error: "Permission denied.", errorCode: "RLS_ERROR" };
+        }
+        return { success: false, error: error.message, errorCode: "DB_ERROR" };
     }
+
     revalidatePath("/growth");
+    revalidatePath("/health");
+    return { success: true };
 }
 
-export async function deleteCustomMetricType(id: string) {
+export async function deleteCustomMetricType(id: string): Promise<ActionResult> {
     const supabase = await createClient();
+
+    // Verify authentication
+    const authResult = await requireAuth(supabase);
+    if (!authResult.authenticated) {
+        return { success: false, error: authResult.error, errorCode: "AUTH_REQUIRED" };
+    }
+
+    if (!id) {
+        return { success: false, error: "Metric type ID is required", errorCode: "VALIDATION_ERROR" };
+    }
+
     const { error } = await supabase
         .from("custom_measurement_types")
         .delete()
         .eq("id", id);
 
     if (error) {
-        throw new Error(error.message);
+        if (error.code === "42501" || error.message.includes("policy")) {
+            return { success: false, error: "Permission denied.", errorCode: "RLS_ERROR" };
+        }
+        return { success: false, error: error.message, errorCode: "DB_ERROR" };
     }
+
     revalidatePath("/growth");
+    revalidatePath("/health");
+    return { success: true };
 }

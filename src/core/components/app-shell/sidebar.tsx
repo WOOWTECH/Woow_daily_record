@@ -1,7 +1,7 @@
 // src/core/components/app-shell/sidebar.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Icon from "@mdi/react";
 import {
   mdiHome,
@@ -14,12 +14,14 @@ import {
 } from "@mdi/js";
 import { useSidebar } from "@/core/hooks/use-sidebar";
 import { SidebarItem } from "./sidebar-item";
+import { SiteSwitcher } from "./site-switcher";
 import { NotificationBell } from "@/core/components/notifications";
-import { getUserHousehold } from "@/core/lib/supabase/households";
 import { cn } from "@/lib/utils";
 import { signOut } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
+import { useSitesStore } from "@/core/stores/sites-store";
+import { useCurrentSiteId } from "@/core/hooks/use-sites";
 
 export function Sidebar() {
   const t = useTranslations('nav');
@@ -36,20 +38,16 @@ export function Sidebar() {
     { icon: mdiCog, label: t('settings'), href: "/settings" },
   ];
 
-  const { isExpanded, isHovered, expand, collapse, setHovered } = useSidebar();
+  const { isExpanded, isHovered, setHovered } = useSidebar();
   const router = useRouter();
   const showExpanded = isExpanded || isHovered;
-  const [householdId, setHouseholdId] = useState<string | null>(null);
+  const currentSiteId = useCurrentSiteId();
+  const fetchSites = useSitesStore((s) => s.fetchSites);
 
+  // Initialize sites on mount
   useEffect(() => {
-    async function loadHousehold() {
-      const household = await getUserHousehold();
-      if (household) {
-        setHouseholdId(household.id);
-      }
-    }
-    loadHousehold();
-  }, []);
+    fetchSites();
+  }, [fetchSites]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -68,20 +66,26 @@ export function Sidebar() {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Logo */}
-      <div className="h-16 flex items-center px-4 border-b border-brand-gray/10">
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-lg bg-brand-blue flex items-center justify-center shrink-0">
-            <span className="text-white font-bold text-sm">W</span>
+      {/* Logo & Site Switcher */}
+      <div className="border-b border-brand-gray/10">
+        <div className="h-16 flex items-center px-4">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-brand-blue flex items-center justify-center shrink-0">
+              <span className="text-white font-bold text-sm">W</span>
+            </div>
+            <span
+              className={cn(
+                "font-bold text-brand-blue whitespace-nowrap overflow-hidden transition-all duration-200",
+                showExpanded ? "w-auto opacity-100" : "w-0 opacity-0"
+              )}
+            >
+              Woowtech
+            </span>
           </div>
-          <span
-            className={cn(
-              "font-bold text-brand-blue whitespace-nowrap overflow-hidden transition-all duration-200",
-              showExpanded ? "w-auto opacity-100" : "w-0 opacity-0"
-            )}
-          >
-            Woowtech
-          </span>
+        </div>
+        {/* Site Switcher */}
+        <div className="px-2 pb-2">
+          <SiteSwitcher isExpanded={showExpanded} />
         </div>
       </div>
 
@@ -95,8 +99,8 @@ export function Sidebar() {
       {/* Bottom Section */}
       <div className="p-2 border-t border-brand-gray/10 space-y-1">
         {/* Notifications */}
-        {householdId && (
-          <NotificationBell householdId={householdId} isExpanded={showExpanded} />
+        {currentSiteId && (
+          <NotificationBell householdId={currentSiteId} isExpanded={showExpanded} />
         )}
 
         {bottomItems.map((item) => (

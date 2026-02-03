@@ -12,6 +12,9 @@ import { useSelectedMember } from '../store';
 import { HealthQuickLog } from './health-quick-log';
 import Icon from '@mdi/react';
 import { mdiAccount } from '@mdi/js';
+import { createClient } from '@/core/lib/supabase/client';
+import type { Log } from '@/modules/baby/lib/constants';
+import { useRouter } from 'next/navigation';
 
 interface HealthActivityTabProps {
   householdId: string;
@@ -21,10 +24,79 @@ interface HealthActivityTabProps {
 export function HealthActivityTab({ householdId, memberId }: HealthActivityTabProps) {
   const t = useTranslations('health');
   const locale = useLocale();
+  const router = useRouter();
   const dateLocale = locale === 'zh-TW' ? zhTW : locale === 'zh-CN' ? zhCN : enUS;
 
   const selectedMember = useSelectedMember();
+  const [recentLogs, setRecentLogs] = useState<Log[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch recent logs
+  const fetchRecentLogs = async () => {
+    if (!memberId) return;
+    setIsLoading(true);
+    const supabase = createClient();
+    try {
+      const { data, error } = await supabase
+        .from("logs")
+        .select(`
+          *,
+          activity_type:activity_types(*)
+        `)
+        .eq("child_id", memberId)
+        .order("start_time", { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+
+      const transformedLogs = (data || []).map((log: any) => ({
+        ...log,
+        activity_type: Array.isArray(log.activity_type) ? log.activity_type[0] : log.activity_type
+      }));
+      setRecentLogs(transformedLogs as Log[]);
+    } catch (error) {
+      console.error("Error fetching recent logs:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecentLogs();
+  }, [memberId]);
+
+  // Realtime subscription
+  useEffect(() => {
+    if (!memberId) return;
+
+    const supabase = createClient();
+    const channel = supabase
+      .channel(`health-recent-changes-${memberId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'logs',
+          filter: `child_id=eq.${memberId}`
+        },
+        (payload) => {
+          console.log('Realtime update received:', payload);
+          fetchRecentLogs();
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('Realtime subscription active for logs');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('Realtime subscription error');
+        }
+      });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [memberId]);
 
   // Calculate member age display
   const currentDate = new Date();
@@ -35,15 +107,6 @@ export function HealthActivityTab({ householdId, memberId }: HealthActivityTabPr
     const years = differenceInYears(currentDate, dob);
     const months = differenceInMonths(currentDate, dob) % 12;
     ageString = years >= 0 ? `${years}Y ${months}M` : '';
-  }
-
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <SkeletonCard className="h-32" />
-        <SkeletonCard className="h-[400px]" />
-      </div>
-    );
   }
 
   return (
@@ -87,7 +150,11 @@ export function HealthActivityTab({ householdId, memberId }: HealthActivityTabPr
       </GlassCard>
 
       {/* Quick Log Widget */}
-      <HealthQuickLog memberId={memberId} />
+      <HealthQuickLog
+        memberId={memberId}
+        recentLogs={recentLogs}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

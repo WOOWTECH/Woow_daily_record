@@ -112,39 +112,32 @@ export async function updateAccountBalanceAction(
     throw new Error("Unauthorized");
   }
 
-  // Get current balance
-  const { data: account, error: fetchError } = await supabase
-    .from('finance_accounts')
-    .select('balance')
-    .eq('id', accountId)
-    .single();
-
-  if (fetchError || !account) {
-    console.error("Fetch account error:", fetchError);
-    throw new Error(fetchError?.message || "Account not found");
-  }
-
-  const newBalance = type === 'add'
-    ? account.balance + amount
-    : account.balance - amount;
-
-  const { data, error } = await supabase
-    .from('finance_accounts')
-    .update({
-      balance: newBalance,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', accountId)
-    .select()
-    .single();
+  // Use atomic balance update to prevent race conditions
+  const { data: newBalance, error } = await supabase.rpc('update_account_balance_atomic', {
+    p_account_id: accountId,
+    p_amount: amount,
+    p_operation: type,
+  });
 
   if (error) {
     console.error("Update balance error:", error);
     throw new Error(error.message || "Failed to update balance");
   }
 
+  // Fetch the updated account to return
+  const { data: account, error: fetchError } = await supabase
+    .from('finance_accounts')
+    .select()
+    .eq('id', accountId)
+    .single();
+
+  if (fetchError) {
+    console.error("Fetch account error:", fetchError);
+    throw new Error(fetchError.message || "Failed to fetch updated account");
+  }
+
   revalidatePath("/finance");
-  return data;
+  return account;
 }
 
 // ============================================================
@@ -613,28 +606,13 @@ async function reverseTransactionFromBalance(supabase: SupabaseClient, input: Cr
 }
 
 async function updateBalance(supabase: SupabaseClient, accountId: string, amount: number, type: 'add' | 'subtract') {
-  // Get current balance
-  const { data: account, error: fetchError } = await supabase
-    .from('finance_accounts')
-    .select('balance')
-    .eq('id', accountId)
-    .single();
-
-  if (fetchError || !account) {
-    throw new Error(fetchError?.message || "Account not found");
-  }
-
-  const newBalance = type === 'add'
-    ? account.balance + amount
-    : account.balance - amount;
-
-  const { error } = await supabase
-    .from('finance_accounts')
-    .update({
-      balance: newBalance,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', accountId);
+  // Use atomic balance update to prevent race conditions
+  // This uses a PostgreSQL function that performs the update in a single statement
+  const { error } = await supabase.rpc('update_account_balance_atomic', {
+    p_account_id: accountId,
+    p_amount: amount,
+    p_operation: type,
+  });
 
   if (error) {
     throw new Error(error.message || "Failed to update balance");

@@ -33,8 +33,16 @@ import { Label } from '@/core/components/ui/label';
 import { Textarea } from '@/core/components/ui/textarea';
 import { toast } from 'sonner';
 
+import { SkeletonCard } from '@/core/components/skeleton-card';
+import type { Log } from '@/modules/baby/lib/constants';
+import { ICONS, COLOR_THEMES } from '@/modules/baby/lib/constants';
+import { format } from 'date-fns';
+import { createClient } from '@/core/lib/supabase/client';
+
 interface HealthQuickLogProps {
     memberId: string;
+    recentLogs: Log[];
+    isLoading: boolean;
 }
 
 interface QuickActivity {
@@ -75,12 +83,26 @@ const COLOR_OPTIONS = [
     { value: 'indigo', color: 'text-indigo-600', bgColor: 'bg-indigo-100 dark:bg-indigo-900/30' },
 ];
 
-export function HealthQuickLog({ memberId }: HealthQuickLogProps) {
+// Mapping of quick activity IDs to activity_type categories
+const ACTIVITY_CATEGORY_MAP: Record<string, string> = {
+    'sleep': 'sleep',
+    'medication': 'health',
+    'feeding': 'feeding',
+    'temperature': 'health',
+    'weight': 'health',
+    'height': 'health',
+    'hydration': 'health',
+    'activity': 'care',
+};
+
+export function HealthQuickLog({ memberId, recentLogs, isLoading }: HealthQuickLogProps) {
     const t = useTranslations('health');
+    const tBaby = useTranslations('baby.records');
     const [customActivities, setCustomActivities] = useState<QuickActivity[]>([]);
     const [isLogDialogOpen, setIsLogDialogOpen] = useState(false);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [selectedActivity, setSelectedActivity] = useState<QuickActivity | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Log form state
     const [time, setTime] = useState('');
@@ -105,8 +127,83 @@ export function HealthQuickLog({ memberId }: HealthQuickLogProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        toast.success(`${selectedActivity?.name} logged successfully`);
-        setIsLogDialogOpen(false);
+        if (!selectedActivity || !memberId) return;
+
+        setIsSubmitting(true);
+        const supabase = createClient();
+
+        try {
+            // Get current user
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                toast.error('Please log in to add records');
+                return;
+            }
+
+            // Find or create the activity type
+            const category = ACTIVITY_CATEGORY_MAP[selectedActivity.id] || 'custom';
+
+            // First try to find existing activity type
+            let { data: existingType } = await supabase
+                .from('activity_types')
+                .select('id')
+                .eq('name', selectedActivity.name)
+                .eq('category', category)
+                .single();
+
+            let activityTypeId: string;
+
+            if (existingType) {
+                activityTypeId = existingType.id;
+            } else {
+                // Create new activity type
+                const { data: newType, error: typeError } = await supabase
+                    .from('activity_types')
+                    .insert({
+                        name: selectedActivity.name,
+                        category: category,
+                        icon_name: 'Circle',
+                        color_theme: 'accent-blue',
+                        user_id: user.id,
+                    })
+                    .select('id')
+                    .single();
+
+                if (typeError) throw typeError;
+                activityTypeId = newType.id;
+            }
+
+            // Parse the time and create start_time
+            const today = new Date();
+            const [hours, minutes] = time.split(':').map(Number);
+            const startTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+
+            // Parse value as number if possible
+            const numericValue = value ? parseFloat(value.replace(/[^\d.-]/g, '')) : null;
+            const unit = value ? value.replace(/[\d.-]/g, '').trim() : null;
+
+            // Insert the log (user_id is optional, RLS checks via child ownership)
+            const { error: logError } = await supabase
+                .from('logs')
+                .insert({
+                    child_id: memberId,
+                    activity_type_id: activityTypeId,
+                    start_time: startTime.toISOString(),
+                    value: isNaN(numericValue as number) ? null : numericValue,
+                    unit: unit || null,
+                    note: note || null,
+                });
+
+            if (logError) throw logError;
+
+            toast.success(`${selectedActivity.name} logged successfully`);
+            setIsLogDialogOpen(false);
+        } catch (error) {
+            console.error('Error logging activity:', error);
+            toast.error('Failed to log activity');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleAddCustomActivity = (e: React.FormEvent) => {
@@ -138,63 +235,111 @@ export function HealthQuickLog({ memberId }: HealthQuickLogProps) {
 
     return (
         <>
-            <GlassCard className="p-6">
-                <h3 className="text-lg font-bold text-brand-black dark:text-brand-white mb-4">
-                    {t('quickLog.title') || 'Quick Log'}
-                </h3>
-
-                <div className="grid grid-cols-2 gap-3">
-                    {allActivities.map((activity) => (
-                        <div key={activity.id} className="relative group">
-                            <button
-                                onClick={() => handleActivityClick(activity)}
-                                className={cn(
-                                    "flex flex-col items-center justify-center gap-2 aspect-square rounded-2xl transition-all duration-200 w-full",
-                                    "hover:scale-105 active:scale-95 cursor-pointer",
-                                    "bg-brand-gray/30 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10",
-                                    "hover:shadow-lg hover:shadow-brand-blue/20"
-                                )}
-                            >
-                                <div className={cn(
-                                    "flex h-12 w-12 items-center justify-center rounded-full transition-all duration-200",
-                                    activity.bgColor
-                                )}>
-                                    <Icon path={activity.icon} size={1} className={cn("stroke-none", activity.color)} />
-                                </div>
-                                <span className="text-xs font-semibold text-brand-deep-gray group-hover:text-brand-black dark:group-hover:text-brand-white transition-colors duration-200">
-                                    {activity.name}
-                                </span>
-                            </button>
-
-                            {activity.isCustom && (
+            <div className="space-y-6">
+                {/* Quick Log Chips */}
+                <GlassCard className="p-4">
+                    <div className="flex flex-wrap gap-2">
+                        {allActivities.map((activity) => (
+                            <div key={activity.id} className="relative group">
                                 <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDeleteCustomActivity(activity.id);
-                                    }}
-                                    className="absolute top-1 right-1 p-1 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                    onClick={() => handleActivityClick(activity)}
+                                    className={cn(
+                                        "flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-200",
+                                        "hover:scale-105 active:scale-95 cursor-pointer",
+                                        "bg-white/40 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10",
+                                        "border border-white/20 shadow-sm"
+                                    )}
                                 >
-                                    <Icon path={mdiDelete} size={0.5} />
+                                    <div className={cn(
+                                        "flex h-6 w-6 items-center justify-center rounded-full transition-all duration-200",
+                                        activity.bgColor
+                                    )}>
+                                        <Icon path={activity.icon} size={0.6} className={cn("stroke-none", activity.color)} />
+                                    </div>
+                                    <span className="text-xs font-bold text-brand-deep-gray group-hover:text-brand-black dark:group-hover:text-brand-white transition-colors duration-200">
+                                        {activity.name}
+                                    </span>
                                 </button>
-                            )}
-                        </div>
-                    ))}
 
-                    {/* Add Custom Activity Button */}
-                    <button
-                        onClick={() => setIsAddDialogOpen(true)}
-                        className={cn(
-                            "flex flex-col items-center justify-center gap-2 aspect-square rounded-2xl transition-all duration-200",
-                            "hover:scale-105 active:scale-95 cursor-pointer",
-                            "bg-brand-blue/10 dark:bg-brand-blue/20 hover:bg-brand-blue/20 dark:hover:bg-brand-blue/30",
-                            "border-2 border-dashed border-brand-blue/50 hover:border-brand-blue"
+                                {activity.isCustom && (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeleteCustomActivity(activity.id);
+                                        }}
+                                        className="absolute -top-1 -right-1 p-0.5 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 scale-75"
+                                    >
+                                        <Icon path={mdiDelete} size={0.4} />
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+
+                        {/* Add Custom Activity Button */}
+                        <button
+                            onClick={() => setIsAddDialogOpen(true)}
+                            className={cn(
+                                "flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-200",
+                                "hover:scale-105 active:scale-95 cursor-pointer",
+                                "bg-brand-blue/10 dark:bg-brand-blue/20 hover:bg-brand-blue/20 dark:hover:bg-brand-blue/30",
+                                "border border-dashed border-brand-blue/50 hover:border-brand-blue"
+                            )}
+                        >
+                            <Icon path={mdiPlus} size={0.6} className="text-brand-blue" />
+                            <span className="text-xs font-bold text-brand-blue">Add Custom</span>
+                        </button>
+                    </div>
+                </GlassCard>
+
+                {/* Recent Activity View */}
+                <div className="space-y-3">
+                    <h3 className="text-sm font-bold text-brand-deep-gray uppercase tracking-wider px-2">
+                        {t('overview.eventsToday') || 'Recent activity'}
+                    </h3>
+
+                    <div className="space-y-2">
+                        {isLoading ? (
+                            Array.from({ length: 3 }).map((_, i) => (
+                                <SkeletonCard key={i} className="h-20" />
+                            ))
+                        ) : recentLogs.length > 0 ? (
+                            recentLogs.map((log) => {
+                                const iconPath = ICONS[log.activity_type.icon_name] || ICONS["Circle"];
+                                const theme = COLOR_THEMES[log.activity_type.color_theme] || COLOR_THEMES["accent-blue"];
+
+                                return (
+                                    <GlassCard key={log.id} className="p-4 flex items-center justify-between hover:bg-white/40 dark:hover:bg-white/5 transition-colors group">
+                                        <div className="flex items-center gap-4">
+                                            <div className={cn(
+                                                "flex h-10 w-10 items-center justify-center rounded-full shrink-0",
+                                                theme.bg, theme.text
+                                            )}>
+                                                <Icon path={iconPath} size={0.8} />
+                                            </div>
+                                            <div>
+                                                <p className="font-bold text-brand-black dark:text-brand-white">
+                                                    {log.activity_type.name}
+                                                </p>
+                                                <p className="text-xs text-brand-deep-gray">
+                                                    {log.value ? `${log.value} ${log.unit || ''}` : tBaby('noDetails')}
+                                                    {log.note && ` · ${log.note}`}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="text-sm font-medium text-brand-deep-gray bg-white/50 dark:bg-white/5 px-2 py-1 rounded-lg">
+                                            {format(new Date(log.start_time), "HH:mm")}
+                                        </div>
+                                    </GlassCard>
+                                );
+                            })
+                        ) : (
+                            <div className="text-center py-8 text-brand-deep-gray italic text-sm">
+                                {tBaby('noRecordsFound')}
+                            </div>
                         )}
-                    >
-                        <Icon path={mdiPlus} size={1.5} className="text-brand-blue" />
-                        <span className="text-xs font-semibold text-brand-blue">Add Custom</span>
-                    </button>
+                    </div>
                 </div>
-            </GlassCard>
+            </div>
 
             {/* Log Activity Dialog */}
             <Dialog open={isLogDialogOpen} onOpenChange={setIsLogDialogOpen}>
@@ -247,10 +392,12 @@ export function HealthQuickLog({ memberId }: HealthQuickLogProps) {
                         </div>
 
                         <div className="flex justify-end gap-2">
-                            <Button type="button" variant="outline" onClick={() => setIsLogDialogOpen(false)}>
+                            <Button type="button" variant="outline" onClick={() => setIsLogDialogOpen(false)} disabled={isSubmitting}>
                                 Cancel
                             </Button>
-                            <Button type="submit">Log Activity</Button>
+                            <Button type="submit" disabled={isSubmitting}>
+                                {isSubmitting ? 'Saving...' : 'Log Activity'}
+                            </Button>
                         </div>
                     </form>
                 </DialogContent>

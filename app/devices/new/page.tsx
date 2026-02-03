@@ -1,32 +1,23 @@
 // app/devices/new/page.tsx
 import { GlassCard } from "@/core/components/glass-card";
 import { DeviceForm } from "@/modules/devices/components/device-form";
-import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from 'next-intl/server';
+import { getCurrentSite } from "@/core/lib/supabase/get-current-site";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewDevicePage() {
   const t = await getTranslations('devices');
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
+  const { site, error } = await getCurrentSite();
+
+  if (error === "NOT_AUTHENTICATED") {
     redirect("/login");
   }
 
-  // Get the user's household
-  const { data: memberData } = await supabase
-    .from('household_members')
-    .select('household:households(*)')
-    .eq('user_id', user.id)
-    .single();
-
-  const household = (memberData as { household: { id: string } } | null)?.household;
-
-  if (!household) {
-    redirect("/login");
+  if (error === "NO_SITES" || !site) {
+    redirect("/onboarding");
   }
 
   return (
@@ -40,7 +31,7 @@ export default async function NewDevicePage() {
         </p>
       </GlassCard>
 
-      <DeviceForm householdId={household.id} />
+      <DeviceForm householdId={site.id} />
     </div>
   );
 }

@@ -1,7 +1,10 @@
 import { login, signup } from '@/app/actions/auth'
 import { GlassCard } from '@/core/components/glass-card'
 
-export default function LoginPage() {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+    const params = await searchParams;
+    const error = params?.error;
+
     return (
         <div className="flex min-h-screen items-center justify-center p-4 relative">
             {/* Floating Background Elements */}
@@ -14,6 +17,12 @@ export default function LoginPage() {
                     </h1>
                     <p className="text-brand-deep-gray text-sm">Sign in to manage your smart home</p>
                 </div>
+
+                {error && (
+                    <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+                        {decodeURIComponent(error)}
+                    </div>
+                )}
 
                 <form className="flex flex-col gap-5">
                     <div className="space-y-1.5">

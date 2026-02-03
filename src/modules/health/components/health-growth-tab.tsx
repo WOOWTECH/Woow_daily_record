@@ -36,49 +36,77 @@ export function HealthGrowthTab({ householdId, memberId }: HealthGrowthTabProps)
   const [savedMetrics, setSavedMetrics] = useState<{ id: string; name: string }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Fetch growth data function
+  const fetchData = async () => {
+    if (!memberId) return;
+
+    setIsLoading(true);
+    const supabase = createClient();
+
+    try {
+      // Fetch growth records
+      const { data: recordsData } = await supabase
+        .from("growth_records")
+        .select("*")
+        .eq("child_id", memberId)
+        .order("date", { ascending: true });
+
+      // Fetch custom metric types
+      const { data: metricsData } = await supabase
+        .from("custom_measurement_types")
+        .select("*")
+        .eq("child_id", memberId)
+        .order("name");
+
+      // Map DB records to UI format
+      const uiRecords = (recordsData || []).map(r => ({
+        id: r.id,
+        date: format(new Date(r.date), "yyyy-MM-dd"),
+        height: r.height,
+        weight: r.weight,
+        headCircumference: r.head_circumference,
+        customMeasurements: r.custom_measurements
+      }));
+
+      setRecords(uiRecords);
+      setSavedMetrics(metricsData || []);
+    } catch (error) {
+      console.error('Error fetching growth data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Fetch growth data for the selected member
+  useEffect(() => {
+    fetchData();
+  }, [memberId]);
+
+  // Realtime subscription for growth records
   useEffect(() => {
     if (!memberId) return;
 
-    const fetchData = async () => {
-      setIsLoading(true);
-      const supabase = createClient();
+    const supabase = createClient();
+    const channel = supabase
+      .channel('growth-records-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'growth_records',
+          filter: `child_id=eq.${memberId}`
+        },
+        () => {
+          // Refetch data when changes occur
+          fetchData();
+        }
+      )
+      .subscribe();
 
-      try {
-        // Fetch growth records
-        const { data: recordsData } = await supabase
-          .from("growth_records")
-          .select("*")
-          .eq("child_id", memberId)
-          .order("date", { ascending: true });
-
-        // Fetch custom metric types
-        const { data: metricsData } = await supabase
-          .from("custom_measurement_types")
-          .select("*")
-          .eq("child_id", memberId)
-          .order("name");
-
-        // Map DB records to UI format
-        const uiRecords = (recordsData || []).map(r => ({
-          id: r.id,
-          date: format(new Date(r.date), "yyyy-MM-dd"),
-          height: r.height,
-          weight: r.weight,
-          headCircumference: r.head_circumference,
-          customMeasurements: r.custom_measurements
-        }));
-
-        setRecords(uiRecords);
-        setSavedMetrics(metricsData || []);
-      } catch (error) {
-        console.error('Error fetching growth data:', error);
-      } finally {
-        setIsLoading(false);
-      }
+    return () => {
+      supabase.removeChannel(channel);
     };
-
-    fetchData();
   }, [memberId]);
 
   // Get the member's date of birth for the chart

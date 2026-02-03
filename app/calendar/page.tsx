@@ -1,8 +1,9 @@
 // app/calendar/page.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { CalendarHeader } from '@/modules/calendar/components/calendar-header';
 import { CalendarMonthView } from '@/modules/calendar/components/calendar-month-view';
@@ -10,15 +11,20 @@ import { CalendarWeekView } from '@/modules/calendar/components/calendar-week-vi
 import { CalendarDayView } from '@/modules/calendar/components/calendar-day-view';
 import { EventDialog } from '@/modules/calendar/components/event-dialog';
 import { useCalendarStore, useFilteredOccurrences } from '@/modules/calendar/store';
-import { getUserHousehold, createHousehold } from '@/core/lib/supabase/households';
+import { useCurrentSite, useSitesStore } from '@/core/stores/sites-store';
 import type { EventOccurrence } from '@/modules/calendar/types';
 import { GlassCard } from '@/core/components/glass-card';
 
 export default function CalendarPage() {
   const t = useTranslations('calendar');
+  const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<EventOccurrence | null>(null);
   const [initialDate, setInitialDate] = useState<Date | undefined>(undefined);
+
+  const currentSite = useCurrentSite();
+  const { fetchSites, sites, isLoading: sitesLoading } = useSitesStore();
+  const previousSiteIdRef = useRef<string | null>(null);
 
   const {
     selectedDate,
@@ -26,6 +32,7 @@ export default function CalendarPage() {
     isLoading,
     error,
     setHouseholdId,
+    reset,
     setSelectedDate,
     setView,
     fetchCategories,
@@ -40,28 +47,37 @@ export default function CalendarPage() {
 
   const filteredOccurrences = useFilteredOccurrences();
 
+  // Fetch sites on mount
   useEffect(() => {
-    async function init() {
-      try {
-        let household = await getUserHousehold();
+    fetchSites();
+  }, [fetchSites]);
 
-        if (!household) {
-          household = await createHousehold('My Family');
-        }
+  // Initialize calendar when current site is available or changes
+  useEffect(() => {
+    if (sitesLoading) return;
 
-        if (household) {
-          setHouseholdId(household.id);
-          fetchCategories();
-          fetchEvents();
-        } else {
-          toast.error(t('error.initFailed'));
+    // If no sites exist, redirect to onboarding
+    if (sites.length === 0) {
+      router.push('/onboarding');
+      return;
+    }
+
+    if (currentSite) {
+      // Only reload data if site actually changed
+      if (previousSiteIdRef.current !== currentSite.id) {
+        // Reset old data first
+        if (previousSiteIdRef.current !== null) {
+          reset();
         }
-      } catch (err) {
-        console.error('[Calendar] Error initializing:', err);
+        previousSiteIdRef.current = currentSite.id;
+
+        // Set new household ID and fetch with the new ID directly
+        setHouseholdId(currentSite.id);
+        fetchCategories(currentSite.id);
+        fetchEvents(currentSite.id);
       }
     }
-    init();
-  }, [setHouseholdId, fetchCategories, fetchEvents]);
+  }, [currentSite, sites, sitesLoading, setHouseholdId, reset, fetchCategories, fetchEvents, router]);
 
   useEffect(() => {
     if (error) {

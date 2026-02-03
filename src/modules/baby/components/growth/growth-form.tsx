@@ -13,6 +13,16 @@ import { mdiLoading, mdiClose, mdiPlus, mdiDelete } from "@mdi/js";
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 
+// Helper function to generate unique ID (fallback for environments without crypto.randomUUID)
+const generateId = (): string => {
+    // Always use fallback since crypto.randomUUID may not be available
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+};
+
 interface GrowthFormProps {
     childId: string;
     savedMetrics: { id: string; name: string }[];
@@ -54,7 +64,7 @@ export function GrowthForm({ childId, savedMetrics, existingRecord, onClose }: G
             // Pre-fill custom metrics
             if (existingRecord.customMeasurements) {
                 const metrics = Object.entries(existingRecord.customMeasurements).map(([name, value]) => ({
-                    id: crypto.randomUUID(),
+                    id: generateId(),
                     name,
                     value: value.toString()
                 }));
@@ -160,7 +170,7 @@ export function GrowthForm({ childId, savedMetrics, existingRecord, onClose }: G
                                         onClick={() => {
                                             // Add to custom metrics if not already there
                                             if (!customMetrics.find(m => m.name === metric.name)) {
-                                                setCustomMetrics(prev => [...prev, { id: crypto.randomUUID(), name: metric.name, value: "" }]);
+                                                setCustomMetrics(prev => [...prev, { id: generateId(), name: metric.name, value: "" }]);
                                             }
                                         }}
                                         className="bg-brand-blue/10 hover:bg-brand-blue/20 text-brand-blue text-xs px-3 py-1.5 rounded-full pr-8 transition-colors font-medium border border-transparent hover:border-brand-blue/30"

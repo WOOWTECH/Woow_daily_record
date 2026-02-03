@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSettingsStore } from "../store";
 import { SettingsNav } from "./settings-nav";
 import { ProfileSettings } from "./profile-settings";
+import { SitesManagement } from "./sites-management";
 import { SiteSettings } from "./site-settings";
 import { MemberAccessSection } from "./member-access";
 import type { SettingsSection } from "../types";
@@ -41,6 +42,7 @@ export function SettingsPage() {
       />
 
       {section === "profile" && <ProfileSettings />}
+      {section === "sites" && <SitesManagement />}
       {section === "site" && <SiteSettings />}
       {section === "members" && isOwner && <MemberAccessSection />}
     </div>

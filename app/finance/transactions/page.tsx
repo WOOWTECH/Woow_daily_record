@@ -4,24 +4,25 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { TransactionList } from "@/modules/finance/components/transaction-list";
+import { getCurrentSite } from "@/core/lib/supabase/get-current-site";
 
 export const dynamic = "force-dynamic";
 
 export default async function TransactionsPage() {
   const t = await getTranslations("finance");
+
+  const { site, error } = await getCurrentSite();
+
+  if (error === "NOT_AUTHENTICATED") {
+    redirect("/login");
+  }
+
+  if (error === "NO_SITES" || !site) {
+    redirect("/onboarding");
+  }
+
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) redirect("/login");
-
-  const { data: memberData } = await supabase
-    .from("household_members")
-    .select("household:households(*)")
-    .eq("user_id", user.id)
-    .single();
-
-  const household = (memberData as { household: { id: string } } | null)?.household;
-  if (!household) redirect("/login");
+  const household = site;
 
   // Fetch accounts and categories first
   const { data: accounts } = await supabase
@@ -35,15 +36,15 @@ export default async function TransactionsPage() {
     .or(`household_id.eq.${household.id},is_system.eq.true`);
 
   // Fetch transactions with simple SELECT (no embedded joins)
-  const { data: rawTransactions, error } = await supabase
+  const { data: rawTransactions, error: txError } = await supabase
     .from("finance_transactions")
     .select("*")
     .eq("household_id", household.id)
     .order("date", { ascending: false })
     .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("Error fetching transactions:", error);
+  if (txError) {
+    console.error("Error fetching transactions:", txError);
   }
 
   // Enrich transactions with account and category data

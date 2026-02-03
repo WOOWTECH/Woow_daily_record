@@ -4,22 +4,42 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import Icon from "@mdi/react";
 import { mdiAccount } from "@mdi/js";
-import type { HouseholdMember, ModuleName, AccessLevel } from "../../types";
-import { ACCESS_LEVELS, MODULE_NAMES, ACCESS_LEVEL_CONFIG, MODULE_CONFIG } from "../../types";
+import type { HouseholdMember, PageName, AccessLevel } from "../../types";
+import { ACCESS_LEVELS, PAGE_NAMES, ACCESS_LEVEL_CONFIG, PAGE_CONFIG } from "../../types";
 
 interface PermissionMatrixProps {
   members: HouseholdMember[];
-  onUpdatePermission: (memberId: string, module: ModuleName, level: AccessLevel) => void;
+  onUpdatePermission: (memberId: string, page: PageName, level: AccessLevel) => void;
 }
 
 export function PermissionMatrix({ members, onUpdatePermission }: PermissionMatrixProps) {
   const t = useTranslations("settings.members");
+  const tRoles = useTranslations("roles");
+  const tPermissions = useTranslations("permissions");
+  const tPages = useTranslations("pages");
 
-  const cyclePermission = (memberId: string, module: ModuleName, currentLevel: AccessLevel) => {
+  const cyclePermission = (memberId: string, page: PageName, currentLevel: AccessLevel) => {
     const currentIndex = ACCESS_LEVELS.indexOf(currentLevel);
     const nextIndex = (currentIndex + 1) % ACCESS_LEVELS.length;
     const nextLevel = ACCESS_LEVELS[nextIndex];
-    onUpdatePermission(memberId, module, nextLevel);
+    onUpdatePermission(memberId, page, nextLevel);
+  };
+
+  // Check if member can have permissions edited (only regular members, not owner/admin)
+  const canEditPermissions = (member: HouseholdMember) => {
+    return member.role === "member";
+  };
+
+  const getRoleLabel = (role: string) => {
+    return tRoles(role as "owner" | "admin" | "member");
+  };
+
+  const getPermissionLabel = (level: AccessLevel) => {
+    return tPermissions(level);
+  };
+
+  const getPageLabel = (page: PageName) => {
+    return tPages(page);
   };
 
   return (
@@ -27,13 +47,13 @@ export function PermissionMatrix({ members, onUpdatePermission }: PermissionMatr
       {/* Mobile: Card-based layout */}
       <div className="md:hidden space-y-4">
         {members.map((member) => {
-          const isOwner = member.role === "owner";
+          const isEditable = canEditPermissions(member);
           return (
             <div
               key={member.id}
               className={cn(
                 "p-4 rounded-lg border border-white/20",
-                isOwner ? "bg-brand-gray/30" : "bg-white/30"
+                !isEditable ? "bg-brand-gray/30" : "bg-white/30"
               )}
             >
               {/* User info */}
@@ -53,38 +73,36 @@ export function PermissionMatrix({ members, onUpdatePermission }: PermissionMatr
                   <p className="font-medium text-brand-black dark:text-brand-white">
                     {member.name}
                   </p>
-                  {isOwner && (
-                    <span className="text-xs text-brand-deep-gray uppercase tracking-wider">
-                      {t("owner")}
-                    </span>
-                  )}
+                  <span className="text-xs text-brand-deep-gray uppercase tracking-wider">
+                    {getRoleLabel(member.role)}
+                  </span>
                 </div>
               </div>
 
-              {/* Permissions grid - 2x2 on mobile */}
+              {/* Permissions grid - 2x3 on mobile */}
               <div className="grid grid-cols-2 gap-2">
-                {MODULE_NAMES.map((module) => {
-                  const level = member.permissions[module];
+                {PAGE_NAMES.map((page) => {
+                  const level = member.permissions[page] || "close";
                   const config = ACCESS_LEVEL_CONFIG[level];
-                  const moduleConfig = MODULE_CONFIG[module];
+                  const pageConfig = PAGE_CONFIG[page];
                   return (
                     <button
-                      key={module}
-                      onClick={() => !isOwner && cyclePermission(member.id, module, level)}
-                      disabled={isOwner}
+                      key={page}
+                      onClick={() => isEditable && cyclePermission(member.id, page, level)}
+                      disabled={!isEditable}
                       className={cn(
                         "flex items-center gap-2 p-3 rounded-lg transition-all",
-                        isOwner
+                        !isEditable
                           ? "bg-brand-gray/50 cursor-not-allowed opacity-60"
                           : "bg-white/50 hover:bg-white/80 active:scale-95"
                       )}
                     >
-                      <span className="text-base">{moduleConfig.icon}</span>
+                      <span className="text-base">{pageConfig.icon}</span>
                       <div className="flex-1 text-left min-w-0">
-                        <p className="text-xs text-brand-deep-gray truncate">{moduleConfig.label}</p>
+                        <p className="text-xs text-brand-deep-gray truncate">{getPageLabel(page)}</p>
                         <p className="text-sm font-medium flex items-center gap-1">
                           <span>{config.icon}</span>
-                          <span className="truncate">{config.label}</span>
+                          <span className="truncate">{getPermissionLabel(level)}</span>
                         </p>
                       </div>
                     </button>
@@ -104,26 +122,26 @@ export function PermissionMatrix({ members, onUpdatePermission }: PermissionMatr
               <th className="text-left p-3 text-sm font-medium text-brand-deep-gray border-b border-white/20">
                 {t("user")}
               </th>
-              {MODULE_NAMES.map((module) => (
+              {PAGE_NAMES.map((page) => (
                 <th
-                  key={module}
-                  className="text-center p-3 text-sm font-medium text-brand-deep-gray border-b border-white/20 min-w-[100px]"
+                  key={page}
+                  className="text-center p-3 text-sm font-medium text-brand-deep-gray border-b border-white/20 min-w-[80px]"
                 >
-                  <span className="mr-1">{MODULE_CONFIG[module].icon}</span>
-                  {MODULE_CONFIG[module].label}
+                  <span className="mr-1">{PAGE_CONFIG[page].icon}</span>
+                  {getPageLabel(page)}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {members.map((member) => {
-              const isOwner = member.role === "owner";
+              const isEditable = canEditPermissions(member);
               return (
                 <tr
                   key={member.id}
                   className={cn(
                     "border-b border-white/10",
-                    isOwner && "bg-brand-gray/30"
+                    !isEditable && "bg-brand-gray/30"
                   )}
                 >
                   <td className="p-3">
@@ -143,33 +161,31 @@ export function PermissionMatrix({ members, onUpdatePermission }: PermissionMatr
                         <p className="font-medium text-sm text-brand-black dark:text-brand-white truncate">
                           {member.name}
                         </p>
-                        {isOwner && (
-                          <span className="text-[10px] text-brand-deep-gray uppercase tracking-wider">
-                            {t("owner")}
-                          </span>
-                        )}
+                        <span className="text-[10px] text-brand-deep-gray uppercase tracking-wider">
+                          {getRoleLabel(member.role)}
+                        </span>
                       </div>
                     </div>
                   </td>
-                  {MODULE_NAMES.map((module) => {
-                    const level = member.permissions[module];
+                  {PAGE_NAMES.map((page) => {
+                    const level = member.permissions[page] || "close";
                     const config = ACCESS_LEVEL_CONFIG[level];
                     return (
-                      <td key={module} className="p-2 text-center">
+                      <td key={page} className="p-2 text-center">
                         <button
-                          onClick={() => !isOwner && cyclePermission(member.id, module, level)}
-                          disabled={isOwner}
+                          onClick={() => isEditable && cyclePermission(member.id, page, level)}
+                          disabled={!isEditable}
                           className={cn(
                             "inline-flex flex-col items-center justify-center w-16 h-14 rounded-lg transition-all",
-                            isOwner
+                            !isEditable
                               ? "bg-brand-gray/50 cursor-not-allowed opacity-60"
                               : "bg-white/50 hover:bg-white/80 cursor-pointer active:scale-95"
                           )}
-                          title={isOwner ? t("ownerFullAccess") : t("clickToChange")}
+                          title={!isEditable ? t("ownerFullAccess") : t("clickToChange")}
                         >
                           <span className="text-lg">{config.icon}</span>
                           <span className="text-[10px] text-brand-deep-gray mt-0.5">
-                            {config.label}
+                            {getPermissionLabel(level)}
                           </span>
                         </button>
                       </td>

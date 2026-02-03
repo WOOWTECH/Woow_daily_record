@@ -8,11 +8,11 @@ export async function fetchFamilyMembers(householdId: string): Promise<FamilyMem
 
   if (!user) throw new Error('Not authenticated');
 
-  // Fetch by parent_id (user id) since children table uses parent_id
+  // Fetch by user_id since children table uses user_id
   const { data, error } = await supabase
     .from('children')
     .select('*')
-    .eq('parent_id', user.id)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
   if (error) throw error;
@@ -40,11 +40,11 @@ export async function createFamilyMember(
 
   if (!user) throw new Error('Not authenticated');
 
-  // Map to children table schema (uses parent_id and dob)
+  // Map to children table schema (uses user_id and dob)
   const { data, error } = await supabase
     .from('children')
     .insert({
-      parent_id: user.id,
+      user_id: user.id,
       name: member.name,
       dob: member.date_of_birth || null,
       gender: member.gender || null,

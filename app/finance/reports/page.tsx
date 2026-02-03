@@ -4,24 +4,25 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { FinanceReports } from "@/modules/finance/components/finance-reports";
+import { getCurrentSite } from "@/core/lib/supabase/get-current-site";
 
 export const dynamic = "force-dynamic";
 
 export default async function ReportsPage() {
   const t = await getTranslations("finance");
+
+  const { site, error } = await getCurrentSite();
+
+  if (error === "NOT_AUTHENTICATED") {
+    redirect("/login");
+  }
+
+  if (error === "NO_SITES" || !site) {
+    redirect("/onboarding");
+  }
+
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) redirect("/login");
-
-  const { data: memberData } = await supabase
-    .from("household_members")
-    .select("household:households(*)")
-    .eq("user_id", user.id)
-    .single();
-
-  const household = (memberData as { household: { id: string } } | null)?.household;
-  if (!household) redirect("/login");
+  const household = site;
 
   // Calculate date range for past 6 months
   const now = new Date();

@@ -32,6 +32,55 @@
     "settings": "设置",
     "signOut": "退出登录"
   },
+  "siteSwitcher": {
+    "currentSite": "当前场域",
+    "switchSite": "切换场域",
+    "createSite": "创建场域",
+    "createFirstSite": "创建您的第一个场域",
+    "mySites": "我的场域",
+    "noSites": "尚无场域",
+    "default": "默认"
+  },
+  "createSite": {
+    "title": "创建新场域",
+    "subtitle": "为您的家庭、办公室或其他空间创建独立记录",
+    "name": "场域名称",
+    "namePlaceholder": "例如：我的家、办公室",
+    "description": "描述（选填）",
+    "descriptionPlaceholder": "简短描述此场域",
+    "create": "创建场域",
+    "creating": "创建中...",
+    "cancel": "取消",
+    "success": "场域创建成功",
+    "error": "创建场域失败",
+    "limitReached": "您已达到拥有场域的上限（最多 {max} 个）"
+  },
+  "onboarding": {
+    "welcomeTitle": "欢迎使用 Woowtech!",
+    "welcomeSubtitle": "让我们开始建立您的第一个场域来记录生活吧",
+    "featureMembers": "邀请家人一起管理",
+    "featureHA": "连接 Home Assistant 智慧家居",
+    "featureTracking": "记录健康、财务、生活大小事",
+    "getStarted": "开始设定",
+    "createTitle": "建立您的场域",
+    "createSubtitle": "场域是您记录的独立空间，例如家庭或办公室",
+    "siteName": "场域名称",
+    "siteNamePlaceholder": "例如：我的家",
+    "siteDescription": "描述（选填）",
+    "siteDescPlaceholder": "简短描述此场域的用途",
+    "back": "返回",
+    "createSite": "建立场域",
+    "creating": "建立中...",
+    "nameRequired": "请输入场域名称",
+    "createError": "建立场域失败，请重试",
+    "completeTitle": "设定完成！",
+    "completeSubtitle": "您的场域「{name}」已建立成功",
+    "nextSteps": "接下来您可以：",
+    "stepInvite": "邀请家人加入场域",
+    "stepHA": "连接 Home Assistant",
+    "stepRecord": "开始记录生活",
+    "enterSite": "进入场域"
+  },
   "devices": {
     "title": "设备管理",
     "subtitle": "管理家中设备的使用说明与维修记录",
@@ -99,12 +148,48 @@
       "deleteFailed": "删除失败"
     }
   },
+  "roles": {
+    "owner": "拥有者",
+    "admin": "管理员",
+    "member": "使用者",
+    "viewer": "查看者"
+  },
+  "permissions": {
+    "close": "关闭",
+    "view": "查看",
+    "limited": "有限",
+    "full": "编辑",
+    "closeDesc": "无法访问此页面",
+    "viewDesc": "只能查看，不能修改",
+    "limitedDesc": "可新增/编辑记录，不能管理设置",
+    "fullDesc": "完整权限，包含所有功能"
+  },
+  "pages": {
+    "home": "首页",
+    "health": "健康",
+    "finance": "财务",
+    "productivity": "效率",
+    "devices": "设备",
+    "settings": "设置"
+  },
   "settings": {
     "title": "设置",
     "nav": {
       "profile": "个人资料",
-      "site": "站点",
+      "sites": "场域管理",
+      "site": "场域设置",
       "members": "成员"
+    },
+    "sites": {
+      "title": "场域管理",
+      "subtitle": "管理您的所有场域，切换或创建新场域",
+      "mySites": "我的场域",
+      "noSites": "您还没有加入任何场域",
+      "createNew": "创建新场域",
+      "createFirst": "创建第一个场域",
+      "current": "当前使用中",
+      "switched": "已切换场域",
+      "ownedCount": "您拥有的场域：{count}/{max} 个"
     },
     "profile": {
       "title": "个人资料设置",
@@ -120,10 +205,10 @@
       "saved": "个人资料已保存"
     },
     "site": {
-      "title": "站点设置",
-      "subtitle": "自定义您的家庭偏好",
-      "household": "家庭",
-      "householdName": "家庭名称",
+      "title": "场域设置",
+      "subtitle": "自定义您的场域偏好",
+      "household": "场域",
+      "householdName": "场域名称",
       "appearance": "外观",
       "theme": "主题",
       "themeLight": "浅色",
@@ -138,11 +223,36 @@
       "saveSettings": "保存设置",
       "saved": "设置已保存",
       "accentColor": "主题色",
-      "accentColorHint": "选择按钮和强调内容的主颜色"
+      "accentColorHint": "选择按钮和强调内容的主颜色",
+      "homeAssistant": "Home Assistant 集成",
+      "haUrl": "Home Assistant URL",
+      "haUrlPlaceholder": "https://your-ha.duckdns.org",
+      "haUrlHint": "输入您的 HA 网址，系统会自动转换为 WebSocket 连接",
+      "haToken": "API Token",
+      "haTokenPlaceholder": "输入长效访问令牌",
+      "haStatus": "连接状态",
+      "haConnected": "Connected",
+      "haDisconnected": "Disconnected",
+      "haReconnect": "重新连接",
+      "haConnecting": "连接中...",
+      "haConnectionFailed": "连接失败",
+      "haConnectionSuccess": "连接成功",
+      "dangerZone": "危险区域",
+      "dangerZoneDesc": "以下操作不可恢复，请谨慎操作",
+      "leaveSite": "离开场域",
+      "leaveSiteDesc": "您将不再是此场域的成员",
+      "leaveSiteConfirm": "确定要离开「{name}」吗？",
+      "leaveSiteSuccess": "已离开场域",
+      "deleteSite": "删除场域",
+      "deleteSiteDesc": "永久删除此场域及所有数据",
+      "deleteSiteConfirm": "确定要删除「{name}」吗？此操作无法恢复。",
+      "deleteSiteHint": "请输入场域名称以确认删除：",
+      "deleteSiteSuccess": "场域已删除",
+      "cannotLeaveAsOwner": "拥有者无法离开场域，请先删除场域或转移拥有权"
     },
     "members": {
       "title": "成员访问",
-      "subtitle": "管理谁可以访问您的家庭",
+      "subtitle": "管理谁可以访问您的场域",
       "inviteMember": "邀请成员",
       "pendingInvitations": "待处理邀请",
       "activeMembers": "成员",
@@ -165,11 +275,14 @@
       "removeMembers": "移除成员",
       "invite": {
         "title": "邀请成员",
-        "subtitle": "发送邀请加入您的家庭",
+        "subtitle": "发送邀请加入您的场域",
         "email": "电子邮件地址",
         "emailPlaceholder": "name@example.com",
+        "role": "成员角色",
+        "roleHint": "管理员可管理成员和设置，使用者只能访问被授权的页面。",
         "defaultAccess": "默认访问级别",
         "defaultAccessHint": "初始应用于所有页面。加入后可以逐页自定义。",
+        "adminDefaultHint": "管理员默认拥有所有页面的完整权限。",
         "sendInvite": "发送邀请",
         "cancel": "取消",
         "sending": "发送中...",
@@ -466,7 +579,9 @@
       "types": {
         "bank": "银行账户",
         "cash": "现金",
-        "credit": "信用卡"
+        "credit": "信用卡",
+        "checking": "支票账户",
+        "savings": "储蓄账户"
       }
     },
     "transactions": {

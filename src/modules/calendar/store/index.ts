@@ -25,12 +25,13 @@ interface CalendarState {
   householdId: string | null;
 
   setHouseholdId: (id: string) => void;
+  reset: () => void;
   setSelectedDate: (date: Date) => void;
   setView: (view: CalendarView) => void;
   setCategoryFilter: (category: string | 'all') => void;
 
-  fetchCategories: () => Promise<void>;
-  fetchEvents: () => Promise<void>;
+  fetchCategories: (overrideHouseholdId?: string) => Promise<void>;
+  fetchEvents: (overrideHouseholdId?: string) => Promise<void>;
   addEvent: (event: NewEvent) => Promise<void>;
   updateEvent: (id: string, updates: Partial<Event>) => Promise<void>;
   deleteEvent: (id: string) => Promise<void>;
@@ -53,15 +54,27 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
 
   setHouseholdId: (id) => set({ householdId: id }),
 
-  fetchCategories: async () => {
-    const { householdId } = get();
+  reset: () => set({
+    events: [],
+    occurrences: [],
+    categories: [],
+    selectedDate: new Date(),
+    categoryFilter: 'all',
+    error: null
+  }),
+
+  fetchCategories: async (overrideHouseholdId?: string) => {
+    const { householdId: storeHouseholdId } = get();
+    const householdId = overrideHouseholdId || storeHouseholdId;
     if (!householdId) return;
 
+    set({ isLoading: true });
     try {
       const categories = await getEventCategories(householdId);
-      set({ categories });
+      set({ categories, isLoading: false, error: null });
     } catch (error) {
       console.error('Failed to fetch categories:', error);
+      set({ error: (error as Error).message, isLoading: false });
     }
   },
 
@@ -77,8 +90,9 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
 
   setCategoryFilter: (category) => set({ categoryFilter: category }),
 
-  fetchEvents: async () => {
-    const { householdId, selectedDate, view } = get();
+  fetchEvents: async (overrideHouseholdId?: string) => {
+    const { householdId: storeHouseholdId, selectedDate, view } = get();
+    const householdId = overrideHouseholdId || storeHouseholdId;
     if (!householdId) return;
 
     set({ isLoading: true, error: null });

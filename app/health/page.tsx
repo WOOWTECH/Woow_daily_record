@@ -5,7 +5,6 @@ import { useEffect, useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import Icon from "@mdi/react";
 import {
   mdiClockCheck,
   mdiClipboardText,
@@ -23,9 +22,8 @@ import {
   HealthAnalyticsTab,
 } from "@/modules/health/components";
 import { useHealthStore } from "@/modules/health/store";
-import { getUserHousehold, createHousehold } from "@/core/lib/supabase/households";
-import { cn } from "@/lib/utils";
 import { TabNavigation } from "@/core/components/ui/tab-navigation";
+import { useSiteSync } from "@/core/hooks";
 
 type TabId = "activity" | "records" | "growth" | "analytics" | "settings";
 
@@ -50,7 +48,6 @@ export default function HealthPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [householdId, setHouseholdId] = useState<string | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
   // Get active tab from URL
@@ -61,39 +58,17 @@ export default function HealthPage() {
   const setStoreHouseholdId = useHealthStore((state) => state.setHouseholdId);
   const fetchMembers = useHealthStore((state) => state.fetchMembers);
   const selectedMemberId = useHealthStore((state) => state.selectedMemberId);
+  const resetMembers = useHealthStore((state) => state.resetMembers);
 
-  // Initialize household and fetch members
-  useEffect(() => {
-    async function init() {
-      try {
-        let household = await getUserHousehold();
-
-        if (!household) {
-          household = await createHousehold("My Family");
-        }
-
-        if (household) {
-          setHouseholdId(household.id);
-          setStoreHouseholdId(household.id);
-        } else {
-          toast.error(t("error.initFailed"));
-        }
-      } catch (err) {
-        console.error("[Health] Error initializing:", err);
-        toast.error(t("error.initFailed"));
-      } finally {
-        setIsInitializing(false);
-      }
-    }
-    init();
-  }, [setStoreHouseholdId, t]);
-
-  // Fetch members when householdId is set
-  useEffect(() => {
-    if (householdId) {
-      fetchMembers();
-    }
-  }, [householdId, fetchMembers]);
+  // Sync with current site - automatically reload when site changes
+  const householdId = useSiteSync(
+    useCallback((siteId: string) => {
+      setStoreHouseholdId(siteId);
+      resetMembers?.();
+      fetchMembers(siteId);  // Pass siteId directly to avoid timing issues
+      setIsInitializing(false);
+    }, [setStoreHouseholdId, fetchMembers, resetMembers])
+  );
 
   // Handle tab change
   const handleTabChange = useCallback(

@@ -18,7 +18,7 @@ import Icon from "@mdi/react";
 import { mdiSend, mdiCheckCircle, mdiContentCopy } from "@mdi/js";
 import { cn } from "@/lib/utils";
 import { useSettingsStore } from "../../store";
-import type { AccessLevel, Invitation } from "../../types";
+import type { MemberRole, Invitation } from "../../types";
 
 interface InviteDialogProps {
   open: boolean;
@@ -28,10 +28,11 @@ interface InviteDialogProps {
 export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
   const t = useTranslations("settings.members.invite");
   const tMembers = useTranslations("settings.members");
+  const tRoles = useTranslations("roles");
   const createInvitation = useSettingsStore((s) => s.createInvitation);
 
   const [email, setEmail] = useState("");
-  const [defaultLevel, setDefaultLevel] = useState<AccessLevel>("view");
+  const [role, setRole] = useState<MemberRole>("member");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sentInvite, setSentInvite] = useState<Invitation | null>(null);
 
@@ -43,7 +44,7 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
     try {
       const invite = await createInvitation({
         email: email.trim(),
-        default_access_level: defaultLevel,
+        role,
       });
       setSentInvite(invite);
     } catch (error) {
@@ -63,15 +64,14 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
 
   const handleClose = () => {
     setEmail("");
-    setDefaultLevel("view");
+    setRole("member");
     setSentInvite(null);
     onOpenChange(false);
   };
 
-  const levelOptions: { value: AccessLevel; label: string }[] = [
-    { value: "view", label: `👁 ${tMembers("accessView")}` },
-    { value: "control", label: `✏️ ${tMembers("accessControl")}` },
-    { value: "full", label: `⭐ ${tMembers("accessFull")}` },
+  const roleOptions: { value: MemberRole; label: string; icon: string }[] = [
+    { value: "admin", label: tRoles("admin"), icon: "👑" },
+    { value: "member", label: tRoles("member"), icon: "👤" },
   ];
 
   return (
@@ -115,21 +115,22 @@ export function InviteDialog({ open, onOpenChange }: InviteDialogProps) {
               </div>
 
               <div className="space-y-2">
-                <Label>{t("defaultAccess")}</Label>
-                <p className="text-xs text-brand-deep-gray">{t("defaultAccessHint")}</p>
-                <div className="flex gap-1 bg-white/30 rounded-lg p-1">
-                  {levelOptions.map((option) => (
+                <Label>{t("role")}</Label>
+                <p className="text-xs text-brand-deep-gray">{t("roleHint")}</p>
+                <div className="flex gap-1 bg-white/30 dark:bg-white/10 rounded-lg p-1">
+                  {roleOptions.map((option) => (
                     <button
                       key={option.value}
                       type="button"
-                      onClick={() => setDefaultLevel(option.value)}
+                      onClick={() => setRole(option.value)}
                       className={cn(
                         "flex-1 px-3 py-2 rounded-md text-sm transition-colors",
-                        defaultLevel === option.value
-                          ? "bg-white shadow text-brand-black"
-                          : "text-brand-deep-gray hover:text-brand-black"
+                        role === option.value
+                          ? "bg-white dark:bg-brand-gray shadow text-brand-black dark:text-brand-white"
+                          : "text-brand-deep-gray hover:text-brand-black dark:hover:text-brand-white"
                       )}
                     >
+                      <span className="mr-1">{option.icon}</span>
                       {option.label}
                     </button>
                   ))}

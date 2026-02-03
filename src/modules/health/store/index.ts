@@ -16,8 +16,9 @@ interface HealthState {
   householdId: string | null;
 
   setHouseholdId: (id: string) => void;
-  fetchMembers: () => Promise<void>;
-  addMember: (member: NewFamilyMember) => Promise<void>;
+  resetMembers: () => void;
+  fetchMembers: (overrideHouseholdId?: string) => Promise<void>;
+  addMember: (member: NewFamilyMember, overrideHouseholdId?: string) => Promise<void>;
   updateMember: (id: string, updates: Partial<FamilyMember>) => Promise<void>;
   deleteMember: (id: string) => Promise<void>;
   selectMember: (id: string | null) => void;
@@ -32,13 +33,16 @@ export const useHealthStore = create<HealthState>((set, get) => ({
 
   setHouseholdId: (id) => set({ householdId: id }),
 
-  fetchMembers: async () => {
-    const { householdId } = get();
+  resetMembers: () => set({ members: [], selectedMemberId: null, error: null }),
+
+  fetchMembers: async (overrideHouseholdId?: string) => {
+    const { householdId: storeHouseholdId } = get();
+    const householdId = overrideHouseholdId || storeHouseholdId;
     if (!householdId) return;
 
     set({ isLoading: true, error: null });
     try {
-      const result = await fetchFamilyMembersAction();
+      const result = await fetchFamilyMembersAction(householdId);
       if (result.success && result.data) {
         set({ members: result.data, isLoading: false });
 
@@ -55,11 +59,16 @@ export const useHealthStore = create<HealthState>((set, get) => ({
     }
   },
 
-  addMember: async (member) => {
-    const { members } = get();
+  addMember: async (member, overrideHouseholdId?: string) => {
+    const { members, householdId: storeHouseholdId } = get();
+    const householdId = overrideHouseholdId || storeHouseholdId;
+    if (!householdId) {
+      set({ error: 'No household ID available' });
+      throw new Error('No household ID available');
+    }
 
     try {
-      const result = await createFamilyMemberAction(member);
+      const result = await createFamilyMemberAction(householdId, member);
       if (result.success && result.data) {
         set({ members: [result.data, ...members] });
 

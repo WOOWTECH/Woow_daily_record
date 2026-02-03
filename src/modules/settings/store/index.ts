@@ -7,7 +7,7 @@ import type {
   NewInvitation,
   UserProfile,
   ProfileUpdate,
-  ModuleName,
+  PageName,
   AccessLevel,
 } from "../types";
 import {
@@ -52,7 +52,7 @@ interface SettingsState {
   fetchMembers: () => Promise<void>;
   updateMemberPermission: (
     memberId: string,
-    module: ModuleName,
+    page: PageName,
     level: AccessLevel
   ) => Promise<void>;
   removeMember: (memberId: string) => Promise<void>;
@@ -166,19 +166,19 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     }
   },
 
-  updateMemberPermission: async (memberId, module, level) => {
+  updateMemberPermission: async (memberId, page, level) => {
     const { members } = get();
 
     // Optimistic update
     const updatedMembers = members.map((m) =>
       m.id === memberId
-        ? { ...m, permissions: { ...m.permissions, [module]: level } }
+        ? { ...m, permissions: { ...m.permissions, [page]: level } }
         : m
     );
     set({ members: updatedMembers });
 
     try {
-      const result = await updateMemberPermissionsAction(memberId, module, level);
+      const result = await updateMemberPermissionsAction(memberId, page, level);
       if (!result.success) {
         // Rollback on error
         set({ members, error: result.error });

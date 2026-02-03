@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { mdiAccount, mdiCog, mdiAccountGroup } from "@mdi/js";
+import { mdiAccount, mdiCog, mdiAccountGroup, mdiDomain } from "@mdi/js";
 import { TabNavigation, TabOption } from "@/core/components/ui/tab-navigation";
 import type { SettingsSection } from "../types";
 
@@ -20,6 +20,7 @@ export function SettingsNav({
 
   const tabs: TabOption<SettingsSection>[] = [
     { id: "profile", label: t("profile"), icon: mdiAccount },
+    { id: "sites", label: t("sites"), icon: mdiDomain },
     { id: "site", label: t("site"), icon: mdiCog },
     { id: "members", label: t("members"), icon: mdiAccountGroup, ownerOnly: true },
   ];

@@ -19,9 +19,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/core/components/notifications";
-import { getUserHousehold } from "@/core/lib/supabase/households";
 import { signOut } from "@/app/actions/auth";
 import { useTranslations } from 'next-intl';
+import { SiteSwitcher } from "./site-switcher";
+import { useSitesStore } from "@/core/stores/sites-store";
+import { useCurrentSiteId } from "@/core/hooks/use-sites";
 
 export function MobileNav() {
   const t = useTranslations('nav');
@@ -37,17 +39,13 @@ export function MobileNav() {
 
   const pathname = usePathname();
   const router = useRouter();
-  const [householdId, setHouseholdId] = useState<string | null>(null);
+  const currentSiteId = useCurrentSiteId();
+  const fetchSites = useSitesStore((s) => s.fetchSites);
 
+  // Initialize sites on mount
   useEffect(() => {
-    async function loadHousehold() {
-      const household = await getUserHousehold();
-      if (household) {
-        setHouseholdId(household.id);
-      }
-    }
-    loadHousehold();
-  }, []);
+    fetchSites();
+  }, [fetchSites]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -80,6 +78,11 @@ export function MobileNav() {
             </div>
           </div>
 
+          {/* Site Switcher */}
+          <div className="px-2 py-2 border-b border-brand-gray/10">
+            <SiteSwitcher isExpanded={true} />
+          </div>
+
           {/* Navigation */}
           <nav className="p-2 space-y-1">
             {navItems.map((item) => {
@@ -106,8 +109,8 @@ export function MobileNav() {
           {/* Bottom Section */}
           <div className="absolute bottom-0 left-0 right-0 p-2 border-t border-brand-gray/10 space-y-1">
             {/* Notifications */}
-            {householdId && (
-              <NotificationBell householdId={householdId} isExpanded={true} />
+            {currentSiteId && (
+              <NotificationBell householdId={currentSiteId} isExpanded={true} />
             )}
 
             {/* Sign Out Button */}

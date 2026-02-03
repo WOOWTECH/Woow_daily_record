@@ -1,8 +1,9 @@
 // app/notes/page.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import Icon from "@mdi/react";
 import { mdiPlus } from "@mdi/js";
 import { toast } from 'sonner';
@@ -12,19 +13,25 @@ import { NoteDialog } from '@/modules/notes/components/note-dialog';
 import { NoteFilters } from '@/modules/notes/components/note-filters';
 import { GlassCard } from '@/core/components/glass-card';
 import { useNotesStore, useFilteredNotes } from '@/modules/notes/store';
-import { getUserHousehold, createHousehold } from '@/core/lib/supabase/households';
+import { useCurrentSite, useSitesStore } from '@/core/stores/sites-store';
 import type { Note } from '@/modules/notes/types';
 
 export default function NotesPage() {
   const t = useTranslations('notes');
+  const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
+
+  const currentSite = useCurrentSite();
+  const { fetchSites, sites, isLoading: sitesLoading } = useSitesStore();
+  const previousSiteIdRef = useRef<string | null>(null);
 
   const {
     isLoading,
     error,
     filter,
     setHouseholdId,
+    reset,
     fetchNotes,
     addNote,
     updateNote,
@@ -35,27 +42,36 @@ export default function NotesPage() {
 
   const filteredNotes = useFilteredNotes();
 
+  // Fetch sites on mount
   useEffect(() => {
-    async function init() {
-      try {
-        let household = await getUserHousehold();
+    fetchSites();
+  }, [fetchSites]);
 
-        if (!household) {
-          household = await createHousehold('My Family');
-        }
+  // Initialize notes when current site is available or changes
+  useEffect(() => {
+    if (sitesLoading) return;
 
-        if (household) {
-          setHouseholdId(household.id);
-          fetchNotes();
-        } else {
-          toast.error('Could not initialize workspace');
+    // If no sites exist, redirect to onboarding
+    if (sites.length === 0) {
+      router.push('/onboarding');
+      return;
+    }
+
+    if (currentSite) {
+      // Only reload data if site actually changed
+      if (previousSiteIdRef.current !== currentSite.id) {
+        // Reset old data first
+        if (previousSiteIdRef.current !== null) {
+          reset();
         }
-      } catch (err) {
-        console.error('[Notes] Error initializing:', err);
+        previousSiteIdRef.current = currentSite.id;
+
+        // Set new household ID and fetch with the new ID directly
+        setHouseholdId(currentSite.id);
+        fetchNotes(currentSite.id);
       }
     }
-    init();
-  }, [setHouseholdId, fetchNotes]);
+  }, [currentSite, sites, sitesLoading, setHouseholdId, reset, fetchNotes, router]);
 
   useEffect(() => {
     if (error) {

@@ -10,9 +10,10 @@ import type {
   NewInvitation,
   UserProfile,
   ProfileUpdate,
-  ModuleName,
+  PageName,
   AccessLevel,
 } from "../types";
+import { PAGE_NAMES } from "../types";
 
 // ============================================
 // Profile Actions
@@ -89,17 +90,28 @@ export async function fetchHouseholdAction(): Promise<{
   }
 
   // First find via household_members (most reliable, works with or without migration)
-  const { data: membership } = await supabase
+  const { data: membership, error: membershipError } = await supabase
     .from("household_members")
-    .select("household_id, role")
+    .select("household_id, role, status")
     .eq("user_id", user.id)
-    .single();
+    .eq("status", "active")
+    .limit(1)
+    .maybeSingle();
+
+  if (membershipError) {
+    console.error("[fetchHouseholdAction] Membership query error:", membershipError);
+    return { success: false, error: `Membership query failed: ${membershipError.message}` };
+  }
 
   let household: any = null;
   let isOwner = false;
 
+  console.log("[fetchHouseholdAction] membership:", membership);
+
   if (membership) {
-    isOwner = membership.role === "owner";
+    // owner 和 admin 都可以編輯場域設定
+    isOwner = membership.role === "owner" || membership.role === "admin";
+    console.log("[fetchHouseholdAction] role:", membership.role, "isOwner:", isOwner);
     const { data, error: err } = await supabase
       .from("households")
       .select("*")
@@ -129,10 +141,15 @@ export async function fetchHouseholdAction(): Promise<{
     units: household.units || "metric",
     theme: household.theme || "system",
     language: household.language || "en",
+    // Home Assistant integration
+    ha_url: household.ha_url || null,
+    ha_token: household.ha_token || null,
+    ha_connected: household.ha_connected || false,
     created_at: household.created_at,
     updated_at: household.updated_at,
   };
 
+  console.log("[fetchHouseholdAction] final isOwner:", isOwner);
   return { success: true, data: { ...householdWithDefaults, isOwner } };
 }
 
@@ -181,21 +198,25 @@ export async function fetchMembersAction(
   }
 
   const formattedMembers: HouseholdMember[] = (members || []).map((m: any) => {
-    // Default all modules to 'close' for members, 'full' for owner
-    const defaultLevel = m.role === 'owner' ? 'full' : 'close';
-    const permissions: Record<ModuleName, AccessLevel> = {
-      health: defaultLevel as AccessLevel,
-      productivity: defaultLevel as AccessLevel,
-      devices: defaultLevel as AccessLevel,
-      finance: defaultLevel as AccessLevel,
-    };
+    // Default all pages based on role:
+    // - owner/admin: full access
+    // - member: close by default
+    const defaultLevel = (m.role === 'owner' || m.role === 'admin') ? 'full' : 'close';
+    const permissions: Record<PageName, AccessLevel> = {} as Record<PageName, AccessLevel>;
 
-    // Apply actual permissions from database
-    (m.page_permissions || []).forEach((p: any) => {
-      if (['health', 'productivity', 'devices', 'finance'].includes(p.page)) {
-        permissions[p.page as ModuleName] = p.access_level;
-      }
+    // Initialize all pages with default level
+    PAGE_NAMES.forEach((page) => {
+      permissions[page] = defaultLevel as AccessLevel;
     });
+
+    // Apply actual permissions from database (only for regular members)
+    if (m.role === 'member') {
+      (m.page_permissions || []).forEach((p: any) => {
+        if (PAGE_NAMES.includes(p.page as PageName)) {
+          permissions[p.page as PageName] = p.access_level;
+        }
+      });
+    }
 
     return {
       id: m.id,
@@ -215,16 +236,16 @@ export async function fetchMembersAction(
 
 export async function updateMemberPermissionsAction(
   memberId: string,
-  module: ModuleName,
+  page: PageName,
   level: AccessLevel
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient();
 
-  // Upsert permission (still uses 'page' column in DB)
+  // Upsert permission
   const { error } = await supabase
     .from("page_permissions")
     .upsert(
-      { household_member_id: memberId, page: module, access_level: level },
+      { household_member_id: memberId, page, access_level: level },
       { onConflict: "household_member_id,page" }
     );
 
@@ -294,7 +315,7 @@ export async function createInvitationAction(
       household_id: householdId,
       email: invite.email,
       invited_by: user.id,
-      default_access_level: invite.default_access_level,
+      role: invite.role,
     })
     .select()
     .single();

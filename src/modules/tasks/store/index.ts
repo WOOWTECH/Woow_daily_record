@@ -11,7 +11,8 @@ interface TasksState {
   householdId: string | null;
 
   setHouseholdId: (id: string) => void;
-  fetchTasks: () => Promise<void>;
+  reset: () => void;
+  fetchTasks: (overrideHouseholdId?: string) => Promise<void>;
   addTask: (task: NewTask) => Promise<void>;
   updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
   toggleComplete: (id: string) => Promise<void>;
@@ -28,8 +29,11 @@ export const useTasksStore = create<TasksState>((set, get) => ({
 
   setHouseholdId: (id) => set({ householdId: id }),
 
-  fetchTasks: async () => {
-    const { householdId } = get();
+  reset: () => set({ tasks: [], error: null, filter: { status: 'all', priority: 'all' } }),
+
+  fetchTasks: async (overrideHouseholdId?: string) => {
+    const { householdId: storeHouseholdId } = get();
+    const householdId = overrideHouseholdId || storeHouseholdId;
     if (!householdId) return;
 
     set({ isLoading: true, error: null });

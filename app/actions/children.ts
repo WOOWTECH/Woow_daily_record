@@ -12,50 +12,40 @@ const CreateChildSchema = z.object({
 });
 
 export async function createChild(data: { name: string; dob: string; gender: "boy" | "girl" | "other"; photoUrl?: string }) {
-    console.log("=== CREATE CHILD START ===");
-    console.log("Server Action: Creating Child", data);
-
     const result = CreateChildSchema.safeParse(data);
 
     if (!result.success) {
-        console.error("Server Action: Validation Failed", result.error);
         return { success: false, error: "Validation Failed: " + JSON.stringify(result.error.flatten().fieldErrors) };
     }
 
-    console.log("✅ Validation passed");
-
     const supabase = await createClient();
 
-    // 1. Get Authenticated User OR Guest Fallback
+    // 1. Get Authenticated User - REQUIRED (no guest fallback for security)
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    console.log("Auth user:", user?.id || "none", "Error:", authError?.message || "none");
 
-    let parentId = user?.id;
-
-    if (!parentId) {
-        console.log("Server Action: No auth user found, using Guest Profile.");
-        parentId = '00000000-0000-0000-0000-000000000000';
+    if (authError || !user) {
+        return {
+            success: false,
+            error: "Authentication required. Please log in to create a child profile.",
+            errorCode: "AUTH_REQUIRED"
+        };
     }
 
-    console.log("Using parent ID:", parentId);
+    const parentId = user.id;
 
-    // 2. Ensure Profile Exists (Robustness)
-    const { data: profile, error: profileError } = await supabase.from("profiles").select("id").eq("id", parentId).single();
-    console.log("Profile check:", profile?.id || "not found", "Error:", profileError?.message || "none");
+    // 2. Ensure Profile Exists (create if missing for the authenticated user)
+    const { data: profile } = await supabase.from("profiles").select("id").eq("id", parentId).single();
 
     if (!profile) {
-        console.log("Creating fallback profile for:", parentId);
-        // Fallback: Create profile if missing
+        // Create profile for authenticated user if missing
         const { error: createError } = await supabase.from("profiles").insert({
             id: parentId,
-            name: user?.email?.split("@")[0] || "Guest Parent",
+            name: user.email?.split("@")[0] || "Parent",
         });
 
         if (createError) {
-            console.error("Server Action: Failed to create fallback profile", createError);
             return { success: false, error: "Failed to create parent profile: " + createError.message };
         }
-        console.log("✅ Created fallback profile");
     }
 
     const genderMap: Record<string, "male" | "female" | "other"> = {
@@ -66,17 +56,10 @@ export async function createChild(data: { name: string; dob: string; gender: "bo
 
     const dbGender = genderMap[result.data.gender];
 
-    console.log("Attempting to insert child:", {
-        user_id: parentId,
-        name: result.data.name,
-        dob: result.data.dob,
-        gender: dbGender,
-    });
-
     const { data: newChild, error } = await supabase
         .from("children")
         .insert({
-            user_id: parentId, // Changed from parent_id to user_id
+            user_id: parentId,
             name: result.data.name,
             dob: result.data.dob,
             gender: dbGender,
@@ -86,12 +69,8 @@ export async function createChild(data: { name: string; dob: string; gender: "bo
         .single();
 
     if (error) {
-        console.error("❌ Server Action: Failed to create child", error);
         return { success: false, error: error.message };
     }
-
-    console.log("✅ Child created successfully:", newChild.id);
-    console.log("=== CREATE CHILD END ===");
 
     revalidatePath("/dashboard");
     revalidatePath("/settings");

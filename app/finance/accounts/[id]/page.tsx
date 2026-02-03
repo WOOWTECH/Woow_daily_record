@@ -4,6 +4,7 @@ import { AccountForm } from "@/modules/finance/components/account-form";
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { getCurrentSite } from "@/core/lib/supabase/get-current-site";
 
 export const dynamic = "force-dynamic";
 
@@ -14,37 +15,28 @@ interface AccountDetailPageProps {
 export default async function AccountDetailPage({ params }: AccountDetailPageProps) {
   const { id } = await params;
   const t = await getTranslations("finance");
+
+  const { site, error } = await getCurrentSite();
+
+  if (error === "NOT_AUTHENTICATED") {
+    redirect("/login");
+  }
+
+  if (error === "NO_SITES" || !site) {
+    redirect("/onboarding");
+  }
+
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
-  // Get the user's household
-  const { data: memberData } = await supabase
-    .from("household_members")
-    .select("household:households(*)")
-    .eq("user_id", user.id)
-    .single();
-
-  const household = (memberData as { household: { id: string } } | null)?.household;
-
-  if (!household) {
-    redirect("/login");
-  }
 
   // Fetch the account
-  const { data: account, error } = await supabase
+  const { data: account, error: accountError } = await supabase
     .from("finance_accounts")
     .select("*")
     .eq("id", id)
-    .eq("household_id", household.id)
+    .eq("household_id", site.id)
     .single();
 
-  if (error || !account) {
+  if (accountError || !account) {
     notFound();
   }
 
@@ -57,7 +49,7 @@ export default async function AccountDetailPage({ params }: AccountDetailPagePro
         <p className="text-brand-deep-gray mt-1 font-medium">{account.name}</p>
       </GlassCard>
 
-      <AccountForm householdId={household.id} account={account} />
+      <AccountForm householdId={site.id} account={account} />
     </div>
   );
 }

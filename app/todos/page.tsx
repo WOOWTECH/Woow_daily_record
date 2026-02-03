@@ -1,8 +1,9 @@
 // app/todos/page.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import Icon from "@mdi/react";
 import { mdiPlus } from "@mdi/js";
 import { toast } from 'sonner';
@@ -11,19 +12,25 @@ import { TaskList } from '@/modules/tasks/components/task-list';
 import { TaskDialog } from '@/modules/tasks/components/task-dialog';
 import { TaskFilters } from '@/modules/tasks/components/task-filters';
 import { useTasksStore, useFilteredTasks } from '@/modules/tasks/store';
-import { getUserHousehold } from '@/core/lib/supabase/households';
+import { useCurrentSite, useSitesStore } from '@/core/stores/sites-store';
 import type { Task } from '@/modules/tasks/types';
 
 export default function TodosPage() {
   const t = useTranslations('todos');
+  const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+
+  const currentSite = useCurrentSite();
+  const { fetchSites, sites, isLoading: sitesLoading } = useSitesStore();
+  const previousSiteIdRef = useRef<string | null>(null);
 
   const {
     isLoading,
     error,
     filter,
     setHouseholdId,
+    reset,
     fetchTasks,
     addTask,
     updateTask,
@@ -34,29 +41,36 @@ export default function TodosPage() {
 
   const filteredTasks = useFilteredTasks();
 
+  // Fetch sites on mount
   useEffect(() => {
-    async function init() {
-      try {
-        let household = await getUserHousehold();
+    fetchSites();
+  }, [fetchSites]);
 
-        if (!household) {
-          // Auto-create household if missing
-          const { createHousehold } = await import('@/core/lib/supabase/households');
-          household = await createHousehold('My Family');
-        }
+  // Initialize tasks when current site is available or changes
+  useEffect(() => {
+    if (sitesLoading) return;
 
-        if (household) {
-          setHouseholdId(household.id);
-          fetchTasks();
-        } else {
-          toast.error('Could not initialize workspace');
+    // If no sites exist, redirect to onboarding
+    if (sites.length === 0) {
+      router.push('/onboarding');
+      return;
+    }
+
+    if (currentSite) {
+      // Only reload data if site actually changed
+      if (previousSiteIdRef.current !== currentSite.id) {
+        // Reset old data first
+        if (previousSiteIdRef.current !== null) {
+          reset();
         }
-      } catch (err) {
-        console.error('[Tasks] Error initializing:', err);
+        previousSiteIdRef.current = currentSite.id;
+
+        // Set new household ID and fetch with the new ID directly
+        setHouseholdId(currentSite.id);
+        fetchTasks(currentSite.id);
       }
     }
-    init();
-  }, [setHouseholdId, fetchTasks]);
+  }, [currentSite, sites, sitesLoading, setHouseholdId, reset, fetchTasks, router]);
 
   useEffect(() => {
     if (error) {

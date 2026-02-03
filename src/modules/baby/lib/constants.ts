@@ -20,6 +20,7 @@ export const COLOR_THEMES: Record<string, { bg: string; text: string; ring: stri
     "accent-green": { bg: "bg-accent-green/20", text: "text-accent-green", ring: "ring-accent-green" },
     "accent-pink": { bg: "bg-accent-pink/20", text: "text-accent-pink", ring: "ring-accent-pink" },
     "accent-purple": { bg: "bg-accent-purple/20", text: "text-accent-purple", ring: "ring-accent-purple" },
+    "accent-blue": { bg: "bg-brand-blue/20", text: "text-brand-blue", ring: "ring-brand-blue" },
 };
 
 // Icon Map - now using MDI paths

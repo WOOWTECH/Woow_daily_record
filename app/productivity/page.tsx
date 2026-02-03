@@ -4,11 +4,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useSearchParams, useRouter } from "next/navigation";
-import { toast } from "sonner";
-import Icon from "@mdi/react";
 import {
   mdiViewDashboard,
-  mdiCheckCircle, // Changed from mdiCheckboxMarkedOutline
+  mdiCheckCircle,
   mdiNoteText,
   mdiCalendar,
 } from "@mdi/js";
@@ -20,12 +18,11 @@ import {
 } from "@/modules/productivity/components";
 import type { TabId } from "@/modules/productivity/components";
 import type { OverviewStats } from "@/modules/productivity/components";
-import { getUserHousehold, createHousehold } from "@/core/lib/supabase/households";
 import { useTasksStore } from "@/modules/tasks/store";
 import { useNotesStore } from "@/modules/notes/store";
 import { useCalendarStore } from "@/modules/calendar/store";
-import { TabNavigation, TabOption } from "@/core/components/ui/tab-navigation"; // Added
-import { cn } from "@/lib/utils";
+import { TabNavigation } from "@/core/components/ui/tab-navigation";
+import { useSiteSync } from "@/core/hooks";
 
 const VALID_TABS: TabId[] = ["overview", "todos", "notes", "calendar"];
 
@@ -47,7 +44,6 @@ export default function ProductivityPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [householdId, setHouseholdId] = useState<string | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
   // Get active tab from URL
@@ -58,6 +54,22 @@ export default function ProductivityPage() {
   const tasks = useTasksStore((state) => state.tasks);
   const notes = useNotesStore((state) => state.notes);
   const events = useCalendarStore((state) => state.events);
+
+  // Store reset functions
+  const resetTasks = useTasksStore((state) => state.reset);
+  const resetNotes = useNotesStore((state) => state.reset);
+  const resetCalendar = useCalendarStore((state) => state.reset);
+
+  // Sync with current site - automatically reload when site changes
+  const householdId = useSiteSync(
+    useCallback((siteId: string) => {
+      // Reset all stores when site changes
+      resetTasks?.();
+      resetNotes?.();
+      resetCalendar?.();
+      setIsInitializing(false);
+    }, [resetTasks, resetNotes, resetCalendar])
+  );
 
   // Calculate stats for overview
   const stats: OverviewStats = {
@@ -86,31 +98,6 @@ export default function ProductivityPage() {
       }).length,
     },
   };
-
-  // Initialize household
-  useEffect(() => {
-    async function init() {
-      try {
-        let household = await getUserHousehold();
-
-        if (!household) {
-          household = await createHousehold("My Family");
-        }
-
-        if (household) {
-          setHouseholdId(household.id);
-        } else {
-          toast.error("Could not initialize workspace");
-        }
-      } catch (err) {
-        console.error("[Productivity] Error initializing:", err);
-        toast.error("Could not initialize workspace");
-      } finally {
-        setIsInitializing(false);
-      }
-    }
-    init();
-  }, []);
 
   // Handle tab change
   const handleTabChange = useCallback(

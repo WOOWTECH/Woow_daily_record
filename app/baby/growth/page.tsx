@@ -44,7 +44,8 @@ export default async function BabyGrowthPage(props: { searchParams: Promise<{ ch
     const t = await getTranslations('baby.growth');
 
     // Fetch custom metric types if child exists
-    const savedMetrics = child ? await getCustomMetricTypes(child.id) : [];
+    const metricsResult = child ? await getCustomMetricTypes(child.id) : { success: true, data: [] };
+    const savedMetrics = metricsResult.success && metricsResult.data ? metricsResult.data : [];
 
     // Canonical URL Redirect
     if (child && !searchParams?.childId) {

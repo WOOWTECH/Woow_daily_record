@@ -11,7 +11,8 @@ interface NotesState {
   householdId: string | null;
 
   setHouseholdId: (id: string) => void;
-  fetchNotes: () => Promise<void>;
+  reset: () => void;
+  fetchNotes: (overrideHouseholdId?: string) => Promise<void>;
   addNote: (note: NewNote) => Promise<void>;
   updateNote: (id: string, updates: Partial<Note>) => Promise<void>;
   togglePin: (id: string) => Promise<void>;
@@ -28,8 +29,11 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 
   setHouseholdId: (id) => set({ householdId: id }),
 
-  fetchNotes: async () => {
-    const { householdId } = get();
+  reset: () => set({ notes: [], error: null, filter: 'all' }),
+
+  fetchNotes: async (overrideHouseholdId?: string) => {
+    const { householdId: storeHouseholdId } = get();
+    const householdId = overrideHouseholdId || storeHouseholdId;
     if (!householdId) return;
 
     set({ isLoading: true, error: null });

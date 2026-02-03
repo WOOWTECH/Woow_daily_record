@@ -11,6 +11,10 @@ export interface Household {
   units: 'metric' | 'imperial';
   theme: 'light' | 'dark' | 'system';
   language: 'en' | 'zh-CN' | 'zh-TW';
+  // Home Assistant integration
+  ha_url: string | null;
+  ha_token: string | null;
+  ha_connected: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -22,31 +26,42 @@ export type HouseholdUpdate = Partial<
 // ============================================
 // Member Access
 // ============================================
-export type AccessLevel = 'close' | 'view' | 'control' | 'full';
-export type ModuleName = 'health' | 'productivity' | 'devices' | 'finance';
-export type MemberRole = 'owner' | 'member';
+export type AccessLevel = 'close' | 'view' | 'limited' | 'full';
+export type PageName = 'home' | 'health' | 'finance' | 'productivity' | 'devices' | 'settings';
+export type MemberRole = 'owner' | 'admin' | 'member';
+
+// Legacy alias for backward compatibility
+export type ModuleName = PageName;
 
 // Access level constants for cycling
-export const ACCESS_LEVELS: AccessLevel[] = ['close', 'view', 'control', 'full'];
+export const ACCESS_LEVELS: AccessLevel[] = ['close', 'view', 'limited', 'full'];
 
-// Module name constants
-export const MODULE_NAMES: ModuleName[] = ['health', 'productivity', 'devices', 'finance'];
+// Page name constants
+export const PAGE_NAMES: PageName[] = ['home', 'health', 'finance', 'productivity', 'devices', 'settings'];
+
+// Legacy alias
+export const MODULE_NAMES = PAGE_NAMES;
 
 // Access level configuration with icons and labels
-export const ACCESS_LEVEL_CONFIG: Record<AccessLevel, { icon: string; label: string }> = {
-  close: { icon: '🚫', label: 'No Access' },
-  view: { icon: '👁', label: 'View Only' },
-  control: { icon: '✏️', label: 'Control' },
-  full: { icon: '⭐', label: 'Full Access' },
+export const ACCESS_LEVEL_CONFIG: Record<AccessLevel, { icon: string; labelKey: string }> = {
+  close: { icon: '🚫', labelKey: 'permissions.close' },
+  view: { icon: '👁', labelKey: 'permissions.view' },
+  limited: { icon: '✏️', labelKey: 'permissions.limited' },
+  full: { icon: '⭐', labelKey: 'permissions.full' },
 };
 
-// Module configuration with icons and labels
-export const MODULE_CONFIG: Record<ModuleName, { icon: string; label: string }> = {
-  health: { icon: '🏥', label: 'Health' },
-  productivity: { icon: '📋', label: 'Productivity' },
-  devices: { icon: '📱', label: 'Devices' },
-  finance: { icon: '💰', label: 'Finance' },
+// Page configuration with icons and labels
+export const PAGE_CONFIG: Record<PageName, { icon: string; labelKey: string }> = {
+  home: { icon: '🏠', labelKey: 'pages.home' },
+  health: { icon: '🏥', labelKey: 'pages.health' },
+  finance: { icon: '💰', labelKey: 'pages.finance' },
+  productivity: { icon: '📋', labelKey: 'pages.productivity' },
+  devices: { icon: '📱', labelKey: 'pages.devices' },
+  settings: { icon: '⚙️', labelKey: 'pages.settings' },
 };
+
+// Legacy alias
+export const MODULE_CONFIG = PAGE_CONFIG;
 
 export interface HouseholdMember {
   id: string;
@@ -58,16 +73,19 @@ export interface HouseholdMember {
   name: string;
   email: string;
   avatar_url: string | null;
-  // Joined from module_permissions
-  permissions: Record<ModuleName, AccessLevel>;
+  // Joined from page_permissions
+  permissions: Record<PageName, AccessLevel>;
 }
 
-export interface ModulePermission {
+export interface PagePermission {
   id: string;
   household_member_id: string;
-  module: ModuleName;
+  page: PageName;
   access_level: AccessLevel;
 }
+
+// Legacy alias
+export type ModulePermission = PagePermission;
 
 // ============================================
 // Invitations
@@ -78,7 +96,7 @@ export interface Invitation {
   email: string;
   invite_code: string;
   invited_by: string;
-  default_access_level: AccessLevel;
+  role: MemberRole;
   expires_at: string;
   accepted_at: string | null;
   created_at: string;
@@ -86,7 +104,7 @@ export interface Invitation {
 
 export interface NewInvitation {
   email: string;
-  default_access_level: AccessLevel;
+  role: MemberRole;
 }
 
 // ============================================
@@ -107,4 +125,4 @@ export interface ProfileUpdate {
 // ============================================
 // Settings Tab
 // ============================================
-export type SettingsSection = 'profile' | 'site' | 'members';
+export type SettingsSection = 'profile' | 'sites' | 'site' | 'members';
